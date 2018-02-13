@@ -1,0 +1,9 @@
+*~
+url/
+\#*
+*.eld
+auto-save-list/
+*.elc
+eshell/lastdir
+eshell/history
+all-my-config.el
