@@ -46,29 +46,6 @@ Emacs shows weird characters if =utf-8= isn't enabled.
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT_STRING))
 #+END_SRC
 
-** Way to learn to use Emacs keybindings
-It will do near about the same thing but its not what you wanted to happen.
-So, its easier to use C-p, C-n, C-b and C-f in this case.
-#+BEGIN_SRC emacs-lisp -i
-  (defun use-emacs-keybindings ()
-    "Set up, down, left and right keys to scroll text instead of
-  move the cursor."
-    (interactive)
-    (global-set-key [up] '(lambda () (interactive) (scroll-down 1)))
-    (global-set-key [down] '(lambda () (interactive) (scroll-up 1)))
-    (global-set-key [left] '(lambda () (interactive) (scroll-right 1)))
-    (global-set-key [right] '(lambda () (interactive) (scroll-left 1))))
-  (defun use-normal-keybindings ()
-    "Set up, down, left and right keys to move the cursor instead
-  of scrolling the text."
-    (interactive)
-    (global-set-key [up] 'previous-line)
-    (global-set-key [down] 'next-line)
-    (global-set-key [left] 'backward-char)
-    (global-set-key [right] 'forward-char))
-  (use-emacs-keybindings)
-#+END_SRC
-
 ** Font setting
 Everybody likes this, so do I. Make sure you have it installed in your
 system. [[https://fonts.google.com/download?family=Source%20Code%20Pro][Click here to download Source Code Pro font pack]].
@@ -199,15 +176,37 @@ Emacs too.
 
 ** Org mode configurations
 #+BEGIN_SRC emacs-lisp -i
+  ;; Switch on indentation
   (add-hook 'org-mode-hook 'org-indent-mode)
+  ;; Color org-mode src blocks
+  (setq org-src-fontify-natively t)
 #+END_SRC
 
+** Manage trailing whitespaces
+#+BEGIN_SRC emacs-lisp -i
+  ;; Show trailing whitespaces in a buffer
+  (setq-default show-trailing-whitespace t)
+  ;; Remove the trailing whitespaces on save
+  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+#+END_SRC
+
+** TODO Abbrev Mode
+#+BEGIN_SRC emacs-lisp -i
+  (use-package abbrev
+    :diminish abbrev-mode
+    :config
+    (if (file-exists-p abbrev-file-name)
+        (quietly-read-abbrev-file)))
+#+END_SRC
 * Externals (plugins)
 These are customizations that require internet access to download and
 install emacs lisp extensions.
 ** Some good themes
 #+BEGIN_SRC emacs-lisp -i
-  (use-package monokai-theme :ensure t :defer t)
+  (use-package monokai-theme
+    :ensure t :defer t
+    :init
+    (load-theme 'monokai))
   (use-package solarized-theme :ensure t :defer t)
   (use-package ahungry-theme :ensure t :defer t)
   (use-package zenburn-theme :ensure t :defer t)
@@ -218,6 +217,7 @@ install emacs lisp extensions.
 #+BEGIN_SRC emacs-lisp -i
   (use-package helm
     :ensure t :defer t
+    :diminish helm-mode
     :bind (("M-x" . helm-M-x)
            ([f8] . helm-find-files)
            ([f9] . helm-buffers-list))
@@ -231,6 +231,7 @@ install emacs lisp extensions.
 #+BEGIN_SRC emacs-lisp -i
   (use-package yasnippet
     :ensure t :defer t
+    :diminish yas
     :init
     (use-package yasnippet-snippets
       :ensure t
@@ -246,7 +247,7 @@ install emacs lisp extensions.
 #+BEGIN_SRC emacs-lisp -i
   (use-package ggtags
     :ensure t :defer t
-    :hook (c++-mode c-mode java-mode go-mode))
+    :hook ((c++-mode c-mode java-mode go-mode) . ggtags-mode))
 #+END_SRC
 
 ** =magit= - Git Porcelain
@@ -305,7 +306,8 @@ The best ever project management tool in Emacs from [[https://github.com/bbatsov
 The code completion framework that is easy to work with.
 #+BEGIN_SRC emacs-lisp -i
   (use-package company
-    :ensure t :defer t)
+    :ensure t :defer t
+    :diminish company)
 #+END_SRC
 
 ** C/C++ completion
@@ -330,6 +332,7 @@ Burkett]] solves this problem.
 #+BEGIN_SRC emacs-lisp -i
   (use-package which-key
     :ensure t :defer t
+    :diminish which-key-mode
     :init
     (which-key-mode 1))
 #+END_SRC
@@ -370,4 +373,70 @@ Good for browsing through a project from [[https://github.com/Alexander-Miller][
 #+BEGIN_SRC emacs-lisp -i
   (use-package iedit
     :ensure t :defer t)
+#+END_SRC
+
+* Custom Elisp
+** Way to learn to use Emacs keybindings
+It will do near about the same thing but its not what you wanted to happen.
+So, its easier to use C-p, C-n, C-b and C-f in this case.
+#+BEGIN_SRC emacs-lisp -i
+  (defun use-emacs-keybindings ()
+    "Set up, down, left and right keys to scroll text instead of
+  move the cursor."
+    (interactive)
+    (global-set-key [up] '(lambda () (interactive) (scroll-down 1)))
+    (global-set-key [down] '(lambda () (interactive) (scroll-up 1)))
+    (global-set-key [left] '(lambda () (interactive) (scroll-right 1)))
+    (global-set-key [right] '(lambda () (interactive) (scroll-left 1))))
+  (defun use-normal-keybindings ()
+    "Set up, down, left and right keys to move the cursor instead
+  of scrolling the text."
+    (interactive)
+    (global-set-key [up] 'previous-line)
+    (global-set-key [down] 'next-line)
+    (global-set-key [left] 'backward-char)
+    (global-set-key [right] 'forward-char))
+  (use-emacs-keybindings)
+#+END_SRC
+
+** Dedicated window toggle
+Make a window dedicated to a buffer.
+#+BEGIN_SRC emacs-lisp -i
+(defun toggle-dedicated-window (&optional window)
+  "Toggle the option of a buffer being dedicated to a window or not."
+  (interactive)
+  (if (null window)
+      (setq window (selected-window)))
+  (message
+   (if (set-window-dedicated-p window
+                               (not (window-dedicated-p window)))
+       "Window '%s' is dedicated"
+     "Window '%s' is normal") (current-buffer)))
+
+(global-set-key (kbd "C-M-z") 'toggle-dedicated-window)
+#+END_SRC
+
+** =eshell= clear buffer
+Clear eshell buffer using =C-l=.
+#+BEGIN_SRC emacs-lisp -i
+(defun clear-buffer (func)
+  "Execute FUNC after clearing buffer."
+  (let ((inhibit-read-only t))
+    (erase-buffer)
+    (funcall func)))
+(defun eshell-clear-buffer ()
+  "Clear terminal."
+  (interactive)
+  (clear-buffer 'eshell-send-input))
+(add-hook 'eshell-mode-hook
+          '(lambda()
+             (local-set-key (kbd "C-l") 'eshell-clear-buffer)))
+#+END_SRC
+
+** Timestamp
+#+BEGIN_SRC emacs-lisp -i
+(defun insert-date ()
+  "Insert current date yyyy-mm-dd."
+  (interactive)
+  (insert (format-time-string "[Timestamp: %c]")))
 #+END_SRC
