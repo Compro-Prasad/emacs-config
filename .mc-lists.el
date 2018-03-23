@@ -4,6 +4,8 @@
 (setq mc/cmds-to-run-for-all
       '(
         hungry-delete-backward
+        hungry-delete-forward
+        org-self-insert-command
         ))
 
 (setq mc/cmds-to-run-once
