@@ -7,3 +7,5 @@ auto-save-list/
 eshell/lastdir
 eshell/history
 all-my-config.el
+session.*
+*.cache

@@ -7,63 +7,63 @@ used with bare Emacs *25.3*.
 ** User details
 Emacs should always know who you are and how to contact with the outside world.
 #+BEGIN_SRC emacs-lisp -i
-  (setq user-mail-address "comproprasad@gmail.com"
-        user-full-name "Abhishek(Compro) Prasad")
+(setq user-mail-address "comproprasad@gmail.com"
+      user-full-name "Abhishek(Compro) Prasad")
 #+END_SRC
 
 ** Convert =yes= to =y= and =no= to =n=
 Its really annoying when Emacs asks for *yes* / *no* every now and then. So,
 better convert that to simple *y* / *n*.
 #+BEGIN_SRC emacs-lisp -i
-  (defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 ** Separate file for auto Emacs customizations
 Emacs litters =init-el= with =M-x= =customize= settings. So, I chose a
 separate bin for this purpose.
 #+BEGIN_SRC emacs-lisp -i
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (load custom-file)
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file)
 #+END_SRC
 
 ** Load git tokens
 #+BEGIN_SRC emacs-lisp -i
-  (if (file-readable-p "~/.git-tokens")
-      (load-file "~/.git-tokens"))
+(if (file-readable-p "~/.git-tokens")
+    (load-file "~/.git-tokens"))
 #+END_SRC
 
 ** Get support for all characters
 Emacs shows weird characters if =utf-8= isn't enabled.
 #+BEGIN_SRC emacs-lisp -i
-  (set-language-environment 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-selection-coding-system 'utf-8)
-  (set-locale-environment "en.UTF-8")
-  (set-terminal-coding-system 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
-  (setq buffer-file-coding-system 'utf-8)
-  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT_STRING))
+(set-language-environment 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-selection-coding-system 'utf-8)
+(set-locale-environment "en.UTF-8")
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq buffer-file-coding-system 'utf-8)
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT_STRING))
 #+END_SRC
 
 ** Font setting
 Everybody likes this, so do I. Make sure you have it installed in your
 system. [[https://fonts.google.com/download?family=Source%20Code%20Pro][Click here to download Source Code Pro font pack]].
 #+BEGIN_SRC emacs-lisp -i
-  (set-frame-font "Source Code Pro-12")
+(set-frame-font "Source Code Pro-12")
 #+END_SRC
 
 ** Hide basic UI components
 #+BEGIN_SRC emacs-lisp -i
-  (menu-bar-mode 0)
-  (tool-bar-mode 0)
-  (menu-bar-no-scroll-bar)
-  (blink-cursor-mode -1)
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(menu-bar-no-scroll-bar)
+(blink-cursor-mode -1)
 #+END_SRC
 
 ** Mode line customization
 #+BEGIN_SRC emacs-lisp -i
-  (column-number-mode 1)
+(column-number-mode 1)
 #+END_SRC
 
 ** Overwrite marked regions
@@ -71,12 +71,12 @@ Emacs by default writes character even if a region is marked instead
 of deleting the whole region and replacing it with the character you
 typed or pasted.
 #+BEGIN_SRC emacs-lisp -i
-  (delete-selection-mode 1)
+(delete-selection-mode 1)
 #+END_SRC
 
-** Unicode comments if in normal text region/buffer
+** Unicode quotes if in normal text region/buffer
 #+BEGIN_SRC emacs-lisp -i
-  (electric-quote-mode t)
+(electric-quote-mode t)
 #+END_SRC
 
 ** Subword Mode
@@ -84,67 +84,67 @@ Jumps per word. If this is disabled Emacs would jump to the next word separated
 by whitespace(s). But enabling this allows me to jump words separated by other
 punctuation too. Its slower but it fits my needs.
 #+BEGIN_SRC emacs-lisp -i
-  (setq global-subword-mode t)
+(setq global-subword-mode t)
 #+END_SRC
 
 ** Xterm/Terminal mouse support
 Enables mouse support if Emacs is initialized/opened from terminal.
 #+BEGIN_SRC emacs-lisp -i
-  (if (not window-system)
-      (xterm-mouse-mode 1)
-    (xterm-mouse-mode 0))
+(if (not window-system)
+    (xterm-mouse-mode 1)
+  (xterm-mouse-mode 0))
 #+END_SRC
 
 ** Maximize Emacs Frame
 By default, Emacs opens up in a small window. So, its better to make it
 full screen.
 #+BEGIN_SRC emacs-lisp -i
-  (toggle-frame-maximized)
-  (toggle-frame-fullscreen)
+(toggle-frame-maximized)
+(toggle-frame-fullscreen)
 #+END_SRC
 
 ** No tabs. Only spaces.
 #+BEGIN_SRC emacs-lisp -i
-  (setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+END_SRC
 
 ** Pair(like quotes & brackets) completion
 #+BEGIN_SRC emacs-lisp -i
-  (electric-pair-mode 1)
+(electric-pair-mode 1)
 #+END_SRC
 
 ** Enable features
 Some features are by default disabled in Emacs to prevent a bad user experience
 if you don't know about that specific feature.
 #+BEGIN_SRC emacs-lisp -i
-  (put 'upcase-region 'disabled nil)
-  (put 'narrow-to-region 'disabled nil)
-  (put 'erase-buffer 'disabled nil)
-  (put 'downcase-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'erase-buffer 'disabled nil)
+(put 'downcase-region 'disabled nil)
 #+END_SRC
 
 ** ERC (Emacs IRC)
 #+BEGIN_SRC emacs-lisp -i
-  (use-package erc
-    :ensure t :defer t
-    :config
-    (setq erc-hide-list '("PART" "QUIT" "JOIN")
-          erc-server "irc.freenode.net"
-          erc-nick "compro"))
+(use-package erc
+  :ensure t :defer t
+  :config
+  (setq erc-hide-list '("PART" "QUIT" "JOIN")
+        erc-server "irc.freenode.net"
+        erc-nick "compro"))
 #+END_SRC
 
 ** =imenu= - Jump to an identifier
-Like modern IDEs there is an option to jump to global identifiers in
+Like modern IDEs, there is an option to jump to global identifiers in
 Emacs too.
 #+BEGIN_SRC emacs-lisp -i
-  (use-package imenu
-    :ensure t :defer t
-    :bind ("<C-S-mouse-1>" . imenu))
+(use-package imenu
+  :ensure t :defer t
+  :bind ("<C-S-mouse-1>" . imenu))
 #+END_SRC
 
 ** Auto refresh buffers when files change
 #+BEGIN_SRC emacs-lisp -i
-  (global-auto-revert-mode t)
+(global-auto-revert-mode t)
 #+END_SRC
 
 ** Speedup display of characters
@@ -154,225 +154,337 @@ Emacs too.
 
 ** Highlight Parenthesis
 #+BEGIN_SRC emacs-lisp -i
-  (show-paren-mode t)
+(show-paren-mode t)
 #+END_SRC
 
-** Right click on selection
+** Right click on selection/region
 #+BEGIN_SRC emacs-lisp -i
-  (define-key global-map [mouse-3] menu-bar-edit-menu)
+(define-key global-map [mouse-3] menu-bar-edit-menu)
 #+END_SRC
 
 ** Set region colors
 #+BEGIN_SRC emacs-lisp -i
-  (set-face-attribute 'region nil
-                      :background "pale turquoise"
-                      :distant-foreground "gtk_selection_fg_color")
+(set-face-attribute 'region nil
+                    :background "pale turquoise"
+                    :distant-foreground "gtk_selection_fg_color")
 #+END_SRC
 
-** Decreace frequency of GC
+** Decrease frequency of GC
 #+BEGIN_SRC emacs-lisp -i
-(setq gc-cons-threshold 100000000)
+(setq gc-cons-threshold 10000000)
 #+END_SRC
 
 ** Org mode configurations
 #+BEGIN_SRC emacs-lisp -i
-  ;; Switch on indentation
-  (add-hook 'org-mode-hook 'org-indent-mode)
-  ;; Color org-mode src blocks
-  (setq org-src-fontify-natively t)
+;; Switch on indentation
+(add-hook 'org-mode-hook 'org-indent-mode)
+;; Color org-mode src blocks
+(setq org-src-fontify-natively t)
 #+END_SRC
 
 ** Manage trailing whitespaces
 #+BEGIN_SRC emacs-lisp -i
-  ;; Show trailing whitespaces in a buffer
-  (setq-default show-trailing-whitespace t)
-  ;; Remove the trailing whitespaces on save
-  (add-hook 'before-save-hook 'delete-trailing-whitespace)
+(setq-default show-trailing-whitespace nil)
+(defun my/set-show-whitespace-mode ()
+  "Show white space in current buffer"
+  (setq show-trailing-whitespace t))
+(add-hook 'find-file-hook 'my/set-show-whitespace-mode)
+;; Remove the trailing whitespaces on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
 #+END_SRC
 
 ** TODO Abbrev Mode
 #+BEGIN_SRC emacs-lisp -i
-  (use-package abbrev
-    :diminish abbrev-mode
-    :config
-    (if (file-exists-p abbrev-file-name)
-        (quietly-read-abbrev-file)))
+(use-package abbrev
+  :diminish abbrev-mode
+  :config
+  (if (file-exists-p abbrev-file-name)
+      (quietly-read-abbrev-file)))
+#+END_SRC
+
+** Highlight current line
+Highlight the line on which the cursor is sitting. This is good for
+large table modes.
+#+BEGIN_SRC emacs-lisp -i
+(add-hook 'package-menu-mode-hook 'hl-line-mode)
+#+END_SRC
+
+** Browser in Emacs
+Now, Emacs users have the option to run a JavaScript enabled web
+browser inside of Emacs if Emacs is compiled with ~--with-xwidgets~
+configure option. But the defaults are not good to get into the
+workflow, so [[https://www.reddit.com/user/tuhdo][tuhdo]] [[https://www.reddit.com/r/emacs/comments/4srze9/watching_youtube_inside_emacs_25/][posted]] about his configuration which is as follows:
+#+BEGIN_SRC emacs-lisp -i
+(when (fboundp 'xwidget-webkit-browse-url)
+  (use-package xwidget
+    :defer t
+    :bind (:map xwidget-webkit-mode-map
+                ([mouse-4] . xwidget-webkit-scroll-down)
+                ([mouse-5] . xwidget-webkit-scroll-up)
+                ("<up>" . xwidget-webkit-scroll-down)
+                ("<down>" . xwidget-webkit-scroll-up)
+                ("M-w" . xwidget-webkit-copy-selection-as-kill)
+                ("C-c" . xwidget-webkit-copy-selection-as-kill))
+    :hook (window-configuration-change-hook
+           . (lambda ()
+               (when (equal major-mode 'xwidget-webkit-mode)
+                 (xwidget-webkit-adjust-size-dispatch))))
+    :init
+    ;; by default, xwidget reuses previous xwidget window,
+    ;; thus overriding your current website, unless a prefix argument
+    ;; is supplied
+    ;;
+    ;; This function always opens a new website in a new window
+    (defun xwidget-browse-url-no-reuse (url &optional sessoin)
+      (interactive
+       (progn
+         (require 'browse-url)
+         (browse-url-interactive-arg "xwidget-webkit URL: ")))
+      (xwidget-webkit-browse-url url t)))
+  ;; make xwidget default browser
+  (setq browse-url-browser-function
+        (lambda (url session)
+          (other-window 1)
+          (xwidget-browse-url-no-reuse url))))
 #+END_SRC
 * Externals (plugins)
 These are customizations that require internet access to download and
 install emacs lisp extensions.
+** Better Defaults
+#+BEGIN_SRC emacs-lisp -i
+(use-package better-defaults
+  :defer t :ensure t)
+#+END_SRC
+
 ** Some good themes
 #+BEGIN_SRC emacs-lisp -i
-  (use-package monokai-theme
-    :ensure t :defer t
-    :init
-    (load-theme 'monokai))
-  (use-package solarized-theme :ensure t :defer t)
-  (use-package ahungry-theme :ensure t :defer t)
-  (use-package zenburn-theme :ensure t :defer t)
-  (use-package spacemacs-theme :ensure t :defer t)
+(use-package monokai-theme   :ensure t :defer t)
+(use-package solarized-theme :ensure t :defer t)
+(use-package ahungry-theme   :ensure t :defer t)
+(use-package zenburn-theme   :ensure t :defer t)
 #+END_SRC
 
 ** Helm - Autocomplete emacs commands and other stuff
 #+BEGIN_SRC emacs-lisp -i
-  (use-package helm
-    :ensure t :defer t
-    :diminish helm-mode
-    :bind (("M-x" . helm-M-x)
-           ([f8] . helm-find-files)
-           ([f9] . helm-buffers-list))
-    :config
-    (require 'helm-config)
-    (helm-mode 1)
-    (setq helm-M-x-fuzzy-match t))
+(use-package helm
+  :ensure t :defer t
+  :diminish Helm
+  :bind (("M-x" . helm-M-x)
+         ([f8] . helm-find-files)
+         ([f9] . helm-buffers-list))
+  :config
+  (require 'helm-config)
+  (helm-mode 1)
+  (setq helm-M-x-fuzzy-match t))
 #+END_SRC
 
 ** =yasnippet= - TextMate like snippets
 #+BEGIN_SRC emacs-lisp -i
-  (use-package yasnippet
-    :ensure t :defer t
-    :diminish yas
-    :init
-    (use-package yasnippet-snippets
-      :ensure t
-      :defer t)
-    (yas-global-mode 1))
+(use-package yasnippet
+  :ensure t :defer t
+  :diminish yas
+  :init
+  (use-package yasnippet-snippets
+    :ensure t
+    :defer t)
+  (yas-global-mode 1))
 #+END_SRC
 + Authors:
   - pluskid <pluskid@gmail.com>
   - João Távora <joaotavora@gmail.com>
   - Noam Postavsky <npostavs@gmail.com>
 + Maintainer: Noam Postavsky <npostavs@gmail.com>
+
+** =flycheck= - Syntax check on the fly
+Here comes the IDE stuff
+#+BEGIN_SRC emacs-lisp -i
+(use-package flycheck
+  :ensure t :defer t
+  :hook (prog-mode . flycheck-mode)
+  :config
+  (add-hook 'c++-mode-hook
+            '(lambda ()
+               (flycheck-select-checker 'c/c++-gcc)))
+  )
+(use-package flycheck-pkg-config
+  :ensure t :defer t)
+(use-package flycheck-clang-analyzer
+  :ensure t :defer t
+  :config
+  (flycheck-clang-analyzer-setup))
+#+END_SRC
+
 ** =rtags= - For CMake projects
 #+BEGIN_SRC emacs-lisp -i
-  (use-package ggtags
-    :ensure t :defer t
-    :hook ((c++-mode c-mode java-mode go-mode) . ggtags-mode))
+(use-package ggtags
+  :ensure t :defer t
+  :hook ((c++-mode c-mode java-mode go-mode) . ggtags-mode))
 #+END_SRC
 
 ** =magit= - Git Porcelain
 #+BEGIN_SRC emacs-lisp -i
-  (use-package magit
-    :ensure t :defer t
-    :bind ("C-x g" . magit-status))
+(use-package magit
+  :ensure t :defer t
+  :bind ("C-x g" . 'magit-status)
+  ;; :hook (magit-post-refresh . diff-hl-magit-post-refresh)
+  :config (setq ;; magit-diff-highlight-indentation t
+                magit-diff-highlight-trailing t
+                magit-diff-paint-whitespace t
+                magit-diff-highlight-hunk-body t
+                magit-diff-refine-hunk 'all))
 #+END_SRC
 
 ** Hungry Deletion
 Hungry delete is only present in =cc-mode=. What about other
 modes. Thus this package from [[https://github.com/nflath][Nathaniel Flath]].
 #+BEGIN_SRC emacs-lisp -i
-  (use-package hungry-delete
-    :ensure t :defer t
-    :init
-    (global-hungry-delete-mode 1))
+(use-package hungry-delete
+  :ensure t :defer t
+  :init
+  (global-hungry-delete-mode 1))
 #+END_SRC
 
 ** Web mode
 The one and only package which understands a wide range of liquid
 templates from [[https://github.com/fxbois][fxbois]].
 #+BEGIN_SRC emacs-lisp -i
-  (use-package web-mode
-    :ensure t :defer t
-    :mode "\\.html\\'")
+(use-package web-mode
+  :ensure t :defer t
+  :mode "\\.html\\'")
 #+END_SRC
 
 ** Expand region
 The region auto completion without the need of a mouse from [[https://github.com/magnars][Magnar
 Sveen]].
 #+BEGIN_SRC emacs-lisp -i
-  (use-package expand-region
-    :ensure t :defer t
-    :bind (("C-=" . er/expand-region)
-           ("C-+" . er/contract-region)))
+(use-package expand-region
+  :ensure t :defer t
+  :bind (("C-=" . er/expand-region)
+         ("C-+" . er/contract-region)))
 #+END_SRC
 
 ** Project management using =projectile=
 The best ever project management tool in Emacs from [[https://github.com/bbatsov/][Bozhidar Batsov]].
 #+BEGIN_SRC emacs-lisp -i
-  (use-package projectile
-    :ensure t :defer t
-    :bind-keymap ("C-c p" . projectile-command-map)
+(use-package projectile
+  :ensure t :defer t
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :init
+  (use-package helm-projectile
+    :ensure t
+    :defer t
     :init
-    (use-package helm-projectile
-      :ensure t
-      :defer t
-      :init
-      (helm-projectile-on))
-    :config
-    (projectile-mode 1))
+    (helm-projectile-on))
+  :config
+  (projectile-mode 1))
 #+END_SRC
 
 ** Complete anything(=company=)
 The code completion framework that is easy to work with.
 #+BEGIN_SRC emacs-lisp -i
-  (use-package company
-    :ensure t :defer t
-    :diminish company)
+(use-package company
+  :ensure t :defer t
+  :diminish company)
 #+END_SRC
 
 ** C/C++ completion
 #+BEGIN_SRC emacs-lisp -i
-  (use-package company-irony
-    :ensure t :defer t
-    :init
-    (global-company-mode 1))
+(use-package company-irony
+  :ensure t :defer t
+  :init
+  (global-company-mode 1))
 #+END_SRC
 
 ** Better window switching
 By default it is tedious to switch windows using =C-x o= repeatedly.
 #+BEGIN_SRC emacs-lisp -i
-  (use-package ace-window
-    :ensure t :defer t
-    :bind ("M-o" . ace-window))
+(use-package ace-window
+  :ensure t :defer t
+  :bind ("M-o" . ace-window))
 #+END_SRC
 
 ** Auto completion for keyboard shortcuts
 We all know Emacs has many weird shortcuts. This package from [[https://github.com/justbur][Justin
 Burkett]] solves this problem.
 #+BEGIN_SRC emacs-lisp -i
-  (use-package which-key
-    :ensure t :defer t
-    :diminish which-key-mode
-    :init
-    (which-key-mode 1))
+(use-package which-key
+  :ensure t :defer t
+  :diminish which-key-mode
+  :init
+  (which-key-mode 1))
 #+END_SRC
 
 ** TODO Tabs?
 Here it is from [[https://github.com/Alexander-Miller][Alexander Miller]].
 #+BEGIN_SRC emacs-lisp -i
-
+;; Sorry, it is empty for now. I am yet deciding on what to use.
 #+END_SRC
 
 ** Sidebar containing project
 Good for browsing through a project from [[https://github.com/Alexander-Miller][Alexander Miller]].
 #+BEGIN_SRC emacs-lisp -i
-  (use-package treemacs-projectile
-    :ensure t :defer t
-    :bind (([f5] . treemacs)
-           ([f6] . treemacs-projectile)))
+(use-package treemacs-projectile
+  :ensure t :defer t
+  :bind (([f5] . treemacs)
+         ([f6] . treemacs-projectile)))
 #+END_SRC
 
 ** Multiple cursors is here too
 #+BEGIN_SRC emacs-lisp -i
-  (use-package multiple-cursors
-    :ensure t :defer t
-    :bind (("M-/" . mc--mark-symbol-at-point)
-           ("C-S-c" . mc/edit-lines)
-           ("M-S-<up>" . mc/mark-previous-like-this)
-           ("M-<up>" . mc/skip-to-previous-like-this)
-           ("M-S-<down>" . mc/mark-next-like-this)
-           ("M-<down>" . mc/skip-to-next-like-this)
-           ("C-c C-<" . mc/mark-all-like-this)
-           ("M-S-<mouse-1>" . mc/add-cursor-on-click)
-           ("M-S-<mouse-2>" . mc/add-cursor-on-click)
-           ("M-S-<mouse-3>" . mc/add-cursor-on-click)))
+(use-package multiple-cursors
+  :ensure t :defer t
+  :bind (("M-/" . mc--mark-symbol-at-point)
+         ("C-S-c" . mc/edit-lines)
+         ("M-S-<up>" . mc/mark-previous-like-this)
+         ("M-<up>" . mc/skip-to-previous-like-this)
+         ("M-S-<down>" . mc/mark-next-like-this)
+         ("M-<down>" . mc/skip-to-next-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)
+         ("M-S-<mouse-1>" . mc/add-cursor-on-click)
+         ("M-S-<mouse-2>" . mc/add-cursor-on-click)
+         ("M-S-<mouse-3>" . mc/add-cursor-on-click)))
 #+END_SRC
 /Author: Magnar Sveen <magnars@gmail.com>/
 
 ** Rename identifiers in a buffer
 #+BEGIN_SRC emacs-lisp -i
-  (use-package iedit
-    :ensure t :defer t)
+(use-package iedit
+  :ensure t :defer t)
+#+END_SRC
+
+** PDF tools in Emacs
+#+BEGIN_SRC emacs-lisp -i
+(use-package pdf-tools
+  :defer t :ensure t
+  :init
+  (pdf-tools-install))
+#+END_SRC
+
+** Highlight diffs
+This helps to highlight diffs in Emacs if the file is under version
+control.
+#+BEGIN_SRC emacs-lisp -i
+(use-package diff-hl
+  :defer t :ensure t
+  :hook (prog-mode . diff-hl-mode)
+  :init (progn
+          (setq diff-hl-side 'right)
+          (diff-hl-margin-mode t)))
+          ;;(diff-hl-flydiff-mode t)))
+#+END_SRC
+
+** GitHubGist integration
+Enables me to edit and upload new gists to GitHub. Might need a
+setup. For me it worked without any setup.
+#+BEGIN_SRC emacs-lisp -i
+(use-package gist
+  :defer t :ensure t)
+#+END_SRC
+
+** Vue js mode
+#+BEGIN_SRC emacs-lisp -i
+(use-package vue-mode
+  :defer t :ensure t)
 #+END_SRC
 
 * Custom Elisp
@@ -380,23 +492,23 @@ Good for browsing through a project from [[https://github.com/Alexander-Miller][
 It will do near about the same thing but its not what you wanted to happen.
 So, its easier to use C-p, C-n, C-b and C-f in this case.
 #+BEGIN_SRC emacs-lisp -i
-  (defun use-emacs-keybindings ()
-    "Set up, down, left and right keys to scroll text instead of
+(defun use-emacs-keybindings ()
+  "Set up, down, left and right keys to scroll text instead of
   move the cursor."
-    (interactive)
-    (global-set-key [up] '(lambda () (interactive) (scroll-down 1)))
-    (global-set-key [down] '(lambda () (interactive) (scroll-up 1)))
-    (global-set-key [left] '(lambda () (interactive) (scroll-right 1)))
-    (global-set-key [right] '(lambda () (interactive) (scroll-left 1))))
-  (defun use-normal-keybindings ()
-    "Set up, down, left and right keys to move the cursor instead
+  (interactive)
+  (global-set-key [up] '(lambda () (interactive) (scroll-down 1)))
+  (global-set-key [down] '(lambda () (interactive) (scroll-up 1)))
+  (global-set-key [left] '(lambda () (interactive) (scroll-right 1)))
+  (global-set-key [right] '(lambda () (interactive) (scroll-left 1))))
+(defun use-normal-keybindings ()
+  "Set up, down, left and right keys to move the cursor instead
   of scrolling the text."
-    (interactive)
-    (global-set-key [up] 'previous-line)
-    (global-set-key [down] 'next-line)
-    (global-set-key [left] 'backward-char)
-    (global-set-key [right] 'forward-char))
-  (use-emacs-keybindings)
+  (interactive)
+  (global-set-key [up] 'previous-line)
+  (global-set-key [down] 'next-line)
+  (global-set-key [left] 'backward-char)
+  (global-set-key [right] 'forward-char))
+(use-emacs-keybindings)
 #+END_SRC
 
 ** Dedicated window toggle
