@@ -5,7 +5,10 @@
 These customizations don’t require any external dependency and can be
 used with bare Emacs *25.3*.
 ** User details
-Emacs should always know who you are and how to contact with the outside world.
+Emacs should always know who you are and how to contact with the
+outside world.  Not as necessary but it gives you the feeling of
+owning Emacs. It does provides integration with mail utils and
+contacts but I don’t use such things. But I do have plans.
 #+BEGIN_SRC emacs-lisp -i
 (setq user-mail-address "comproprasad@gmail.com"
       user-full-name "Abhishek(Compro) Prasad")
@@ -20,13 +23,17 @@ better convert that to simple *y* / *n*.
 
 ** Separate file for auto Emacs customizations
 Emacs litters =init-el= with =M-x= =customize= settings. So, I chose a
-separate bin for this purpose.
+separate trash can for this purpose. If required I will pick
+configurations from their and document it here.
 #+BEGIN_SRC emacs-lisp -i
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 #+END_SRC
 
 ** Load git tokens
+This is the file where I keep applications in Emacs authorized with
+GitHub tokens. Since, not everyone may use this thing it is kept uder
+a check.
 #+BEGIN_SRC emacs-lisp -i
 (if (file-readable-p "~/.git-tokens")
     (load-file "~/.git-tokens"))
@@ -49,11 +56,17 @@ Emacs shows weird characters if =utf-8= isn't enabled.
 ** Font setting
 Everybody likes this, so do I. Make sure you have it installed in your
 system. [[https://fonts.google.com/download?family=Source%20Code%20Pro][Click here to download Source Code Pro font pack]].
+
+Sometimes the font needs to be scaled down to as low as 10 or as high
+as 14. So, whenever I need that I just do =M-x= =menu-set-font= which
+brings me a font picker from where I can set the font for the current
+session.
 #+BEGIN_SRC emacs-lisp -i
 (set-frame-font "Source Code Pro-12")
 #+END_SRC
 
 ** Hide basic UI components
+If you need some of the UI components just pass in a possitive value to the function.
 #+BEGIN_SRC emacs-lisp -i
 (menu-bar-mode 0)
 (tool-bar-mode 0)
@@ -62,19 +75,34 @@ system. [[https://fonts.google.com/download?family=Source%20Code%20Pro][Click he
 #+END_SRC
 
 ** Mode line customization
+Not necessary but it shows the column number in the current line.
 #+BEGIN_SRC emacs-lisp -i
 (column-number-mode 1)
 #+END_SRC
 
 ** Overwrite marked regions
-Emacs by default writes character even if a region is marked instead
-of deleting the whole region and replacing it with the character you
-typed or pasted.
+Modern editors delete a region of selected text on inserting a new
+character while the region was selected.
+
+This doesn’t happen by default in Emacs. Instead, Emacs keeps on
+adding text in the current cursor position even when the region is
+selected. So, there is this feature function called
+=delete-selection-mode= which needs to be turned on in order to get
+the default behaviour of the modern text editors.
 #+BEGIN_SRC emacs-lisp -i
 (delete-selection-mode 1)
 #+END_SRC
 
+** Auto complete the next pair
+This is so good that web-mode also relies on its auto completion to
+complete the ending tags.
+#+BEGIN_SRC emacs-lisp -i
+(electric-pair-mode 1)
+#+END_SRC
+
 ** Unicode quotes if in normal text region/buffer
+In a buffer where a character like =`= is turned into *‘’* which is
+super awesome, though it will render badly in non utf 8 encodings.
 #+BEGIN_SRC emacs-lisp -i
 (electric-quote-mode t)
 #+END_SRC
@@ -108,14 +136,9 @@ full screen.
 (setq-default indent-tabs-mode nil)
 #+END_SRC
 
-** Pair(like quotes & brackets) completion
-#+BEGIN_SRC emacs-lisp -i
-(electric-pair-mode 1)
-#+END_SRC
-
 ** Enable features
-Some features are by default disabled in Emacs to prevent a bad user experience
-if you don't know about that specific feature.
+Some features are by default disabled in Emacs to prevent a bad user
+experience if you don't know about that specific feature.
 #+BEGIN_SRC emacs-lisp -i
 (put 'upcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
@@ -134,8 +157,6 @@ if you don't know about that specific feature.
 #+END_SRC
 
 ** =imenu= - Jump to an identifier
-Like modern IDEs, there is an option to jump to global identifiers in
-Emacs too.
 #+BEGIN_SRC emacs-lisp -i
 (use-package imenu
   :ensure t :defer t
@@ -152,12 +173,15 @@ Emacs too.
 (setq inhibit-compacting-font-caches t)
 #+END_SRC
 
-** Highlight Parenthesis
+** Highlight Matching Parenthesis
 #+BEGIN_SRC emacs-lisp -i
 (show-paren-mode t)
 #+END_SRC
 
 ** Right click on selection/region
+This will give cut, copy, paste like actions on right click. The right
+click might be on =mouse-2=, so you may need to change the
+configuration.
 #+BEGIN_SRC emacs-lisp -i
 (define-key global-map [mouse-3] menu-bar-edit-menu)
 #+END_SRC
@@ -178,16 +202,18 @@ Emacs too.
 #+BEGIN_SRC emacs-lisp -i
 ;; Switch on indentation
 (add-hook 'org-mode-hook 'org-indent-mode)
-;; Color org-mode src blocks
+;; Color org-mode src blocks written in other languages
 (setq org-src-fontify-natively t)
 #+END_SRC
 
 ** Manage trailing whitespaces
 #+BEGIN_SRC emacs-lisp -i
+;; Switch off the display of trailing whitespaces in all buffers
 (setq-default show-trailing-whitespace nil)
 (defun my/set-show-whitespace-mode ()
   "Show white space in current buffer"
   (setq show-trailing-whitespace t))
+;; Show whitespaces only in buffers pointing to specific files
 (add-hook 'find-file-hook 'my/set-show-whitespace-mode)
 ;; Remove the trailing whitespaces on save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
@@ -199,12 +225,14 @@ Emacs too.
   :diminish abbrev-mode
   :config
   (if (file-exists-p abbrev-file-name)
-      (quietly-read-abbrev-file)))
+      (quietly-read-abbrev-file))
+  (if (file-exists-p "./my-abbrev.el")
+      (load "./my-abbrev.el")))
 #+END_SRC
 
 ** Highlight current line
 Highlight the line on which the cursor is sitting. This is good for
-large table modes.
+large table modes like the package lists.
 #+BEGIN_SRC emacs-lisp -i
 (add-hook 'package-menu-mode-hook 'hl-line-mode)
 #+END_SRC
@@ -296,7 +324,13 @@ install emacs lisp extensions.
 + Maintainer: Noam Postavsky <npostavs@gmail.com>
 
 ** =flycheck= - Syntax check on the fly
-Here comes the IDE stuff
+Ever wondered to get to know the compilation errors before even
+building the project? Yeah these things are already provided in IDEs
+so why can’t Emacs do that.
+
+=flymake= was the syntax checker before =flycheck= and it is still now
+used by many people. But for me, =flycheck= does much work without
+much of configuration or prerequisites like Makefiles.
 #+BEGIN_SRC emacs-lisp -i
 (use-package flycheck
   :ensure t :defer t
@@ -306,15 +340,26 @@ Here comes the IDE stuff
             '(lambda ()
                (flycheck-select-checker 'c/c++-gcc)))
   )
+#+END_SRC
+Including different includes and libraries is a tedious job. So, for C
+and C++ development a command line tool called =pkg-config= does the
+job of providing a known library’s path and linking flags.
+
+This Emacs package just uses =pkg-config= to provide these flags to
+=flycheck= after selecting a library interactively. It also gives
+completion of all the know libraries to =pkg-config=.
+#+BEGIN_SRC emacs-lisp -i
 (use-package flycheck-pkg-config
   :ensure t :defer t)
+#+END_SRC
+#+BEGIN_SRC emacs-lisp -i
 (use-package flycheck-clang-analyzer
   :ensure t :defer t
   :config
   (flycheck-clang-analyzer-setup))
 #+END_SRC
 
-** =rtags= - For CMake projects
+** GNU Global - =ggtags=
 #+BEGIN_SRC emacs-lisp -i
 (use-package ggtags
   :ensure t :defer t
@@ -350,7 +395,7 @@ templates from [[https://github.com/fxbois][fxbois]].
 #+BEGIN_SRC emacs-lisp -i
 (use-package web-mode
   :ensure t :defer t
-  :mode "\\.html\\'")
+  :mode "\\.\\(html\\|vue\\|htm\\)\\'")
 #+END_SRC
 
 ** Expand region
@@ -478,12 +523,6 @@ Enables me to edit and upload new gists to GitHub. Might need a
 setup. For me it worked without any setup.
 #+BEGIN_SRC emacs-lisp -i
 (use-package gist
-  :defer t :ensure t)
-#+END_SRC
-
-** Vue js mode
-#+BEGIN_SRC emacs-lisp -i
-(use-package vue-mode
   :defer t :ensure t)
 #+END_SRC
 

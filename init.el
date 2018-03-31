@@ -15,7 +15,11 @@
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
 (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
-(package-initialize)
+(add-to-list 'package-archives
+             '("marmalade" . "http://marmalade-repo.org/packages/") t)
+
+;; Already declared somewhere?
+;; (package-initialize)
 
 
 ;; Install use-package if not installed
