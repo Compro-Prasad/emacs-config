@@ -3,11 +3,14 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        c-electric-slash
         hungry-delete-backward
         hungry-delete-forward
         org-self-insert-command
+        sgml-slash
         ))
 
 (setq mc/cmds-to-run-once
       '(
+        helm-M-x
         ))
