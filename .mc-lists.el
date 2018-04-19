@@ -6,6 +6,7 @@
         c-electric-slash
         hungry-delete-backward
         hungry-delete-forward
+        org-beginning-of-line
         org-self-insert-command
         sgml-slash
         ))
