@@ -708,6 +708,27 @@ The code completion framework that is easy to work with.
 #+BEGIN_SRC emacs-lisp -i
 (use-package company
   :ensure t :defer t
+  :init
+  (use-package company-jedi :ensure t)
+  (use-package company-tern :ensure t)
+  (use-package company-flx :ensure t)
+  (add-hook 'python-mode-hook 'company-jedi-start)
+  (add-hook 'js-mode-hook 'tern-mode)
+  (add-to-list 'company-backends 'company-tern)
+  (setq company-idle-delay 0.1
+        company-minimum-prefix-length 1
+        company-selection-wrap-around t
+        company-show-numbers t
+        company-require-match 'never
+        company-dabbrev-downcase nil
+        company-dabbrev-ignore-case t
+        company-backends '(company-jedi company-nxml
+                                        company-css company-capf
+                                        (company-dabbrev-code company-keywords)
+                                        company-files company-dabbrev)
+        company-jedi-python-bin "python")
+  :config
+  (company-flx-mode +1))
 #+END_SRC
 
 ** C/C++ completion
@@ -723,7 +744,7 @@ By default it is tedious to switch windows using =C-x o= repeatedly.
 #+BEGIN_SRC emacs-lisp -i
 (use-package ace-window
   :ensure t :defer t
-  :bind ("M-o" . ace-window))
+  :bind ("M-\\" . ace-window))
 #+END_SRC
 
 ** Auto completion for keyboard shortcuts
@@ -803,6 +824,22 @@ setup. For me it worked without any setup.
   :defer t :ensure t)
 #+END_SRC
 
+** Undo and Redo - Undo Tree
+#+BEGIN_SRC emacs-lisp -i
+(use-package undo-tree
+  :ensure t :defer t
+  :init (global-undo-tree-mode 1)
+  :config (defalias 'redo 'undo-tree-visualize)
+  :bind (("C-z" . undo)     ; Zap to character isn't helpful
+         ("C-S-z" . undo-tree-visualize)))
+#+END_SRC
+
+** Visual Regular Expressions
+#+BEGIN_SRC emacs-lisp -i
+(use-package visual-regexp :ensure t :defer t)
+(use-package visual-regexp-steroids :ensure t :defer t)
+#+END_SRC
+
 ** TODO Smart Mode Line
 #+BEGIN_SRC emacs-lisp -i
 (use-package smart-mode-line
@@ -817,6 +854,31 @@ setup. For me it worked without any setup.
   (sml/setup))
 #+END_SRC
 Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#improve-the-mode-line][wasamasa - GitHub]]
+
+** =cmake-ide=
+#+BEGIN_SRC emacs-lisp -i
+(use-package cmake-ide
+  :ensure t :defer t
+  :init
+  (cmake-ide-setup))
+#+END_SRC
+
+** Edit Elisp lists interactively
+#+BEGIN_SRC emacs-lisp -i
+(use-package refine
+  :ensure t :defer t)
+#+END_SRC
+Source: [[https://github.com/Wilfred/refine][refine - GitHub]]
+
+** Better Help system in Emacs
+#+BEGIN_SRC emacs-lisp -i
+(use-package helpful
+  :ensure t :defer t
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)))
+#+END_SRC
 
 * Custom Elisp
 ** Way to learn to use Emacs keybindings
