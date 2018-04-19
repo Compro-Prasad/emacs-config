@@ -156,6 +156,14 @@ Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#enable-every
         erc-nick "compro"))
 #+END_SRC
 
+** Bump up kill ring/clipboard max value
+Emacs keeps track of word and line kills too. So, the actual things
+that were copied are just pushed back. Since, the default maxima is 60
+it is insufficient to get older pastes.
+#+BEGIN_SRC emacs-lisp -i
+(setq kill-ring-max 512)
+#+END_SRC
+
 ** =imenu= - Jump to an identifier
 #+BEGIN_SRC emacs-lisp -i
 (use-package imenu
