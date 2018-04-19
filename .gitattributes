@@ -1,4 +1,8 @@
-elpa/*        binary
-elpa/         binary
-elpa/*/*      binary
-elpa/*/*/*    binary
+elpa/                    binary
+elpa/*                   binary
+elpa/*/*                 binary
+elpa/*/*/*               binary
+elpa/*/*/*/*             binary
+elpa/*/*/*/*/*           binary
+elpa/*/*/*/*/*/*         binary
+elpa/*/*/*/*/*/*/*       binary
