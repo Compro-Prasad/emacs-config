@@ -26,7 +26,7 @@ better convert that to simple *y* / *n*.
 ** Separate file for auto Emacs customizations
 Emacs litters =init-el= with =M-x= =customize= settings. So, I chose a
 separate trash can for this purpose. If required I will pick
-configurations from their and document it here.
+configurations from there and document it here.
 #+BEGIN_SRC emacs-lisp -i
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
