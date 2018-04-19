@@ -15,3 +15,8 @@ eshell/history
 all-my-config.el
 session.*
 *.cache
+magithub
+recentf
+server/
+.python-environments
+tramp
