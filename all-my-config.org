@@ -142,11 +142,9 @@ full screen.
 Some features are by default disabled in Emacs to prevent a bad user
 experience if you don't know about that specific feature.
 #+BEGIN_SRC emacs-lisp -i
-(put 'upcase-region 'disabled nil)
-(put 'narrow-to-region 'disabled nil)
-(put 'erase-buffer 'disabled nil)
-(put 'downcase-region 'disabled nil)
+(setq disabled-command-function nil)
 #+END_SRC
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#enable-every-deactivated-command][wasamasa - GitHub]]
 
 ** ERC (Emacs IRC)
 #+BEGIN_SRC emacs-lisp -i
