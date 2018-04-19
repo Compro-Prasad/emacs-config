@@ -648,6 +648,8 @@ completion of all the know libraries to =pkg-config=.
 (use-package magit
   :ensure t :defer t
   :bind ("C-x g" . 'magit-status)
+  :init
+  (use-package magithub :ensure t :defer t)
   ;; :hook (magit-post-refresh . diff-hl-magit-post-refresh)
   :config (setq ;; magit-diff-highlight-indentation t
                 magit-diff-highlight-trailing t
