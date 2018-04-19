@@ -19,16 +19,15 @@
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 
 ;; Already declared somewhere?
-;; (package-initialize)
+(when (< emacs-major-version 27)
+  (package-initialize))
 
 
 ;; Install use-package if not installed
 ;; It will be used to automatically download and lazy load packages
-(if (package-installed-p 'use-package)
-    nil
-  (progn
-    (package-refresh-contents)
-    (package-install 'use-package)))
+(when (not (package-installed-p 'use-package))
+  (package-refresh-contents)
+  (package-install 'use-package))
 
 
 ;; My configurations inside this beautiful org file
