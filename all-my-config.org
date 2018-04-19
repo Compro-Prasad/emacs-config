@@ -1,5 +1,7 @@
 #+TITLE: All My Emacs Configurations
 #+AUTHOR: Compro Prasad
+#+STARTUP: logdone
+#+STARTUP: indent
 
 * Internals
 These customizations don’t require any external dependency and can be
