@@ -208,12 +208,64 @@ configuration.
 
 ** Org mode configurations
 #+BEGIN_SRC emacs-lisp -i
-;; Switch on indentation
-(add-hook 'org-mode-hook 'org-indent-mode)
-;; Color org-mode src blocks written in other languages
-(setq org-src-fontify-natively t)
+(setq org-src-fontify-natively t
+      org-startup-indented t
+      org-src-preserve-indentation t
+      org-enforce-todo-dependencies t
+      org-enforce-todo-checkbox-dependencies t
+
+      org-ellipsis "⤵"
+
+      org-export-backends '(ascii beamer html latex md)
+
+      org-latex-listings 'minted
+      org-latex-packages-alist '(("" "tabu") ("" "minted"))
+      org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+#+END_SRC
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#org-mode][wasamasa - GitHub]]
+
+*** Some handy keybindings
+#+BEGIN_SRC emacs-lisp -i
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-cc" 'org-capture)
+;; (define-key global-map "\C-cb" 'org-iswitchb)
+(define-key global-map "\C-ca" 'org-agenda)
 #+END_SRC
 
+*** Org babel execution engines
+#+BEGIN_SRC emacs-lisp -i
+(require 'ob-dot)
+(require 'ob-shell)
+(require 'ob-C)
+(require 'ob-shell)
+(require 'ob-ruby)
+(require 'ob-emacs-lisp)
+(require 'ob-python)
+(require 'ob-R)
+(require 'ob-table)
+(require 'ob-latex)
+(require 'ob-calc)
+(require 'ob-scheme)
+(require 'ob-latex)
+(require 'ob-matlab)
+(require 'ob-java)
+#+END_SRC
+
+*** DONE Journals in Org Mode
+CLOSED: [2018-04-07 Sat 10:11]
+#+BEGIN_SRC emacs-lisp -i
+(setq org-capture-templates
+      '(
+        ("j" "Journal Entry" entry
+         (file+datetree "~/Dropbox/programs/notes/journal.org")
+         "* %?\n\nSource: %a" :empty-lines 1)
+
+        ;; ... other templates
+        ))
+#+END_SRC
+Source: [[http://www.howardism.org/Technical/Emacs/journaling-org.html]]
 ** Manage trailing whitespaces
 #+BEGIN_SRC emacs-lisp -i
 ;; Switch off the display of trailing whitespaces in all buffers
