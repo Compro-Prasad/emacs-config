@@ -334,6 +334,214 @@ workflow, so [[https://www.reddit.com/user/tuhdo][tuhdo]] [[https://www.reddit.c
           (other-window 1)
           (xwidget-browse-url-no-reuse url))))
 #+END_SRC
+
+** Theme questions
+#+BEGIN_SRC emacs-lisp -i
+(setq custom-safe-themes t)
+#+END_SRC
+
+** Disable Advertisements
+#+BEGIN_SRC emacs-lisp -i
+(setq inhibit-startup-screen t)
+(defun display-startup-echo-area-message ()
+  (message "Let the hacking begin!"))
+#+END_SRC
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#disable-advertisements][wasamasa - GitHub]]
+
+** Fix =line-number-mode=
+Sometimes the line number in mode line disappears and just shows *??* which is
+pretty unhelpful. Thus this configuration fixes that. For more information
+checkout the source link.
+#+BEGIN_SRC emacs-lisp -i
+(setq line-number-display-limit-width 1000000)
+#+END_SRC
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#fix-line-number-mode][wasamasa - GitHub]]
+
+** TODO GnuTLS
+Don’t know what it is but it seems helpful so I pulled out from their config.
+#+BEGIN_SRC emacs-lisp -i
+(setq gnutls-min-prime-bits 4096)
+#+END_SRC
+Source: [[(setq gnutls-min-prime-bits 4096)][wasamasa - GitHub]]
+
+** Better unique buffer names
+#+BEGIN_SRC emacs-lisp -i
+(setq uniquify-buffer-name-style 'forward)
+#+END_SRC
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#unique-buffer-names][wasamasa - GitHub]]
+
+** TODO Allow for multiple Emacs daemons
+Although I’m pretty sure I won’t make use of this, I prefer using local TCP
+connections over socket files. Another benefit of this setting is that it would
+allow me to make use of emacsclient to access a remote Emacs daemon.
+#+BEGIN_SRC emacs-lisp -i
+(setq server-use-tcp t)
+#+END_SRC
+Source: [[https://emacs.stackexchange.com/questions/371/how-do-i-use-emacsclient-to-connect-to-a-remote-emacs-instance#380][StackExchange]]
+
+** Save clipboard data of other programs
+#+BEGIN_SRC emacs-lisp -i
+(setq save-interprogram-paste-before-kill t)
+#+END_SRC
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#enable-every-deactivated-command][wasamasa - GitHub]]
+
+** Save History
+#+BEGIN_SRC emacs-lisp -i
+(setq recentf-max-saved-items 512
+      recentf-save-file "~/.emacs.d/recentf"
+      history-length 512
+      savehist-file "~/.emacs.d/savehist"
+      save-place-file "~/.emacs.d/saveplace")
+(setq-default save-place t)
+#+END_SRC
+
+** =comint=
+Here comes another particularly interesting Emacs package. It allows one to
+define major modes interacting with a REPL-style process. In other words, it
+gives you all kinds of shell and interpreter interaction with common
+keybindings, be it for SQL, your favourite programming language or your
+shell. Even Emacs itself can be used, try out M-x ielm.
+
+However there’s a couple things that could be improved. One of them is the fact
+that by default such buffers are editable. The prompt can be customized easily
+to be read-only, the remaining output needs a bit more work.
+#+BEGIN_SRC emacs-lisp -i
+(setq comint-prompt-read-only t)
+
+(defun my-comint-preoutput-read-only (text)
+  (propertize text 'read-only t))
+
+(add-hook 'comint-preoutput-filter-functions
+          'my-comint-preoutput-read-only)
+#+END_SRC
+
+It's trivial to clear the entire =comint= buffer by temporarily binding
+~comint-buffer-maximum-size~ to zero and calling ~comint-truncate-buffer~,
+however that's not what I really want.  Usually it's just the output of the last
+expression that's been faulty and needs to be cleared by replacing it with a
+comment.  The idea itself is taken from [[https://github.com/clojure-emacs/cider/blob/cb3509eb54d3c3369681d73f3218a1493b977e99/cider-repl.el#L640-L655][CIDER]].
+
+#+BEGIN_SRC emacs-lisp
+(defun my-comint-last-output-beg ()
+  (save-excursion
+    (comint-goto-process-mark)
+    (while (not (or (eq (get-char-property (point) 'field) 'boundary)
+                    (= (point) (point-min))))
+      (goto-char (previous-char-property-change (point) (point-min))))
+    (if (= (point) (point-min))
+        (point)
+      (1+ (point)))))
+
+(defun my-comint-last-output-end ()
+  (save-excursion
+    (comint-goto-process-mark)
+    (while (not (or (eq (get-char-property (point) 'font-lock-face)
+                        'comint-highlight-prompt)
+                    (= (point) (point-min))))
+      (goto-char (previous-char-property-change (point) (point-min))))
+    (let ((overlay (car (overlays-at (point)))))
+      (when (and overlay (eq (overlay-get overlay 'font-lock-face)
+                             'comint-highlight-prompt))
+        (goto-char (overlay-start overlay))))
+    (1- (point))))
+
+(defun my-comint-clear-last-output ()
+  (interactive)
+  (let ((start (my-comint-last-output-beg))
+        (end (my-comint-last-output-end)))
+    (let ((inhibit-read-only t))
+      (delete-region start end)
+      (save-excursion
+        (goto-char start)
+        (insert (propertize "output cleared"
+                            'font-lock-face 'font-lock-comment-face))))))
+#+END_SRC
+
+Killed =comint= processes tend to leave an useless buffer around.  Let's kill it
+after noticing such an event with a process sentinel.
+
+#+BEGIN_SRC emacs-lisp
+(defun my-shell-kill-buffer-sentinel (process event)
+  (when (and (memq (process-status process) '(exit signal))
+             (buffer-live-p (process-buffer process)))
+    (kill-buffer)))
+
+(defun my-kill-process-buffer-on-exit ()
+  (set-process-sentinel (get-buffer-process (current-buffer))
+                        #'my-shell-kill-buffer-sentinel))
+
+(dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
+  (add-hook hook 'my-kill-process-buffer-on-exit))
+#+END_SRC
+
+Recentering feels a bit unintuitive since it goes by the middle first.  I only
+need top and bottom commands, for that I'll define my own command and bind it
+later.
+
+#+BEGIN_SRC emacs-lisp
+(defun my-recenter-top-bottom ()
+  (interactive)
+  (goto-char (point-max))
+  (let ((recenter-positions '(top bottom)))
+    (recenter-top-bottom)))
+#+END_SRC
+
+Another thing annoying me in comint buffers is that when text is read-only, both
+cursor movement and appending to kill ring still happen.  This is less useful
+since if you keep holding the keys to delete words, you end up traversing the
+entire buffer instead of stopping at the read-only boundaries and pollute the
+kill ring.  To remedy that I'll write my own word killing commands in the
+typical Emacs user fashion, however I'll not advise the built-ins since who
+knows what might possibly be relying on this default behaviour.
+
+#+BEGIN_SRC emacs-lisp
+(defun my-kill-word (arg)
+  (interactive "p")
+  (unless buffer-read-only
+    (let ((beg (point))
+          (end (save-excursion (forward-word arg) (point)))
+          (point (save-excursion (goto-char
+                                  (if (> arg 0)
+                                      (next-single-char-property-change
+                                       (point) 'read-only)
+                                    (previous-single-char-property-change
+                                     (point) 'read-only)))
+                                 (point))))
+      (unless (get-char-property (point) 'read-only)
+        (if (if (> arg 0) (< point end) (> point end))
+            (kill-region beg point)
+          (kill-region beg end))))))
+
+(defun my-backward-kill-word (arg)
+  (interactive "p")
+  (my-kill-word (- arg)))
+#+END_SRC
+
+The new functionality introduced has to be bound to keys for convenient use.
+Note the remapping of commands.
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'comint
+  (define-key comint-mode-map (kbd "<remap> <kill-word>") 'my-kill-word)
+  (define-key comint-mode-map (kbd "<remap> <backward-kill-word>") 'my-backward-kill-word)
+  (define-key comint-mode-map (kbd "C-S-l") 'my-comint-clear-last-output)
+  (define-key comint-mode-map (kbd "C-l") 'my-recenter-top-bottom))
+#+END_SRC
+
+Source: [[https://github.com/wasamasa/dotemacs/blob/master/init.org#comint][wasamasa - GitHub]]
+
+** =shell=
+For unknown reasons I get my input echoed back to me.  In other words,
+sending =ls= to =shell= echoes my input twice, then the output.
+=comint= has a setting that can filter these echoes.
+
+#+BEGIN_SRC emacs-lisp
+(defun my-shell-turn-echo-off ()
+  (setq comint-process-echoes t))
+
+(add-hook 'shell-mode-hook 'my-shell-turn-echo-off)
+#+END_SRC
+
 * Externals (plugins)
 These are customizations that require internet access to download and
 install emacs lisp extensions.
