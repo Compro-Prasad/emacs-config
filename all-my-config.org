@@ -565,11 +565,23 @@ install emacs lisp extensions.
   :ensure t :defer t
   :bind (("M-x" . helm-M-x)
          ([f8] . helm-find-files)
-         ([f9] . helm-buffers-list))
+         ("C-x b" . helm-mini)
+         ("M-y" . helm-show-kill-ring)
+         ("C-h SPC" . helm-all-mark-rings))
+  :init
+  (use-package helm-descbinds
+    :ensure t :defer t
+    :bind (("C-h b" . helm-descbinds))
+    :config
+    (helm-descbinds-mode 1))
   :config
   (require 'helm-config)
   (helm-mode 1)
-  (setq helm-M-x-fuzzy-match t))
+  (helm-autoresize-mode 1)
+  (global-unset-key (kbd "C-x c"))
+  (setq helm-M-x-fuzzy-match t
+        helm-buffers-fuzzy-matching t
+        helm-recentf-fuzzy-match    t))
 #+END_SRC
 
 ** =yasnippet= - TextMate like snippets
