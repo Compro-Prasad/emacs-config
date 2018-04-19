@@ -1,4 +1,10 @@
 *~
+-
+var/
+network-security.data
+image-dired/
+eshell/history
+eshell/lastdir
 url/
 \#*
 *.eld
