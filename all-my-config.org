@@ -733,7 +733,7 @@ The code completion framework that is easy to work with.
   (company-flx-mode +1))
 #+END_SRC
 
-** C/C++ completion
+*** C/C++ completion
 #+BEGIN_SRC emacs-lisp -i
 (use-package company-irony
   :ensure t :defer t
