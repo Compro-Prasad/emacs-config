@@ -574,6 +574,8 @@ install emacs lisp extensions.
     :bind (("C-h b" . helm-descbinds))
     :config
     (helm-descbinds-mode 1))
+  (use-package helm-ag
+    :ensure t :defer t)
   :config
   (require 'helm-config)
   (helm-mode 1)
