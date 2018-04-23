@@ -896,6 +896,25 @@ Source: [[https://github.com/Wilfred/refine][refine - GitHub]]
          ([C-down] . move-text-down)))
 #+END_SRC
 
+** avy - jump
+#+BEGIN_SRC emacs-lisp -i
+(use-package avy
+  :defer t :ensure t
+  :bind (("C-M-, C-M-," . avy-goto-char)
+         ("C-M-, ," . avy-goto-char)
+         ("C-M-, C-M-." . avy-goto-char-2)
+         ("C-M-, ." . avy-goto-char-2)
+         ("C-M-, C-M-p" . avy-goto-char-2-above)
+         ("C-M-, p" . avy-goto-char-2-above)
+         ("C-M-, C-M-n" . avy-goto-char-2-below)
+         ("C-M-, n" . avy-goto-char-2-below)
+         ("C-M-, C-M-l" . avy-goto-char-in-line)
+         ("C-M-, l" . avy-goto-char-in-line)
+         ("C-M-, C-M-S-l" . avy-goto-line)
+         ("C-M-, C-S-l" . avy-goto-line)
+         ("C-M-, S-l" . avy-goto-line)))
+#+END_SRC
+
 * Custom Elisp
 ** Way to learn to use Emacs keybindings
 It will do near about the same thing but its not what you wanted to happen.
