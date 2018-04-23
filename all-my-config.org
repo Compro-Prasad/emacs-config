@@ -888,6 +888,14 @@ Source: [[https://github.com/Wilfred/refine][refine - GitHub]]
   :ensure t :defer t)
 #+END_SRC
 
+** move text
+#+BEGIN_SRC emacs-lisp -i
+(use-package move-text
+  :defer t :ensure t
+  :bind (([C-up] . move-text-up)
+         ([C-down] . move-text-down)))
+#+END_SRC
+
 * Custom Elisp
 ** Way to learn to use Emacs keybindings
 It will do near about the same thing but its not what you wanted to happen.
