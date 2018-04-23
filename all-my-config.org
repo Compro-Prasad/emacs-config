@@ -882,6 +882,12 @@ Source: [[https://github.com/Wilfred/refine][refine - GitHub]]
    ("C-h k" . helpful-key)))
 #+END_SRC
 
+** TODO format all languages
+#+BEGIN_SRC emacs-lisp -i
+(use-package format-all
+  :ensure t :defer t)
+#+END_SRC
+
 * Custom Elisp
 ** Way to learn to use Emacs keybindings
 It will do near about the same thing but its not what you wanted to happen.
