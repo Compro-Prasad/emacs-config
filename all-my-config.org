@@ -20,7 +20,7 @@ contacts but I don’t use such things. But I do have plans.
 Its really annoying when Emacs asks for *yes* / *no* every now and then. So,
 better convert that to simple *y* / *n*.
 #+BEGIN_SRC emacs-lisp -i
-(defalias 'yes-or-no-p 'y-or-n-p)
+(fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 ** Separate file for auto Emacs customizations
