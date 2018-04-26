@@ -80,6 +80,8 @@ If you need some of the UI components just pass in a possitive value to the func
 Not necessary but it shows the column number in the current line.
 #+BEGIN_SRC emacs-lisp -i
 (column-number-mode 1)
+(display-time-mode 1)
+(setq display-time-format "%l:%M%p")
 #+END_SRC
 
 ** Overwrite marked regions
