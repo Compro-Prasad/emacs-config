@@ -647,6 +647,11 @@ completion of all the know libraries to =pkg-config=.
   :hook ((c++-mode c-mode java-mode go-mode) . ggtags-mode))
 #+END_SRC
 
+** =test-c= - Test single file C/C++ source code
+#+BEGIN_SRC emacs-lisp -i
+(use-package test-c :ensure t :defer t)
+#+END_SRC
+
 ** =magit= - Git Porcelain
 #+BEGIN_SRC emacs-lisp -i
 (use-package magit
