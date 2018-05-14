@@ -177,6 +177,11 @@ it is insufficient to get older pastes.
 (setq kill-ring-max 512)
 #+END_SRC
 
+** Sentences end with a single space
+#+BEGIN_SRC emacs-lisp -i
+(setq sentence-end-double-space nil)
+#+END_SRC
+
 ** =imenu= - Jump to an identifier
 #+BEGIN_SRC emacs-lisp -i
 (use-package imenu
