@@ -212,13 +212,6 @@ configuration.
 (define-key global-map [mouse-3] menu-bar-edit-menu)
 #+END_SRC
 
-** Set region colors
-#+BEGIN_SRC emacs-lisp -i
-(set-face-attribute 'region nil
-                    :background "pale turquoise"
-                    :distant-foreground "gtk_selection_fg_color")
-#+END_SRC
-
 ** Decrease frequency of GC
 #+BEGIN_SRC emacs-lisp -i
 (setq gc-cons-threshold 10000000)
