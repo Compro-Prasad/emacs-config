@@ -217,8 +217,28 @@ configuration.
 (setq gc-cons-threshold 10000000)
 #+END_SRC
 
-** Org mode configurations
+** TODO Org mode configurations
 #+BEGIN_SRC emacs-lisp -i
+;TODO: See which one I really want
+(setq org-modules '(org-bbdb
+                    org-gnus
+                    ;;org-drill
+                    org-info
+                    ;;org-jsinfo
+                    org-habit
+                    org-irc
+                    org-mouse
+                    org-protocol
+                    ;;org-annotate-file
+                    ;;org-eval
+                    ;;org-expiry
+                    ;;org-interactive-query
+                    ;;org-man
+                    org-collector))
+                    ;;org-panel
+                    ;;org-screen))
+(eval-after-load 'org
+ '(org-load-modules-maybe t))
 (setq org-src-fontify-natively t
       org-startup-indented t
       org-src-preserve-indentation t
@@ -227,7 +247,7 @@ configuration.
 
       org-ellipsis "⤵"
 
-      org-export-backends '(ascii beamer html latex md)
+      org-export-backends '(ascii org beamer html latex md)
 
       org-latex-listings 'minted
       org-latex-packages-alist '(("" "tabu") ("" "minted"))
