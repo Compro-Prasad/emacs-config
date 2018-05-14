@@ -20,3 +20,5 @@ recentf
 server/
 .python-environments
 tramp
+/abbrev_defs
+/ac-comphist.dat
