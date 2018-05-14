@@ -3,6 +3,17 @@
 #+STARTUP: logdone
 #+STARTUP: indent
 
+* EXWM
+#+BEGIN_SRC emacs-lisp
+(use-package exwm
+  :ensure t
+  :config
+  (require 'exwm-config)
+  (exwm-config-default)
+  (exwm-enable)
+  (shell-command "xmodmap ~/.xmodmap" nil nil))
+#+END_SRC
+
 * Internals
 These customizations don’t require any external dependency and can be
 used with bare Emacs *25.3*.
