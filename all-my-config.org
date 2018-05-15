@@ -750,16 +750,18 @@ The code completion framework that is easy to work with.
   (use-package company-jedi :ensure t)
   (use-package company-tern :ensure t)
   (use-package company-flx :ensure t)
+  (use-package company-quickhelp :ensure t
+    :init (company-quickhelp-mode))
+  (use-package company-cmake :ensure t)
   (add-hook 'python-mode-hook 'company-jedi-start)
   (add-hook 'js-mode-hook 'tern-mode)
   (add-to-list 'company-backends 'company-tern)
   (setq company-idle-delay 0.1
-        company-minimum-prefix-length 1
+        company-minimum-prefix-length 2
         company-selection-wrap-around t
         company-show-numbers t
         company-require-match 'never
         company-dabbrev-downcase nil
-        company-dabbrev-ignore-case t
         company-backends '(company-jedi company-nxml
                                         company-css company-capf
                                         (company-dabbrev-code company-keywords)
