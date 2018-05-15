@@ -762,7 +762,8 @@ The code completion framework that is easy to work with.
         company-show-numbers t
         company-require-match 'never
         company-dabbrev-downcase nil
-        company-backends '(company-jedi company-nxml
+        company-dabbrev-ignore-case nil
+        company-backends '(company-jedi company-nxml company-cmake
                                         company-css company-capf
                                         (company-dabbrev-code company-keywords)
                                         company-files company-dabbrev)
