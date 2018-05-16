@@ -984,6 +984,32 @@ Source: [[https://github.com/Wilfred/refine][refine - GitHub]]
          ("C-M-, S-l" . avy-goto-line)))
 #+END_SRC
 
+** DONE ccls
+CLOSED: [2018-05-16 Wed 19:11]
+Refer: [[https://github.com/MaskRay/ccls/issues/3#issuecomment-383806278][ccls - GitHub issue]]
+#+BEGIN_SRC emacs-lisp -i
+(use-package ccls
+  :ensure t
+  :quelpa (ccls :fetcher github :repo "MaskRay/emacs-ccls")
+  :commands lsp-ccls-enable
+  :init
+  (add-to-list 'company-backends 'company-lsp)
+  (with-eval-after-load 'projectile
+    (setq projectile-project-root-files-top-down-recurring
+          (append '("compile_commands.json"
+                    ".ccls")
+                  projectile-project-root-files-top-down-recurring)))
+  (defun ccls//enable ()
+    (condition-case nil
+        (lsp-ccls-enable)
+      (user-error nil)))
+  (add-hook 'c-mode-common-hook #'ccls//enable)
+  (add-hook 'c-mode-common-hook 'company-mode)
+  :config
+  (setq ccls-sem-highlight-method 'font-lock)
+  (ccls-use-default-rainbow-sem-highlight))
+#+END_SRC
+
 * Custom Elisp
 ** Way to learn to use Emacs keybindings
 It will do near about the same thing but its not what you wanted to happen.
