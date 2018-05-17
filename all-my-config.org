@@ -3,13 +3,6 @@
 #+STARTUP: logdone
 #+STARTUP: indent
 
-* Install quelpa
-#+BEGIN_SRC emacs-lisp -i
-(use-package quelpa-use-package
-  :ensure t :defer t
-  :init (require 'quelpa-use-package))
-#+END_SRC
-
 * EXWM
 #+BEGIN_SRC emacs-lisp
 (use-package exwm

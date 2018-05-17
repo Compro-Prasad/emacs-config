@@ -23,11 +23,14 @@
   (package-initialize))
 
 
-;; Install use-package if not installed
-;; It will be used to automatically download and lazy load packages
-(when (not (package-installed-p 'use-package))
+;; Install quelpa-use-package if not installed. Installing
+;; quelpa-use-package will install both quelpa and use-package. It
+;; will be used to automatically download and lazy load packages.
+;; quelpa on the other hand provides a way to install git repositories
+;; directly without relying on tarballs.
+(when (not (package-installed-p 'quelpa-use-package))
   (package-refresh-contents)
-  (package-install 'use-package))
+  (package-install 'quelpa-use-package))
 
 
 ;; My configurations inside this beautiful org file
