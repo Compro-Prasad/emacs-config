@@ -1068,6 +1068,13 @@ you were working on. When you're done, press =C-c <left>=.
 #+END_SRC
 Source: [[http://pages.sachachua.com/.emacs.d/Sacha.html][Sacha Chua]]
 
+** Smart scan mode
+#+BEGIN_SRC emacs-lisp -i
+(use-package smartscan
+  :defer t :ensure t
+  :init (global-smartscan-mode t))
+#+END_SRC
+
 ** TODO Smartparens
 #+BEGIN_SRC emacs-lisp -i
 (use-package smartparens
