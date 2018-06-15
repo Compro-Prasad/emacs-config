@@ -591,6 +591,17 @@ sending =ls= to =shell= echoes my input twice, then the output.
         try-complete-lisp-symbol))
 #+END_SRC
 
+** Winner
+<2018-06-15 Fri>
+For managing window configurations:
+#+BEGIN_SRC emacs-lisp -i
+(use-package winner
+  :init
+  (winner-mode 1))
+#+END_SRC
+- ~C-c <left>~  - undo window config
+- ~C-c <right>~ - redo window config
+
 * Externals (plugins)
 These are customizations that require internet access to download and
 install emacs lisp extensions.
@@ -1042,14 +1053,10 @@ Refer: [[https://github.com/MaskRay/ccls/issues/3#issuecomment-383806278][ccls -
   (ccls-use-default-rainbow-sem-highlight))
 #+END_SRC
 
-** TODO Winner mode - undo and redo window configuration
-=winner-mode= lets you use =C-c <left>= and =C-c <right>= to switch between
-window configurations. This is handy when something has popped up a
-buffer that you want to look at briefly before returning to whatever
-you were working on. When you're done, press =C-c <left>=.
+** ag - The silver searcher
 #+BEGIN_SRC emacs-lisp -i
-(use-package winner
-  :defer t :ensure t)
+(use-package ag
+  :ensure t :defer t)
 #+END_SRC
 
 ** TODO Minibuffer editing - more space!
