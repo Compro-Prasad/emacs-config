@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: testc
-# key: testc
-# --
-/*= compile: g++ -std=c++11 -Werror -Wall $src -o $exe =*/
-/*= run: $exe =*/
