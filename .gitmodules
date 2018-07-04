@@ -1,3 +1,0 @@
-[submodule "elpa/emacs-ccls"]
-	path = elpa/emacs-ccls
-	url = https://github.com/MaskRay/emacs-ccls
