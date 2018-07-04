@@ -92,6 +92,9 @@
 
 ;;;   Undo tree for better visualization of undo in Emacs
 (use-package undo-tree
+  :bind
+  (:map undo-tree-map
+        ("C-_" . nil))  ; reserved for move-text-up
   :init
   (global-undo-tree-mode t))
 ;;;   end
@@ -108,8 +111,9 @@
 
 ;;;   Move text in a buffer
 (use-package move-text
-  :bind (("C-_" . move-text-up)
-         ("C--" . move-text-down)))
+  :bind
+  (("C-_" . move-text-up)
+   ("C--" . move-text-down)))
 ;;;   end
 
 
