@@ -95,7 +95,7 @@
  erc-nick      "compro"
  )
 
-(f-mkdir "~/.emacs.d/.cache/auto-save-list")
+(f-mkdir "~/.emacs.d/.cache" "auto-save-list")
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
