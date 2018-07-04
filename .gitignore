@@ -1,0 +1,11 @@
+*~
+\#*
+.cache/
+*.eld
+*.elc
+build/
+*.pyc
+__pycache__/
+straight/
+server/
+elpa/
