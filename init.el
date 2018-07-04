@@ -23,6 +23,12 @@
 ;;;   end
 
 
+;;;   Load Emacs internal configurations
+(when (file-readable-p "~/.emacs.d/emacs-internals.el")
+  (load-file "~/.emacs.d/emacs-internals.el"))
+;;;   end
+
+
 ;;;   Hungry delete is the best part of editing text!
 (use-package hungry-delete
   :init
