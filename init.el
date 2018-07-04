@@ -30,6 +30,27 @@
 ;;;   end
 
 
+;;;   Function to get basename of a given path
+(defun basename (file)
+    "Returns just the file name of the given FILE."
+    (file-name-nondirectory (directory-file-name file)))
+;;;   end
+
+
+(defun project-kill-magit-buffers ()
+  "Kill current project's magit buffers."
+  (interactive)
+  ;;(delete-window)
+  (kill-matching-buffers
+   (rx (and line-start
+            "magit"
+            (or "" (and "-" (zero-or-more (in "a-z"))))
+            ": "
+            (or (eval (basename default-directory))
+                (eval (basename (file-truename default-directory))))))
+   nil t))
+
+
 ;;;   Hungry delete is the best part of editing text!
 (use-package hungry-delete
   :init
@@ -40,7 +61,9 @@
 ;;;   Magit for top notch git integration
 (use-package magit
   :bind
-  (("C-x g" . magit-status)))
+  (("C-x g" . magit-status)
+   :map magit-status-mode-map
+   ("q" . project-kill-magit-buffers)))
 ;;;   end
 
 
