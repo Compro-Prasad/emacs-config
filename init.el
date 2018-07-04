@@ -110,3 +110,10 @@
   :bind (("C-_" . move-text-up)
          ("C--" . move-text-down)))
 ;;;   end
+
+
+;;;   Page break char doesn’t look good
+(use-package page-break-lines
+  :init
+  (global-page-break-lines-mode t))
+;;;   end
