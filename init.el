@@ -37,20 +37,6 @@
 ;;;   end
 
 
-(defun project-kill-magit-buffers ()
-  "Kill current project's magit buffers."
-  (interactive)
-  ;;(delete-window)
-  (kill-matching-buffers
-   (rx (and line-start
-            "magit"
-            (or "" (and "-" (zero-or-more (in "a-z"))))
-            ": "
-            (or (eval (basename default-directory))
-                (eval (basename (file-truename default-directory))))))
-   nil t))
-
-
 ;;;   Hungry delete is the best part of editing text!
 (use-package hungry-delete
   :init
@@ -63,7 +49,21 @@
   :bind
   (("C-x g" . magit-status)
    :map magit-status-mode-map
-   ("q" . project-kill-magit-buffers)))
+   ("q" . project-kill-magit-buffers))
+  :init
+  (defun project-kill-magit-buffers ()
+    "Kill current project's magit buffers."
+    (interactive)
+    (when (> (count-windows) 1)
+      (delete-window))
+    (let ((project-magit-buffers-regexp
+           (concat
+            "^magit\\(?:\\|-[a-z]*\\): \\(?:"
+            (regexp-quote (basename default-directory))
+            "\\|"
+            (regexp-quote (basename default-directory))
+            "\\)")))
+      (kill-matching-buffers project-magit-buffers-regexp t t))))
 ;;;   end
 
 
