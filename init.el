@@ -34,9 +34,9 @@
 
 
 ;;;   Function to get basename of a given path
-(defun basename (file)
-    "Returns just the file name of the given FILE."
-    (file-name-nondirectory (directory-file-name file)))
+(defun basename (path)
+    "Returns just the file name of the given PATH."
+    (file-name-nondirectory (directory-file-name path)))
 ;;;   end
 
 
@@ -147,4 +147,42 @@
 (use-package page-break-lines
   :init
   (global-page-break-lines-mode t))
+;;;   end
+
+
+;;;   Completion
+(use-package company
+  :hook
+  (after-init . global-company-mode)
+  :bind
+  (:map company-mode-map
+        ("C-<tab>" . company-complete))
+  :config
+  (setq company-idle-delay 0.09
+        company-minimum-prefix-length 5
+        company-selection-wrap-around t
+        company-show-numbers t
+        company-require-match 'never
+        company-dabbrev-downcase nil
+        company-dabbrev-ignore-case nil
+        company-backends '(company-lsp company-nxml company-cmake
+                                       company-css company-capf
+                                       (company-dabbrev-code company-keywords)
+                                       company-files company-dabbrev)
+        company-jedi-python-bin "python"))
+;;;   end
+
+
+;;;   Python
+(use-package anaconda-mode
+  :hook
+  ((python-mode . anaconda-mode)
+   (python-mode . anaconda-eldoc-mode))
+  :init
+  (progn
+    (use-package company-anaconda
+      :config
+      (require 'rx))
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
 ;;;   end
