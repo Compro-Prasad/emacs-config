@@ -20,6 +20,9 @@
  ;;;   Date format on mode line
  display-time-format "%l:%M%p"
 
+ ;;;   Follow symlinks to the actual file
+ find-file-visit-truename t
+
  ;;;   Jump by words separated by punctuations
  global-subword-mode t
 
@@ -87,7 +90,7 @@
  delete-old-versions -1
  version-control t
  vc-make-backup-files t
- auto-save-file-name-transforms '((".*" "~/.emacs.d/.cache/auto-save-list/" t))
+ auto-save-file-name-transforms '((".*" "~/.emacs.d/.cache/auto-save-list" t))
 
  ;;;   ERC configurations
  erc-hide-list '("PART" "QUIT" "JOIN")
@@ -183,7 +186,7 @@
     ;; is supplied
     ;;
     ;; This function always opens a new website in a new window
-    (defun xwidget-browse-url-no-reuse (url &optional sessoin)
+    (defun xwidget-browse-url-no-reuse (url &optional session)
       (interactive
        (progn
          (require 'browse-url)
