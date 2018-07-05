@@ -195,7 +195,36 @@
   )
 
 (defun display-startup-echo-area-message ()
-  (message "Let the hacking begin!"))
+  (interactive)
+  (message
+   (case (abs (% (random) 20))
+     (0 "Let the hacking begin!")
+     (1 "Welcome to Emacs!")
+     (2 "Have a good day!")
+     (3 "Good luck configuring Emacs!")
+     (4 "Better concentrate on your work")
+     (5 "Don’t even think about other editors")
+     (6 "Are you sleeping?")
+     (7 "Sorry, if I broke your concentration!")
+     (8 "Please update me")
+     (9 "The minibuffer sucks!")
+     (10 "Remember the day when we first met?")
+     (11 "Did you stop typing?")
+     (12 "You should commit your changes before you mess up")
+     (13 "I am on a loop")
+     (14 "You should keep a log of your tasks")
+     (15 "Please don’t quit! Please!")
+     (16 "Did you call your Mom?")
+     (17 "I am older than you")
+     (18 "Don’t get into the XY problem")
+     (19 "Get some rest"))))
+
+(defvar minibuffer-echo-message-timer
+  (run-with-timer 5 (* 5 60) 'display-startup-echo-area-message)
+  "Object that stores the timer for messages that are displayed
+in the minibuffer")
+
+(global-set-key (kbd "C-c C-<tab>") 'display-startup-echo-area-message)
 
 (setq recentf-max-saved-items 512
       history-length t
