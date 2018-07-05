@@ -18,8 +18,11 @@
 ;;;   end
 
 
-;;;   Tell use-package to always use straight.el when installing packages
-(setq straight-use-package-by-default t)
+;;;   straight.el configurations
+(setq
+ straight-use-package-by-default t       ; use-package should use straight.el
+ straight-check-for-modifications 'live  ; build package when modified in Emacs
+ )
 ;;;   end
 
 
