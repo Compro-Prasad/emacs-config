@@ -41,8 +41,8 @@
  ;;;   Don't compact font cache during GC to optimize redisplay
  inhibit-compacting-font-caches t
 
- ;;;   GC triggers after 12 MB
- gc-cons-threshold 100000000
+ ;;;   GC triggers per 7 MB increase in memory
+ gc-cons-threshold 58720256
 
  ;;;   No bells
  ring-bell-function 'ignore
