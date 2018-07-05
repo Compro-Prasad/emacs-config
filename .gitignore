@@ -9,3 +9,4 @@ __pycache__/
 straight/
 server/
 elpa/
+*.data
