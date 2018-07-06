@@ -22,6 +22,7 @@
 
  ;;;   Follow symlinks to the actual file
  find-file-visit-truename t
+ vc-follow-symlinks t
 
  ;;;   Jump by words separated by punctuations
  global-subword-mode t
@@ -78,6 +79,7 @@
  ;;;   Scroll one line at a time no matter what
  scroll-step            1
  scroll-conservatively  10000
+ mouse-wheel-scroll-amount '(1 ((shift) . 1))
 
  ;;;   Remember screen position after scrolling
  scroll-preserve-screen-position 'always
