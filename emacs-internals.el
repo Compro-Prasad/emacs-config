@@ -85,6 +85,9 @@
  ;;;   Initial scratch message is nil
  initial-scratch-message ""
 
+ ;;;   Cache directories
+ tramp-persistency-file-name "~/.emacs.d/.cache/tramp"
+
  ;;;   Backup configuration
  backup-directory-alist '(("." . "~/.emacs.d/.cache/backups"))
  delete-old-versions -1
@@ -99,8 +102,11 @@
  )
 
 (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
+(f-mkdir tramp-persistency-file-name)
 
 (fset 'yes-or-no-p 'y-or-n-p)
+
+(blink-cursor-mode 0)
 
 (when (file-readable-p custom-file)
   (load custom-file))
