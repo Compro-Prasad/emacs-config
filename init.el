@@ -186,3 +186,10 @@
     (with-eval-after-load 'company
       (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
 ;;;   end
+
+
+;;;   C and C++
+(use-package ggtags
+  :hook
+  (c-mode-common . ggtags-mode))
+;;;   end
