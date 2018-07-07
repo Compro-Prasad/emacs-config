@@ -5,8 +5,11 @@
       '(
         c-electric-colon
         c-electric-slash
+        electric-newline-and-maybe-indent
+        fill-paragraph
         hungry-delete-backward
         hungry-delete-forward
+        markdown-outdent-or-delete
         org-beginning-of-line
         org-self-insert-command
         sgml-slash
