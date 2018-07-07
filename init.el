@@ -183,6 +183,16 @@
 ;;;   end
 
 
+;;;   Language Server Protocol
+(use-package lsp-mode
+  :init
+  (progn
+    (require 'lsp-imenu)
+    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
+    (use-package company-lsp)))
+;;;   end
+
+
 ;;;   Python
 (use-package anaconda-mode
   :hook
@@ -199,7 +209,12 @@
 
 
 ;;;   C and C++
-(use-package ggtags
-  :hook
-  (c-mode-common . ggtags-mode))
+(use-package ccls
+  :commands lsp-ccls-enable
+  :hook (c-mode-common . ccls//enable)
+  :init
+  (defun ccls//enable ()
+    (condition-case nil
+        (lsp-ccls-enable)
+    (user-error nil))))
 ;;;   end
