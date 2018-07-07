@@ -248,6 +248,7 @@ in the minibuffer")
 				      search-ring))
 (save-place-mode 1)
 (savehist-mode 1)
+(recentf-mode 1)
 
 (defun my-comint-preoutput-read-only (text)
   (propertize text 'read-only t))

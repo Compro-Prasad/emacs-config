@@ -92,6 +92,8 @@
 (use-package projectile
   :bind-keymap
   ("C-c p" . projectile-command-map)
+  :init
+  (use-package ag)
   :config
   (projectile-mode 1))
 ;;;   end
