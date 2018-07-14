@@ -115,6 +115,12 @@
 
 ;;;   Multiple cursor for small and fast edits
 (use-package multiple-cursors
+  :straight
+  (multiple-cursors
+   :type git
+   :host github
+   :repo "magnars/multiple-cursors.el"
+   :branch "wrap-around")
   :bind
   (("C-S-c" . mc/edit-lines)
    ("M-S-<up>" . mc/mark-previous-like-this)
@@ -152,6 +158,24 @@
   :bind
   (("C-_" . move-text-up)
    ("C--" . move-text-down)))
+;;;   end
+
+
+;;;   The doom theming
+(use-package doom-modeline
+  :straight
+  (doom-modeline
+   :type git
+   :host github
+   :repo "seagle0128/doom-modeline")
+  :hook (after-init . doom-modeline-init))
+
+(use-package doom-themes)
+;;;   end
+
+
+;;;   Sidebar
+(use-package treemacs)
 ;;;   end
 
 
