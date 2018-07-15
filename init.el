@@ -187,18 +187,6 @@
 ;;;   end
 
 
-;;;   Show popups in overlays
-(use-package pos-tip
-  :config
-  (progn
-    (defun my-eldoc-display-message (format-string &rest args)
-      "Display eldoc message near point."
-      (when format-string
-        (pos-tip-show (apply 'format format-string args) nil nil nil 20)))
-    (setq eldoc-message-function #'my-eldoc-display-message)))
-;;;   end
-
-
 ;;;   Completion
 (use-package company
   :hook
