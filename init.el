@@ -249,6 +249,5 @@
 
 
 ;;;   Scala
-(use-package ensime
-  :hook (scala-mode . ensime))
+(use-package ensime)
 ;;;   end
