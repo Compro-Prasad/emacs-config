@@ -101,7 +101,14 @@
  erc-hide-list '("PART" "QUIT" "JOIN")
  erc-server    "107.182.226.199"  ;;; IP for "irc.freenode.net"
  erc-nick      "compro"
+
+ ;;;   Org mode configurations
+ org-startup-indented t
  )
+
+(with-eval-after-load 'ox-latex
+  ;;;   Set colors when exporting to latex
+  (setq org-latex-listings t))
 
 (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
 (f-mkdir tramp-persistency-file-name)
