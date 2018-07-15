@@ -149,8 +149,22 @@
 (toggle-frame-maximized)
 (toggle-frame-fullscreen)
 
-(use-package imenu
-  :bind ("<C-S-mouse-1>" . imenu))
+(general-define-key
+ :keymaps 'input-decode-map
+ [?\C-m] [C-m]
+ [?\C-i] [C-i]
+ [?\C-j] [C-j]
+ [?\C-\[] (kbd "<C-[>"))
+
+(general-define-key
+ "C-<down>" (kbd "C-u 3 C-v")
+ "C-<up>" (kbd "C-u 2 M-v")
+ [C-m] 'delete-other-windows
+ "C-c <tab>" 'toggle-minibuffer-message-timer
+ "<C-S-mouse-1>" 'imenu
+ "C-<f4>" 'kill-current-buffer
+ "M-/" 'hippie-expand
+ [mouse-3] menu-bar-edit-menu)
 
 ;;;   Automatically change to newest version of file if edited externally
 (global-auto-revert-mode t)
@@ -158,8 +172,6 @@
 ;;;   Highlight matching pairs like (), {}, [], etc.
 (show-paren-mode t)
 
-;;;   Right click like other editors
-(define-key global-map [mouse-3] menu-bar-edit-menu)
 
 
 (defun my/set-show-whitespace-mode ()
@@ -182,22 +194,23 @@
 
 (when (fboundp 'xwidget-webkit-browse-url)
   (use-package xwidget
-    :bind (:map xwidget-webkit-mode-map
-                ([mouse-4] . xwidget-webkit-scroll-down)
-                ([mouse-5] . xwidget-webkit-scroll-up)
-                ("<up>" . xwidget-webkit-scroll-down)
-                ("<down>" . xwidget-webkit-scroll-up)
-                ("M-w" . xwidget-webkit-copy-selection-as-kill)
-                ("C-c" . xwidget-webkit-copy-selection-as-kill))
-    :hook (window-configuration-change-hook
-           . (lambda ()
-               (when (equal major-mode 'xwidget-webkit-mode)
-                 (xwidget-webkit-adjust-size-dispatch))))
+    :general
+    (:keymaps 'xwidget-webkit-mode-map
+              ([mouse-4] 'xwidget-webkit-scroll-down)
+              ([mouse-5] 'xwidget-webkit-scroll-up)
+              ("<up>" 'xwidget-webkit-scroll-down)
+              ("<down>" 'xwidget-webkit-scroll-up)
+              ("M-w" 'xwidget-webkit-copy-selection-as-kill)
+              ("C-c" 'xwidget-webkit-copy-selection-as-kill))
+    :hook
+    (window-configuration-change-hook
+     . (lambda ()
+         (when (equal major-mode 'xwidget-webkit-mode)
+           (xwidget-webkit-adjust-size-dispatch))))
     :init
     ;; by default, xwidget reuses previous xwidget window,
     ;; thus overriding your current website, unless a prefix argument
     ;; is supplied
-    ;;
     ;; This function always opens a new website in a new window
     (defun xwidget-browse-url-no-reuse (url &optional session)
       (interactive
@@ -207,37 +220,72 @@
       (xwidget-webkit-browse-url url t)))
   )
 
+
+(defcustom minibuffer-message-list
+  '("Let the hacking begin!"
+    "Welcome to Emacs!"
+    "Have a good day!"
+    "Good luck configuring Emacs!"
+    "Better concentrate on your work"
+    "Don’t even think about other editors"
+    "Are you sleeping?"
+    "Sorry, if I broke your concentration!"
+    "Please update me"
+    "The minibuffer sucks!"
+    "Remember the day when we first met?"
+    "Did you stop typing?"
+    "You should commit your changes before you mess up"
+    "I am on a loop"
+    "You should keep a log of your tasks"
+    "Please don’t quit! Please!"
+    "Did you call your Mom?"
+    "I am older than you"
+    "Don’t get into the XY problem"
+    "Get some rest")
+  "List of messages that are displayed in the minibuffer after a specific period
+of time controlled by `minibuffer-message-display-interval'."
+  :type '(repeat string))
+
+
+(defvar minibuffer-message-display-interval 5
+  "Time in minutes after which a random message from `minibuffer-message-list'
+is shown in minibuffer.")
+
+
+(defvar minibuffer-message-echo-timer nil
+  "Object that stores the timer for messages that are displayed in the
+minibuffer using `display-startup-echo-area-message'.")
+
+
+(defun restart-minibuffer-message-display-timer (func)
+  "Start the minibuffer timer with `FUNC' running per
+`minibuffer-message-display-interval'."
+  (when minibuffer-message-echo-timer (cancel-timer minibuffer-message-echo-timer))
+  (setq minibuffer-message-echo-timer
+        (run-with-timer 0 (* minibuffer-message-display-interval 60) func)))
+
+
 (defun display-startup-echo-area-message ()
+  "Show a message in minibuffer."
   (interactive)
   (message
-   (case (abs (% (random) 20))
-     (0 "Let the hacking begin!")
-     (1 "Welcome to Emacs!")
-     (2 "Have a good day!")
-     (3 "Good luck configuring Emacs!")
-     (4 "Better concentrate on your work")
-     (5 "Don’t even think about other editors")
-     (6 "Are you sleeping?")
-     (7 "Sorry, if I broke your concentration!")
-     (8 "Please update me")
-     (9 "The minibuffer sucks!")
-     (10 "Remember the day when we first met?")
-     (11 "Did you stop typing?")
-     (12 "You should commit your changes before you mess up")
-     (13 "I am on a loop")
-     (14 "You should keep a log of your tasks")
-     (15 "Please don’t quit! Please!")
-     (16 "Did you call your Mom?")
-     (17 "I am older than you")
-     (18 "Don’t get into the XY problem")
-     (19 "Get some rest"))))
+   (let* ((length (length minibuffer-message-list))
+          (random-number (abs (% (random) length))))
+     (car (nthcdr random-number minibuffer-message-list)))))
 
-(defvar minibuffer-echo-message-timer
-  (run-with-timer 5 (* 5 60) 'display-startup-echo-area-message)
-  "Object that stores the timer for messages that are displayed
-in the minibuffer")
 
-(global-set-key (kbd "C-c C-<tab>") 'display-startup-echo-area-message)
+(restart-minibuffer-message-display-timer 'display-startup-echo-area-message)
+
+
+(defun toggle-minibuffer-message-timer ()
+   "Toggle minibuffer message showing per
+`minibuffer-message-display-interval'."
+   (interactive)
+   (if (null minibuffer-message-echo-timer)
+       (restart-minibuffer-message-display-timer 'display-startup-echo-area-message)
+     (cancel-timer minibuffer-message-echo-timer)
+     (setq minibuffer-message-echo-timer)))
+
 
 (setq recentf-max-saved-items 512
       history-length t
@@ -335,17 +383,18 @@ in the minibuffer")
   (my-kill-word (- arg)))
 
 (with-eval-after-load 'comint
-  (define-key comint-mode-map (kbd "<remap> <kill-word>") 'my-kill-word)
-  (define-key comint-mode-map (kbd "<remap> <backward-kill-word>") 'my-backward-kill-word)
-  (define-key comint-mode-map (kbd "C-S-l") 'my-comint-clear-last-output)
-  (define-key comint-mode-map (kbd "C-l") 'my-recenter-top-bottom))
+  (general-define-key
+   :kemaps 'comint-mode-map
+   "<remap> <kill-word>" 'my-kill-word
+   "<remap> <backward-kill-word>" 'my-backward-kill-word
+   "C-S-l" 'my-comint-clear-last-output
+   "C-l" 'my-recenter-top-bottom))
 
 (defun my-shell-turn-echo-off ()
   (setq comint-process-echoes t))
 
 (add-hook 'shell-mode-hook 'my-shell-turn-echo-off)
 
-(bind-key "M-/" 'hippie-expand)
 (setq hippie-expand-try-functions-list '(yas-hippie-try-expand
 					 try-expand-all-abbrevs
 					 try-complete-file-name-partially
