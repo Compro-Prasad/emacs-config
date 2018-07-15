@@ -93,6 +93,7 @@
  version-control t
  vc-make-backup-files t
  auto-save-file-name-transforms '((".*" "~/.emacs.d/.cache/auto-save-list" t))
+ auto-save-list-file-prefix "~/.emacs.d/.cache/auto-save-list/saves-"
 
  ;;;   ERC configurations
  erc-hide-list '("PART" "QUIT" "JOIN")
