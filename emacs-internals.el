@@ -355,12 +355,6 @@ minibuffer using `display-startup-echo-area-message'.")
 (dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
   (add-hook hook 'my-kill-process-buffer-on-exit))
 
-(defun my-recenter-top-bottom ()
-  (interactive)
-  (goto-char (point-max))
-  (let ((recenter-positions '(top bottom)))
-    (recenter-top-bottom)))
-
 (defun my-kill-word (arg)
   (interactive "p")
   (unless buffer-read-only
@@ -387,8 +381,7 @@ minibuffer using `display-startup-echo-area-message'.")
    :kemaps 'comint-mode-map
    "<remap> <kill-word>" 'my-kill-word
    "<remap> <backward-kill-word>" 'my-backward-kill-word
-   "C-S-l" 'my-comint-clear-last-output
-   "C-l" 'my-recenter-top-bottom))
+   "C-S-l" 'my-comint-clear-last-output))
 
 (defun my-shell-turn-echo-off ()
   (setq comint-process-echoes t))
