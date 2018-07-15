@@ -17,9 +17,6 @@
  ;;;   Customizations go to this file
  custom-file (expand-file-name "custom.el" user-emacs-directory)
 
- ;;;   Date format on mode line
- display-time-format "%l:%M%p"
-
  ;;;   Follow symlinks to the actual file
  find-file-visit-truename t
  vc-follow-symlinks t
