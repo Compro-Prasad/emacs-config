@@ -196,12 +196,12 @@
   (use-package xwidget
     :general
     (:keymaps 'xwidget-webkit-mode-map
-              ([mouse-4] 'xwidget-webkit-scroll-down)
-              ([mouse-5] 'xwidget-webkit-scroll-up)
-              ("<up>" 'xwidget-webkit-scroll-down)
-              ("<down>" 'xwidget-webkit-scroll-up)
-              ("M-w" 'xwidget-webkit-copy-selection-as-kill)
-              ("C-c" 'xwidget-webkit-copy-selection-as-kill))
+              "<mouse-4>" 'xwidget-webkit-scroll-down
+              "<mouse-5>" 'xwidget-webkit-scroll-up
+              "<up>" 'xwidget-webkit-scroll-down
+              "<down>" 'xwidget-webkit-scroll-up
+              "M-w" 'xwidget-webkit-copy-selection-as-kill
+              "C-c" 'xwidget-webkit-copy-selection-as-kill)
     :hook
     (window-configuration-change-hook
      . (lambda ()
@@ -388,17 +388,18 @@ minibuffer using `display-startup-echo-area-message'.")
 
 (add-hook 'shell-mode-hook 'my-shell-turn-echo-off)
 
-(setq hippie-expand-try-functions-list '(yas-hippie-try-expand
-					 try-expand-all-abbrevs
-					 try-complete-file-name-partially
-					 try-complete-file-name
-					 try-expand-dabbrev
-					 try-expand-dabbrev-from-kill
-					 try-expand-dabbrev-all-buffers
-					 try-expand-list
-					 try-expand-line
-					 try-complete-lisp-symbol-partially
-					 try-complete-lisp-symbol))
+(setq hippie-expand-try-functions-list
+      '(yas-hippie-try-expand
+	try-expand-all-abbrevs
+	try-complete-file-name-partially
+	try-complete-file-name
+	try-expand-dabbrev
+	try-expand-dabbrev-from-kill
+	try-expand-dabbrev-all-buffers
+	try-expand-list
+	try-expand-line
+	try-complete-lisp-symbol-partially
+	try-complete-lisp-symbol))
 
 (minibuffer-depth-indicate-mode 1)
 
