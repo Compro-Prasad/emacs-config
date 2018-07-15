@@ -231,7 +231,8 @@
       :config
       (require 'rx))
     (with-eval-after-load 'company
-      (add-to-list 'company-backends '(company-anaconda :with company-capf)))))
+      (add-to-list 'company-backends '(company-anaconda :with company-capf)))
+    (setq anaconda-mode-installation-directory "~/.emacs.d/.cache/anaconda-mode")))
 ;;;   end
 
 
