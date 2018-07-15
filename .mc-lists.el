@@ -9,6 +9,7 @@
         fill-paragraph
         hungry-delete-backward
         hungry-delete-forward
+        kill-region
         markdown-outdent-or-delete
         org-beginning-of-line
         org-self-insert-command
