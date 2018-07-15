@@ -64,7 +64,8 @@ deletes all spaces between point and the last/first non-space character.
 
 ### [Magit](https://github.com/magit/magit)
 The git playground that helps you learn and use **Git** in Emacs like never
-before. Use `C-x g` to enter into the status buffer.
+before. Use `C-x g` to enter into the status buffer. Pressing `q` in status
+buffer reveals the power of **Magit**.
 
 ### [magithub](https://github.com/vermiculus/magithub)
 A plugin for **Magit** that interacts with GitHub to manage repositories, pull
