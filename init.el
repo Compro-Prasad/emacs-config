@@ -239,10 +239,16 @@
 ;;;   C and C++
 (use-package ccls
   :commands lsp-ccls-enable
-  :hook (c-mode-common . ccls//enable)
+  :hook ((c++-mode c-mode) . ccls//enable)
   :init
   (defun ccls//enable ()
     (condition-case nil
         (lsp-ccls-enable)
     (user-error nil))))
+;;;   end
+
+
+;;;   Scala
+(use-package ensime
+  :hook (scala-mode . ensime))
 ;;;   end
