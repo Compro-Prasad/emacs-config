@@ -251,3 +251,8 @@
 ;;;   Scala
 (use-package ensime)
 ;;;   end
+
+
+;;;   Web development
+(use-package web-mode)
+;;;   end
