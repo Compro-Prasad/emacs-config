@@ -158,12 +158,13 @@
 (toggle-frame-maximized)
 (toggle-frame-fullscreen)
 
-(general-define-key
- :keymaps 'input-decode-map
- [?\C-m] [C-m]
- [?\C-i] [C-i]
- [?\C-j] [C-j]
- [?\C-\[] (kbd "<C-[>"))
+(when (display-graphic-p)
+  (general-define-key
+   :keymaps 'input-decode-map
+   [?\C-m] [C-m]
+   [?\C-i] [C-i]
+   [?\C-j] [C-j]
+   [?\C-\[] (kbd "<C-[>")))
 
 (general-define-key
  "C-<down>" (kbd "C-u 3 C-v")
