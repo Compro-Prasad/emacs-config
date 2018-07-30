@@ -440,3 +440,12 @@ minibuffer using `display-startup-echo-area-message'.")
           ("True" .     #x1d54b)
           ("False" .    #x1d53d)
           )))
+
+;; No box around modeline
+(defun after-init-jobs ()
+  "Configurations run after Emacs starts."
+  (set-face-attribute 'mode-line nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (remove-hook 'after-init-hook 'after-init-jobs))
+
+(add-hook 'after-init-hook 'after-init-jobs)
