@@ -266,6 +266,15 @@
 ;;;   end
 
 
-;;;   Web development
+;;;   Finest mode for multiple HTML based modes
 (use-package web-mode)
+;;;   end
+
+
+;;;   Spacemacs themes
+(use-package spacemacs-theme
+  :init
+  (progn
+    (require 'spacemacs-common)
+    (load-theme 'spacemacs-light)))
 ;;;   end
