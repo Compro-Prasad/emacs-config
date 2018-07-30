@@ -26,6 +26,13 @@
 ;;;   end
 
 
+;;;   Load environment variables in Emacs
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :init (exec-path-from-shell-initialize))
+;;;   end
+
+
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
   (use-package f)
