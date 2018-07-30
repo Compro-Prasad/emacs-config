@@ -55,6 +55,19 @@
 ;;;   end
 
 
+;;;   Hide minor modes from modeline
+(use-package minions
+  :bind ([S-down-mouse-3] . minions-minor-modes-menu)
+  :hook (after-init . minions-mode))
+;;;   end
+
+
+;;;   Show last keybind and the function in modeline
+(use-package keycast
+  :bind ("<f9> k" . keycast-mode))
+;;;   end
+
+
 ;;;   Magit for top notch git integration
 (use-package magit
   :bind
@@ -169,15 +182,8 @@
 ;;;   end
 
 
-;;;   The doom theming
-(use-package doom-modeline
-  :straight
-  (doom-modeline
-   :type git
-   :host github
-   :repo "seagle0128/doom-modeline")
-  :hook (after-init . doom-modeline-init))
 
+;;;   The doom theming
 (use-package doom-themes)
 ;;;   end
 
