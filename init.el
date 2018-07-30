@@ -182,6 +182,13 @@
 ;;;   end
 
 
+;;;   This helps edit results in a *grep* buffer
+;;      C-c C-p - Enable editing in *grep* buffer
+;;      C-x C-s - Save changes
+;;    Note: This doesn't save to the file
+(use-package wgrep)
+;;;   end
+
 
 ;;;   The doom theming
 (use-package doom-themes)
