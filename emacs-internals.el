@@ -112,6 +112,9 @@
  org-fontify-whole-heading-line t
  org-fontify-done-headline t
  org-fontify-quote-and-verse-blocks t
+
+ ;;;   Line numbers
+ display-line-numbers-type 'visual
  )
 
 (with-eval-after-load 'ox-latex
