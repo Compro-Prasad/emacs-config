@@ -214,8 +214,7 @@
   :hook
   (after-init . global-company-mode)
   :bind
-  (:map company-mode-map
-        ("C-<tab>" . company-complete))
+  ("<C-j>" . company-complete)
   :config
   (setq company-idle-delay 0.09
         company-minimum-prefix-length 5
