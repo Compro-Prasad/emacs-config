@@ -293,3 +293,22 @@
     (require 'spacemacs-common)
     (load-theme 'spacemacs-light)))
 ;;;   end
+
+
+;;;   Complete almost everything in Emacs using ivy
+(use-package ivy
+  :hook (after-init . ivy-mode)
+  :config
+  (progn
+    (use-package flx)
+    (setq
+     ivy-use-virtual-buffers t
+     ivy-count-format "(%d/%d) "
+     ivy-initial-inputs-alist nil
+     ivy-re-builders-alist
+     '((projectile-find-file . ivy--regex-fuzzy)
+       (projectile-find-dir . ivy--regex-fuzzy)
+       (projectile-switch-to-buffer . ivy--regex-fuzzy)
+       (projectile-switch-project . ivy--regex-fuzzy))
+     ivy-height 15)))
+;;;   end
