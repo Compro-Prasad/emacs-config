@@ -280,7 +280,9 @@
 
 
 ;;;   Finest mode for multiple HTML based modes
-(use-package web-mode)
+(use-package web-mode
+  :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
+;;;   end
 ;;;   end
 
 
