@@ -237,7 +237,12 @@
   (progn
     (require 'lsp-imenu)
     (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-    (use-package company-lsp)))
+    (use-package company-lsp)
+    (use-package lsp-ui
+      :bind
+      (:map lsp-ui-mode-map
+            ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+            ([remap xref-find-references] . lsp-ui-peek-find-references)))))
 ;;;   end
 
 
