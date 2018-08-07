@@ -153,8 +153,6 @@
 
 (delete-selection-mode 1)
 
-(electric-quote-mode t)
-
 (if (not window-system)
     (xterm-mouse-mode 1)
   (xterm-mouse-mode 0))
