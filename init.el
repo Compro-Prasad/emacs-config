@@ -116,7 +116,9 @@
   :init
   (use-package ag)
   :config
-  (projectile-mode 1))
+  (progn
+    (projectile-mode 1)
+    (setq projectile-completion-system nil)))
 ;;;   end
 
 
