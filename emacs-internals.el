@@ -184,6 +184,10 @@
 ;;;   Highlight matching pairs like (), {}, [], etc.
 (show-paren-mode t)
 
+;;;   Enable line numbers in fundamental mode
+(add-hook 'text-mode-hook 'display-line-numbers-mode)
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
 
 
 (defun my/set-show-whitespace-mode ()
