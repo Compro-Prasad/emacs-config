@@ -113,6 +113,10 @@
  org-fontify-done-headline t
  org-fontify-quote-and-verse-blocks t
 
+ ;;;   Ido mode
+ ido-enable-flex-matching t
+ ido-save-directory-list-file "~/.emacs.d/.cache/ido.last"
+
  ;;;   Line numbers
  display-line-numbers-type 'visual
  )
