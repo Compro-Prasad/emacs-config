@@ -84,10 +84,11 @@
  ;;;   Initial scratch message is nil
  initial-scratch-message ""
 
- ;;;   Cache directories
- tramp-persistency-file-name "~/.emacs.d/.cache/tramp"
+ ;;;   Use directory local variables in tramp session
+ enable-remote-dir-locals t
 
  ;;;   Backup configuration
+ tramp-persistency-file-name "~/.emacs.d/.cache/tramp"
  backup-directory-alist '(("." . "~/.emacs.d/.cache/backups"))
  delete-old-versions -1
  version-control t
