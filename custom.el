@@ -4,7 +4,11 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(safe-local-variable-values
-   '((c-file-offsets
+   '((web-mode-script-padding . 0)
+     (web-mode-block-padding . 2)
+     (web-mode-style-padding . 2)
+     (web-mode-part-padding . 2)
+     (c-file-offsets
       (substatement-open . 0)
       (arglist-intro . +)
       (arglist-close . +)))))
