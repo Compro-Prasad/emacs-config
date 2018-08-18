@@ -259,6 +259,9 @@
     (with-eval-after-load 'company
       (add-to-list 'company-backends '(company-anaconda :with company-capf)))
     (setq anaconda-mode-installation-directory "~/.emacs.d/.cache/anaconda-mode")))
+
+(use-package pyvenv)
+(use-package pipenv)
 ;;;   end
 
 
