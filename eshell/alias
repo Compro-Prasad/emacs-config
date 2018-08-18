@@ -1,0 +1,2 @@
+alias clear eshell/clear t
+alias c eshell/clear t
