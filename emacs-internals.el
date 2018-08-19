@@ -4,6 +4,9 @@
 
  ;;;   Don't highlight trailing whitespaces by default
  show-trailing-whitespace nil
+
+ ;;;   Org
+ org-src-fontify-natively t ;; Fontify source blocks
  )
 
 (setq
@@ -72,6 +75,9 @@
 
  ;;;   Use commands when in in minibuffer
  enable-recursive-minibuffers t
+
+ ;;;   Scroll output in *compilation* buffer
+ compilation-scroll-output t
 
  ;;;   Scroll one line at a time no matter what
  scroll-step            1
