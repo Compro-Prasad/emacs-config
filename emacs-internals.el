@@ -552,6 +552,13 @@ The return value is nil if no font was found, truthy otherwise."
                     :weight normal
                     :width normal))
 
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  "Colorize the compilation buffer with ANSI escape sequences."
+  (toggle-read-only)
+  (ansi-color-apply-on-region (point-min) (point-max))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
