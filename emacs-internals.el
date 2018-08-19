@@ -559,6 +559,13 @@ The return value is nil if no font was found, truthy otherwise."
   (ansi-color-apply-on-region (point-min) (point-max))
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+(defun my-org-autodone (n-done n-not-done)
+  "Switch entry to DONE when all subentries are done, to TODO otherwise."
+  (let (org-log-done org-log-states)   ; turn off logging
+    (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+(add-hook 'org-after-todo-statistics-hook 'my-org-autodone)
+
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
