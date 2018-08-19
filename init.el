@@ -316,3 +316,8 @@
        (projectile-switch-project . ivy--regex-fuzzy))
      ivy-height 15)))
 ;;;   end
+
+
+;;;   ox-reveal for presentations
+(use-package ox-reveal)
+;;;   end
