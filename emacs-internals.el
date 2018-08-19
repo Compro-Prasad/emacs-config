@@ -566,6 +566,28 @@ The return value is nil if no font was found, truthy otherwise."
     (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
 (add-hook 'org-after-todo-statistics-hook 'my-org-autodone)
 
+
+;;;   Fontify exported PDF using minted
+;; Include the latex-exporter
+(require 'ox-latex)
+;; Add minted to the defaults packages to include when exporting.
+(add-to-list 'org-latex-packages-alist '("" "minted"))
+;; Tell the latex export to use the minted package for source
+;; code coloration.
+(setq org-latex-listings 'minted)
+;; Let the exporter use the -shell-escape option to let latex
+;; execute external programs.
+;; This obviously and can be dangerous to activate!
+
+;; I use pdflatex instead of xelatex because that seems to work
+;; much better with utf-8 files
+(setq org-latex-pdf-process
+      '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+        "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+;;;   end
+
+
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
