@@ -107,17 +107,24 @@
  erc-server    "107.182.226.199"  ;;; IP for "irc.freenode.net"
  erc-nick      "compro"
 
+ ;;;   Dired
+ dired-dwim-target t
+
+ ;;;   Ediff
+ ediff-window-setup-function 'ediff-setup-windows-plain ;; Single frame ediff session
+
  ;;;   Org mode configurations
  org-startup-indented t
  org-bullets-bullet-list '(" ") ;; no bullets, needs org-bullets package
- org-ellipsis " " ;; folding symbol
+ org-ellipsis " "              ;; folding symbol
  org-pretty-entities t
- org-hide-emphasis-markers t
- ;; show actually italicized text instead of /italicized text/
+ org-hide-emphasis-markers t    ;; show actually italicized text instead of /italicized text/
  org-agenda-block-separator ""
  org-fontify-whole-heading-line t
  org-fontify-done-headline t
  org-fontify-quote-and-verse-blocks t
+ org-default-notes-file "/home/compro/Dropbox/programs/notes/notes.org"
+ org-todo-keywords '((sequence "TODO(t)" "inPROGRESS(i)" "|" "DONE(d)" "CANCELED(c)"))
 
  ;;;   Ido mode
  ido-enable-flex-matching t
