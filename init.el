@@ -198,7 +198,8 @@
 
 
 ;;;   Sidebar
-(use-package treemacs)
+(use-package treemacs
+  :bind ("<f9> t" . treemacs))
 ;;;   end
 
 
