@@ -440,6 +440,11 @@ minibuffer using `display-startup-echo-area-message'.")
   :init
   (winner-mode 1))
 
+(add-hook 'focus-out-hook #'garbage-collect)
+
+;; Keep a single window after startup
+(add-hook 'window-setup-hook #'delete-other-windows)
+
 (global-prettify-symbols-mode 1)
 (add-hook 'python-mode-hook 'python-prettify-symbols)
 (defun python-prettify-symbols ()
