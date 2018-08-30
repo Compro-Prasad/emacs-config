@@ -295,7 +295,7 @@ minibuffer using `display-startup-echo-area-message'.")
 `minibuffer-message-display-interval'."
   (when minibuffer-message-echo-timer (cancel-timer minibuffer-message-echo-timer))
   (setq minibuffer-message-echo-timer
-        (run-with-timer 0 (* minibuffer-message-display-interval 60) func)))
+        (run-with-idle-timer (* minibuffer-message-display-interval 60) t func)))
 
 
 (defun display-startup-echo-area-message ()
