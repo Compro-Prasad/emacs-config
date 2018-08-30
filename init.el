@@ -295,6 +295,14 @@
 ;;;   end
 
 
+;;;   Hot reloading
+(use-package http
+  :bind
+  (("<f9> h e" . httpd-start)
+   ("<f9> h d" . httpd-stop)))
+(use-package impatient-mode
+  :bind ("<f9> i" . impatient-mode))
+;;;   end
   (progn
 ;;;   end
 
