@@ -186,6 +186,10 @@
    [?\C-\[] (kbd "<C-[>")))
 
 (general-define-key
+ [down] nil
+ [up] nil
+ [left] nil
+ [right] nil
  "C-<down>" (kbd "C-u 3 C-v")
  "C-<up>" (kbd "C-u 2 M-v")
  [C-m] 'delete-other-windows
