@@ -287,6 +287,11 @@
 (use-package web-mode
   :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
 ;;;   end
+
+
+;;;   Emmet is wonderful
+(use-package emmet-mode
+  :hook (web-mode . emmet-mode))
 ;;;   end
 
 
