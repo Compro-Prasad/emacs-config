@@ -295,12 +295,7 @@
 ;;;   end
 
 
-;;;   Spacemacs themes
-(use-package spacemacs-theme
-  :init
   (progn
-    (require 'spacemacs-common)
-    (load-theme 'spacemacs-light)))
 ;;;   end
 
 
