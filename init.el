@@ -329,3 +329,13 @@
 ;;;   ox-reveal for presentations
 (use-package ox-reveal)
 ;;;   end
+
+
+;;;   Highlight indentation in Emacs
+(use-package indent-guide
+  :hook (prog-mode . indent-guide-mode)
+  :init
+  (setq indent-guide-char "."
+        indent-guide-delay 0.4))
+;;;   end
+;;;   end
