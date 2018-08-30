@@ -1,2 +1,4 @@
-alias clear eshell/clear t
+alias ff find-file $1
+alias e find-file $1
 alias c eshell/clear t
+alias clear eshell/clear t
