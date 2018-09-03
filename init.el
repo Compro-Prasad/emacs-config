@@ -312,6 +312,24 @@
   (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
   (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward))
 ;;;   end
+
+
+;;;   Complete almost everything in Emacs using ivy
+(use-package ivy
+  :hook (after-init . ivy-mode)
+  :config
+  (progn
+    (use-package flx)
+    (setq
+     ivy-use-virtual-buffers t
+     ivy-count-format "(%d/%d) "
+     ivy-initial-inputs-alist nil
+     ivy-re-builders-alist
+     '((projectile-find-file . ivy--regex-fuzzy)
+       (projectile-find-dir . ivy--regex-fuzzy)
+       (projectile-switch-to-buffer . ivy--regex-fuzzy)
+       (projectile-switch-project . ivy--regex-fuzzy))
+     ivy-height 15)))
 ;;;   end
 
 
@@ -340,26 +358,9 @@
 (use-package impatient-mode
   :bind ("<f9> i" . impatient-mode))
 ;;;   end
-  (progn
-;;;   end
 
 
-;;;   Complete almost everything in Emacs using ivy
-(use-package ivy
-  :hook (after-init . ivy-mode)
-  :config
   (progn
-    (use-package flx)
-    (setq
-     ivy-use-virtual-buffers t
-     ivy-count-format "(%d/%d) "
-     ivy-initial-inputs-alist nil
-     ivy-re-builders-alist
-     '((projectile-find-file . ivy--regex-fuzzy)
-       (projectile-find-dir . ivy--regex-fuzzy)
-       (projectile-switch-to-buffer . ivy--regex-fuzzy)
-       (projectile-switch-project . ivy--regex-fuzzy))
-     ivy-height 15)))
 ;;;   end
 
 
