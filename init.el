@@ -292,12 +292,26 @@
 ;;;   C and C++
 (use-package ccls
   :commands lsp-ccls-enable
-  :hook ((c++-mode c-mode) . ccls//enable)
   :init
-  (defun ccls//enable ()
+  (defun ccls/enable ()
+    "Enable ccls in current buffer."
+    (interactive)
     (condition-case nil
         (lsp-ccls-enable)
-    (user-error nil))))
+      (user-error nil)))
+
+  (defun ccls/enable-hook ()
+    "Enable ccls whenever a C/C++ file opens."
+    (interactive)
+    (add-hook 'c-mode-common-hook #'ccls/enable))
+
+  (defun ccls/disable-hook ()
+    "Remove ccls from c-mode-common-hook."
+    (interactive)
+    (remove-hook 'c-mode-common-hook #'ccls/enable))
+  (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
+  (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward))
+;;;   end
 ;;;   end
 
 
