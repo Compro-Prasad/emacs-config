@@ -309,8 +309,9 @@
     "Remove ccls from c-mode-common-hook."
     (interactive)
     (remove-hook 'c-mode-common-hook #'ccls/enable))
-  (define-key evil-normal-state-map (kbd "C-p") 'lsp-ui-peek-jump-forward)
-  (define-key evil-normal-state-map (kbd "C-t") 'lsp-ui-peek-jump-backward))
+  (with-eval-after-load 'c++-mode
+    (define-key c++-mode-map (kbd "M-.") 'lsp-ui-peek-jump-forward)
+    (define-key c++-mode-map (kbd "M-,") 'lsp-ui-peek-jump-backward)))
 ;;;   end
 
 
