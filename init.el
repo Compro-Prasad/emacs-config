@@ -125,7 +125,7 @@
 ;;;   Switching windows is a bit hard in Emacs
 (use-package switch-window
   :bind
-  (("M-\\" . switch-window)))
+  (("C-\\" . switch-window)))
 ;;;   end
 
 
