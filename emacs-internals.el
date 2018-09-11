@@ -202,8 +202,8 @@
  [up] nil
  [left] nil
  [right] nil
- "C-<down>" (kbd "C-u 3 C-v")
- "C-<up>" (kbd "C-u 2 M-v")
+ "C-1" 'delete-other-windows
+ "C-0" 'delete-window
  [C-m] 'delete-other-windows
  "C-c <tab>" 'toggle-minibuffer-message-timer
  "<C-S-mouse-1>" 'imenu
