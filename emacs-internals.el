@@ -36,6 +36,9 @@
  ;;;   Jump by words separated by punctuations
  global-subword-mode t
 
+ ;;;   Show keystrokes in minibuffer after 0.5 seconds
+ echo-keystrokes 0.5
+
  ;;;   Turn on every disabled function
  disabled-command-function nil
 
