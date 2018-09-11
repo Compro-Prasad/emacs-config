@@ -361,7 +361,18 @@
 ;;;   end
 
 
+;;;   Code cycling
+(use-package bicycle
+  :after outline
+  :bind (:map outline-minor-mode-map
+              ([C-tab] . bicycle-cycle)
+              ([S-tab] . bicycle-cycle-global)
+              ("<backtab>" . bicycle-cycle-global)))
+
+(with-eval-after-load 'prog-mode
   (progn
+    (add-hook 'prog-mode-hook 'outline-minor-mode)
+    (add-hook 'prog-mode-hook 'hs-minor-mode)))
 ;;;   end
 
 
