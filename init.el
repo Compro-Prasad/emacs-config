@@ -118,7 +118,7 @@
   :config
   (progn
     (projectile-mode 1)
-    (setq projectile-completion-system nil)))
+    (setq projectile-completion-system 'default)))
 ;;;   end
 
 
