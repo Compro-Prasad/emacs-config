@@ -209,7 +209,8 @@
  "<C-S-mouse-1>" 'imenu
  "C-<f4>" 'kill-current-buffer
  "M-/" 'hippie-expand
- [mouse-3] menu-bar-edit-menu)
+ [mouse-3] menu-bar-edit-menu
+ "M-^" 'compile)
 
 ;;;   Automatically change to newest version of file if edited externally
 (global-auto-revert-mode t)
