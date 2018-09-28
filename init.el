@@ -388,3 +388,18 @@
   (setq indent-guide-char "."
         indent-guide-delay 0.4))
 ;;;   end
+
+
+;;;   MVC framework in Emacs
+(use-package rem
+  :straight
+  (rem
+   :type git :host github
+   :repo "baygeldin/rem.el"))
+;;;   end
+
+
+;;;   Evil mode
+(use-package evil)
+(use-package evil-collection)
+;;;   end
