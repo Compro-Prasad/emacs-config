@@ -198,19 +198,19 @@
    [?\C-\[] (kbd "<C-[>")))
 
 (general-define-key
- [down] nil
- [up] nil
- [left] nil
- [right] nil
- "C-1" 'delete-other-windows
- "C-0" 'delete-window
- [C-m] 'delete-other-windows
- "C-c <tab>" 'toggle-minibuffer-message-timer
+ [down]          nil
+ [up]            nil
+ [left]          nil
+ [right]         nil
+ "C-1"           'delete-other-windows
+ "C-0"           'delete-window
+ [C-m]           'delete-other-windows
+ "C-c <tab>"     'toggle-minibuffer-message-timer
  "<C-S-mouse-1>" 'imenu
- "C-<f4>" 'kill-current-buffer
- "M-/" 'hippie-expand
- [mouse-3] menu-bar-edit-menu
- "M-^" 'compile)
+ "C-<f4>"        'kill-current-buffer
+ "M-/"           'hippie-expand
+ [mouse-3]       menu-bar-edit-menu
+ "M-^"           'compile)
 
 ;;;   Automatically change to newest version of file if edited externally
 (global-auto-revert-mode t)
