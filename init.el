@@ -403,3 +403,8 @@
 (use-package evil)
 (use-package evil-collection)
 ;;;   end
+
+
+;;;   Elf mode
+(use-package elf-mode)
+;;;   end
