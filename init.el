@@ -415,6 +415,7 @@
 
 
 ;;;   Evil mode
+(setq evil-want-keybinding nil)
 (use-package evil)
 (use-package evil-collection)
 ;;;   end
