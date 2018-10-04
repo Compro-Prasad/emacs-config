@@ -424,3 +424,9 @@
 ;;;   Elf mode
 (use-package elf-mode)
 ;;;   end
+
+
+;;;   Cmake mode
+(use-package cmake-mode
+  :ensure t)
+;;;   end
