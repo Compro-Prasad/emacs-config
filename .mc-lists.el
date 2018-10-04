@@ -5,6 +5,7 @@
       '(
         c-electric-colon
         c-electric-lt-gt
+        c-electric-semi&comma
         c-electric-slash
         c-electric-star
         c-indent-line-or-region
