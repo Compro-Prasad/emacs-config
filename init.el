@@ -442,3 +442,69 @@
 ;;;   end
 
 
+;;;   Org mode
+(use-package org
+  :mode ("\\.org\\'" . org-mode)
+  :bind
+  (("C-c l" . org-store-link)
+   ("C-c a" . org-agenda)
+   ("C-c b" . org-iswitchb)
+   ("C-c c" . org-capture))
+  :bind
+  (:map org-mode-map
+        ("M-n" . outline-next-visible-heading)
+        ("M-p" . outline-previous-visible-heading))
+  :custom
+  (org-return-follows-link t)
+  (org-agenda-diary-file "~/.org/diary.org")
+  (org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
+  :custom-face
+  (variable-pitch ((t (:family "iA Writer Duospace"))))
+  (org-document-title ((t (:foreground "#171717" :weight bold :height 1.5))))
+  (org-done ((t (:background "#E8E8E8" :foreground "#0E0E0E" :strike-through t :weight bold))))
+  (org-headline-done ((t (:foreground "#171717" :strike-through t))))
+  (org-level-1 ((t (:foreground "#090909" :weight bold :height 1.3))))
+  (org-level-2 ((t (:foreground "#090909" :weight normal :height 1.2))))
+  (org-level-3 ((t (:foreground "#090909" :weight normal :height 1.1))))
+  (org-image-actual-width '(600))
+  :config
+  (add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC")))
+
+(add-hook 'org-mode-hook
+          '(lambda ()
+             (setq line-spacing 0.2) ;; Add more line padding for readability
+             (variable-pitch-mode 1) ;; All fonts with variable pitch.
+             (mapc
+              (lambda (face) ;; Other fonts with fixed-pitch.
+                (set-face-attribute face nil :inherit 'fixed-pitch))
+              (list 'org-code
+                    'org-link
+                    'org-block
+                    'org-table
+                    'org-verbatim
+                    'org-block-begin-line
+                    'org-block-end-line
+                    'org-meta-line
+                    'org-document-info-keyword))))
+
+(setq org-startup-indented t
+      org-hide-emphasis-markers t
+      org-pretty-entities t)
+
+(setq org-capture-templates
+ '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+    "** TODO %?\n  %i\n  %a")
+   ("l" "Link" entry (file+headline "~/notes.org" "Links")
+    "** %T %^L \n%?")
+   ))
+
+(use-package ox-hugo
+  :after ox
+  :config
+  (dolist (ext '("zip" "ctf"))
+    (push ext org-hugo-external-file-extensions-allowed-for-copying)))
+;;;   end
+
+
