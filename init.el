@@ -508,3 +508,10 @@
 ;;;   end
 
 
+;;;   PlantUML
+(use-package plantuml-mode
+  :init
+  (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
+;;;   end
+
+
