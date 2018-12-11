@@ -219,7 +219,6 @@
 (show-paren-mode t)
 
 ;;;   Enable line numbers in fundamental mode
-(add-hook 'text-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 
