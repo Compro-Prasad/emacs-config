@@ -430,3 +430,15 @@
 (use-package cmake-mode
   :ensure t)
 ;;;   end
+;;;   Rust
+(use-package rustic)
+(use-package lsp-rust
+  :init
+  (with-eval-after-load 'lsp-mode
+    (setq lsp-rust-rls-command '("rustup" "run" "nightly-2018-08-19" "rls"))
+    (require 'lsp-rust))
+  (add-hook 'rust-mode-hook #'lsp-rust-enable)
+  (add-hook 'rust-mode-hook #'flycheck-mode))
+;;;   end
+
+
