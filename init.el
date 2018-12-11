@@ -515,3 +515,9 @@
 ;;;   end
 
 
+;;;   Emacs Application Framework
+(use-package eaf
+  :straight (eaf
+             :type git
+             :host github
+             :repo "manateelazycat/emacs-application-framework"))
