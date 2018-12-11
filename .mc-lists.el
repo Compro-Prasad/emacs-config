@@ -22,6 +22,7 @@
         my-kill-word
         org-beginning-of-line
         org-self-insert-command
+        overwrite-mode
         sgml-slash
         web-mode-comment-or-uncomment
         ))
