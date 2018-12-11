@@ -300,7 +300,40 @@
     (setq anaconda-mode-installation-directory "~/.emacs.d/.cache/anaconda-mode")))
 
 (use-package pyvenv)
-(use-package pipenv)
+(use-package pipenv
+  :bind
+  (("<f9> l p v a" . pipenv-activate)
+   ("<f9> l p v d" . pipenv-deactivate)
+   ("<f9> l p v g" . pipenv-graph)
+   ("<f9> l p v e" . pipenv-envs)))
+
+(use-package pony-mode
+  :bind
+  (("<f9> l p d a f" . pony-fabric)
+   ("<f9> l p d a d" . pony-fabric-deploy)
+   ("<f9> l p d f s" . pony-goto-settings)
+   ("<f9> l p d f c" . pony-setting)
+   ("<f9> l p d f t" . pony-goto-template)
+   ("<f9> l p d f r" . pony-resolve)
+   ("<f9> l p d i d" . pony-db-shell)
+   ("<f9> l p d i s" . pony-shell)
+   ("<f9> l p d m " . pony-manage)
+   ("<f9> l p d r d" . pony-stopserver)
+   ("<f9> l p d r o" . pony-browser)
+   ("<f9> l p d r r" . pony-restart-server)
+   ("<f9> l p d r u" . pony-runserver)
+   ("<f9> l p d r t" . pony-temp-server)
+   ("<f9> l p d s c" . pony-south-convert)
+   ("<f9> l p d s h" . pony-south-schemamigration)
+   ("<f9> l p d s i" . pony-south-initial)
+   ("<f9> l p d s m" . pony-south-migrate)
+   ("<f9> l p d s s" . pony-syncdb)
+   ("<f9> l p d t d" . pony-test-down)
+   ("<f9> l p d t e" . pony-test-goto-err)
+   ("<f9> l p d t o" . pony-test-open)
+   ("<f9> l p d t t" . pony-test)
+   ("<f9> l p d t u" . pony-test-up)))
+
 ;;;   end
 
 
