@@ -50,7 +50,7 @@
 
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
-  (use-package f)
+  (use-package f :ensure t)
   (use-package general)
   (load-file "~/.emacs.d/emacs-internals.el"))
 ;;;   end
