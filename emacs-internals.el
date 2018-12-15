@@ -2,9 +2,9 @@
 (custom-set-faces
  '(default ((t (:background "#332" :foreground "grey"))))
  '(fringe ((t (:background "#332"))))
- '(mode-line-highlight ((t (:background "black" :foreground "white"))))
  '(mode-line ((t (:background "#222" :foreground "white"))))
- '(mode-line-inactive ((t (:background "#222" : foreground "#111")))))
+ '(mode-line-inactive ((t (:background "#222" : foreground "#111"))))
+ )
 
 
 (setq-default
