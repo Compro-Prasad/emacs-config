@@ -178,9 +178,6 @@
   ;;;   Set colors when exporting to latex
   (setq org-latex-listings t))
 
-(f-mkdir "~/.emacs.d/.cache" "auto-save-list")
-(f-mkdir tramp-persistency-file-name)
-
 (fset 'yes-or-no-p 'y-or-n-p)
 
 (blink-cursor-mode 0)
