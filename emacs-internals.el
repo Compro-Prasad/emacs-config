@@ -26,6 +26,9 @@
  user-mail-address "comproprasad@gmail.com"
  user-full-name    "Abhishek(Compro) Prasad"
 
+ ;;;   Only use ~/.authinfo.gpg
+ auth-sources (list (expand-file-name "~/.authinfo.gpg"))
+
  ;;;   Customizations go to this file
  custom-file (expand-file-name "custom.el" user-emacs-directory)
 
