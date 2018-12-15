@@ -29,6 +29,9 @@
  ;;;   Only use ~/.authinfo.gpg
  auth-sources (list (expand-file-name "~/.authinfo.gpg"))
 
+ ;;;   Security settings
+ gnutls-verify-error t
+
  ;;;   Customizations go to this file
  custom-file (expand-file-name "custom.el" user-emacs-directory)
 
