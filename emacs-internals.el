@@ -146,7 +146,7 @@
  ido-save-directory-list-file "~/.emacs.d/.cache/ido.last"
 
  ;;;   Line numbers
- display-line-numbers-type 'visual
+ display-line-numbers-type 'relative
  )
 
 (with-eval-after-load 'ox-latex
