@@ -50,7 +50,11 @@
 
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
-  (use-package f :ensure t)
+  (use-package f
+    :ensure t
+    :config
+    (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
+    (f-mkdir tramp-persistency-file-name))
   (use-package general)
   (load-file "~/.emacs.d/emacs-internals.el"))
 ;;;   end
