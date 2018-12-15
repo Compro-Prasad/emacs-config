@@ -30,6 +30,8 @@
 
 ;;;   Install use-package
 (straight-use-package 'use-package)
+(setq use-package-always-defer t
+      use-package-verbose t)
 ;;;   end
 
 
