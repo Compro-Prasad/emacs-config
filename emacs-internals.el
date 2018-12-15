@@ -81,6 +81,10 @@
  ;;;   GC triggers per 7 MB increase in memory
  gc-cons-threshold 58720256
 
+ ;;;   Prevent recursion limits
+ max-lisp-eval-depth 48000
+ max-specpdl-size 10000
+
  ;;;   No bells
  ring-bell-function 'ignore
  visible-bell nil
