@@ -554,3 +554,12 @@
              :type git
              :host github
              :repo "manateelazycat/emacs-application-framework"))
+;;;   end
+
+
+;;;   Snippet completion
+(use-package yasnippet
+  :hook
+  ((prog-mode . yas-minor-mode)))
+(use-package yasnippet-snippets)
+;;;   end
