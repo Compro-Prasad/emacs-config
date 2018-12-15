@@ -51,8 +51,26 @@
  ;;;   Use UTF-8 characters in buffer
  buffer-file-coding-system 'utf-8
 
+ ;;;   Disable bidirectional text for tiny performance boost
+ bidi-display-reordering nil
+
+ ;;;   Don't blink parens
+ blink-matching-paren nil
+
+ ;;;   Hide cursors in other windows
+ cursor-in-non-selected-windows nil
+
+ ;;;   Prevent frames from automatically resizing themselves
+ frame-inhibit-implied-resize t
+
  ;;;   Clipboard length
  kill-ring-max 1024
+
+ ;;;   Stretch cursor according to the character under it
+ x-stretch-cursor t
+
+ ;;;   Time to wait before start of stealth fontify
+ jit-lock-stealth-time 1
 
  ;;;   Sentences are separated by single space after dot(.)
  sentence-end-double-space nil
