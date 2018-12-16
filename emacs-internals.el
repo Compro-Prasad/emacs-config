@@ -227,8 +227,7 @@
  [up]            nil
  [left]          nil
  [right]         nil
- "C-1"           'delete-other-windows
- "C-0"           'delete-window
+ "C-x C-o"       'ff-find-other-file
  [C-m]           'delete-other-windows
  "C-c <tab>"     'toggle-minibuffer-message-timer
  "<C-S-mouse-1>" 'imenu
