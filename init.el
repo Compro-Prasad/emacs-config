@@ -282,16 +282,16 @@
 
 ;;;   Language Server Protocol
 (use-package lsp-mode
+  :commands lsp
   :init
-  (progn
-    (require 'lsp-imenu)
-    (add-hook 'lsp-after-open-hook 'lsp-enable-imenu)
-    (use-package company-lsp)
-    (use-package lsp-ui
-      :bind
-      (:map lsp-ui-mode-map
-            ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-            ([remap xref-find-references] . lsp-ui-peek-find-references)))))
+  (add-hook 'prog-mode-hook 'lsp))
+(use-package company-lsp :commands company-lsp)
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :bind
+  (:map lsp-ui-mode-map
+        ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+        ([remap xref-find-references] . lsp-ui-peek-find-references)))
 ;;;   end
 
 
@@ -348,28 +348,7 @@
 
 
 ;;;   C and C++
-(use-package ccls
-  :commands lsp-ccls-enable
-  :init
-  (defun ccls/enable ()
-    "Enable ccls in current buffer."
-    (interactive)
-    (condition-case nil
-        (lsp-ccls-enable)
-      (user-error nil)))
-
-  (defun ccls/enable-hook ()
-    "Enable ccls whenever a C/C++ file opens."
-    (interactive)
-    (add-hook 'c-mode-common-hook #'ccls/enable))
-
-  (defun ccls/disable-hook ()
-    "Remove ccls from c-mode-common-hook."
-    (interactive)
-    (remove-hook 'c-mode-common-hook #'ccls/enable))
-  (with-eval-after-load 'c++-mode
-    (define-key c++-mode-map (kbd "M-.") 'lsp-ui-peek-jump-forward)
-    (define-key c++-mode-map (kbd "M-,") 'lsp-ui-peek-jump-backward)))
+(use-package ccls)
 ;;;   end
 
 ;;;   Complete almost everything in Emacs using ivy
