@@ -3,8 +3,10 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        c-electric-brace
         c-electric-colon
         c-electric-lt-gt
+        c-electric-paren
         c-electric-semi&comma
         c-electric-slash
         c-electric-star
