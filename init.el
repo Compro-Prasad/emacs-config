@@ -107,6 +107,12 @@
             (regexp-quote (basename default-directory))
             "\\)")))
       (kill-matching-buffers project-magit-buffers-regexp t t))))
+(use-package forge
+  :straight
+  (forge
+   :type git
+   :host github
+   :repo "magit/forge"))
 ;;;   end
 
 
