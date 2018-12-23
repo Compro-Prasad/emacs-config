@@ -352,7 +352,9 @@
 
 
 ;;;   C and C++
-(use-package ccls)
+(use-package ccls
+  :init
+  (require 'ccls))
 ;;;   end
 
 ;;;   Complete almost everything in Emacs using ivy
