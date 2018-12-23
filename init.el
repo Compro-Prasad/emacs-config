@@ -99,8 +99,6 @@
   (defun project-kill-magit-buffers ()
     "Kill current project's magit buffers."
     (interactive)
-    (when (> (count-windows) 1)
-      (delete-window))
     (let ((project-magit-buffers-regexp
            (concat
             "^magit\\(?:\\|-[a-z]*\\): \\(?:"
