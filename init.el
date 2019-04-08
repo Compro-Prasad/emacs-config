@@ -218,7 +218,9 @@
 
 
 ;;;   The doom theming
-(use-package doom-themes)
+(use-package doom-themes
+  :init
+  (load-theme 'doom-spacegrey))
 (use-package doom-modeline
   :hook (after-init . doom-modeline-init)
   :init
