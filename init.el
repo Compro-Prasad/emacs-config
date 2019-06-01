@@ -517,7 +517,10 @@
 
 (setq org-startup-indented t
       org-hide-emphasis-markers t
-      org-pretty-entities t)
+      org-pretty-entities t
+      org-catch-invisible-edits 'show-and-error
+      org-cycle-separator-lines 0
+      org-list-indent-offset 1)
 
 (setq org-capture-templates
  '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
