@@ -149,8 +149,8 @@
 
 ;;;   Switching windows is a bit hard in Emacs
 (use-package switch-window
-  :bind
-  (("C-\\" . switch-window)))
+  :bind*
+  (("M-TAB" . switch-window)))
 ;;;   end
 
 
@@ -399,21 +399,6 @@
    ("<f9> h d" . httpd-stop)))
 (use-package impatient-mode
   :bind ("<f9> i" . impatient-mode))
-;;;   end
-
-
-;;;   Code cycling
-(use-package bicycle
-  :after outline
-  :bind (:map outline-minor-mode-map
-              ([C-tab] . bicycle-cycle)
-              ([S-tab] . bicycle-cycle-global)
-              ("<backtab>" . bicycle-cycle-global)))
-
-(with-eval-after-load 'prog-mode
-  (progn
-    (add-hook 'prog-mode-hook 'outline-minor-mode)
-    (add-hook 'prog-mode-hook 'hs-minor-mode)))
 ;;;   end
 
 

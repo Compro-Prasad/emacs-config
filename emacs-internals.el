@@ -220,6 +220,9 @@
  [right]         nil
  "C-x C-o"       'ff-find-other-file
  [C-m]           'delete-other-windows
+ "<C-tab>"       'previous-buffer
+ "<C-S-tab>"     'next-buffer
+ "<C-backtab>"   'next-buffer
  "C-c <tab>"     'toggle-minibuffer-message-timer
  "<C-S-mouse-1>" 'imenu
  "C-<f4>"        'kill-current-buffer
@@ -440,6 +443,12 @@ minibuffer using `display-startup-echo-area-message'.")
 (defun my-backward-kill-word (arg)
   (interactive "p")
   (my-kill-word (- arg)))
+;;;   Switch to file buffers using next-buffer and previous-buffer
+(defun compro/files-buffer-predicate (buffer)
+  (stringp (buffer-file-name buffer)))
+(set-frame-parameter nil 'buffer-predicate 'compro/files-buffer-predicate)
+;;;   end
+
 
 (with-eval-after-load 'comint
   (general-define-key
