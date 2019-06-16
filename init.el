@@ -148,8 +148,7 @@
 
 ;;;   Switching windows is a bit hard in Emacs
 (use-package switch-window
-  :bind*
-  (("M-TAB" . switch-window)))
+  :bind* (("M-TAB" . switch-window)))
 ;;;   end
 
 
@@ -162,12 +161,6 @@
 
 ;;;   Multiple cursor for small and fast edits
 (use-package multiple-cursors
-  :straight
-  (multiple-cursors
-   :type git
-   :host github
-   :repo "magnars/multiple-cursors.el"
-   :branch "wrap-around")
   :bind
   (("C-S-c" . mc/edit-lines)
    ("M-S-<up>" . mc/mark-previous-like-this)
@@ -229,6 +222,7 @@
 
 ;;;   Sidebar
 (use-package treemacs
+  :straight t
   :bind ("<f9> t" . treemacs))
 
 (use-package dired-sidebar
@@ -287,16 +281,25 @@
 
 ;;;   Language Server Protocol
 (use-package lsp-mode
+  :straight t
   :commands lsp
   :init
+  (require 'lsp-clients)
   (add-hook 'prog-mode-hook 'lsp))
-(use-package company-lsp :commands company-lsp)
+(use-package company-lsp
+  :straight t
+  :commands company-lsp)
 (use-package lsp-ui
-  :commands lsp-ui-mode
-  :bind
-  (:map lsp-ui-mode-map
-        ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-        ([remap xref-find-references] . lsp-ui-peek-find-references)))
+  :hook (lsp-mode . lsp-ui-mode)
+  :init
+  (setq lsp-ui-doc-use-webkit t)
+  :config
+  (setq lsp-ui-doc-enable t
+        lsp-enable-completion-at-point t
+        ;lsp-ui-doc-position 'at-point
+        lsp-ui-doc-header nil
+        lsp-ui-doc-include-signature t
+        lsp-ui-sideline-enable nil))
 ;;;   end
 
 
@@ -441,14 +444,9 @@
   :ensure t)
 ;;;   end
 ;;;   Rust
-(use-package rustic)
-(use-package lsp-rust
+(use-package rustic
   :init
-  (with-eval-after-load 'lsp-mode
-    (setq lsp-rust-rls-command '("rustup" "run" "nightly-2018-08-19" "rls"))
-    (require 'lsp-rust))
-  (add-hook 'rust-mode-hook #'lsp-rust-enable)
-  (add-hook 'rust-mode-hook #'flycheck-mode))
+  (setq rustic-rls-pkg 'lsp-mode))
 ;;;   end
 
 
