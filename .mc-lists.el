@@ -34,4 +34,5 @@
         company-complete
         helm-M-x
         magit-status
+        toggle-frame-fullscreen
         ))
