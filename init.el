@@ -146,7 +146,12 @@
    ("C-c C-<" . mc/mark-all-like-this)
    ("M-S-<mouse-1>" . mc/add-cursor-on-click)
    ("M-S-<mouse-2>" . mc/add-cursor-on-click)
-   ("M-S-<mouse-3>" . mc/add-cursor-on-click)))
+   ("M-S-<mouse-3>" . mc/add-cursor-on-click))
+  :init
+  (use-package phi-search-mc
+    :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
+    :config
+    (phi-search-mc/setup-keys)))
 ;;;   end
 
 
