@@ -278,55 +278,41 @@
 ;;;   end
 
 
-;;;   Python
-(use-package anaconda-mode
-  :hook
-  ((python-mode . anaconda-mode)
-   (python-mode . anaconda-eldoc-mode))
-  :init
-  (progn
-    (use-package company-anaconda
-      :config
-      (require 'rx))
-    (with-eval-after-load 'company
-      (add-to-list 'company-backends '(company-anaconda :with company-capf)))
-    (setq anaconda-mode-installation-directory "~/.emacs.d/.cache/anaconda-mode")))
-
+(use-package py-autopep8)
 (use-package pyvenv)
 (use-package pipenv
   :bind
-  (("<f9> l p v a" . pipenv-activate)
-   ("<f9> l p v d" . pipenv-deactivate)
-   ("<f9> l p v g" . pipenv-graph)
-   ("<f9> l p v e" . pipenv-envs)))
+  (("<f9> p v a" . pipenv-activate)
+   ("<f9> p v d" . pipenv-deactivate)
+   ("<f9> p v g" . pipenv-graph)
+   ("<f9> p v e" . pipenv-envs)))
 
 (use-package pony-mode
   :bind
-  (("<f9> l p d a f" . pony-fabric)
-   ("<f9> l p d a d" . pony-fabric-deploy)
-   ("<f9> l p d f s" . pony-goto-settings)
-   ("<f9> l p d f c" . pony-setting)
-   ("<f9> l p d f t" . pony-goto-template)
-   ("<f9> l p d f r" . pony-resolve)
-   ("<f9> l p d i d" . pony-db-shell)
-   ("<f9> l p d i s" . pony-shell)
-   ("<f9> l p d m " . pony-manage)
-   ("<f9> l p d r d" . pony-stopserver)
-   ("<f9> l p d r o" . pony-browser)
-   ("<f9> l p d r r" . pony-restart-server)
-   ("<f9> l p d r u" . pony-runserver)
-   ("<f9> l p d r t" . pony-temp-server)
-   ("<f9> l p d s c" . pony-south-convert)
-   ("<f9> l p d s h" . pony-south-schemamigration)
-   ("<f9> l p d s i" . pony-south-initial)
-   ("<f9> l p d s m" . pony-south-migrate)
-   ("<f9> l p d s s" . pony-syncdb)
-   ("<f9> l p d t d" . pony-test-down)
-   ("<f9> l p d t e" . pony-test-goto-err)
-   ("<f9> l p d t o" . pony-test-open)
-   ("<f9> l p d t t" . pony-test)
-   ("<f9> l p d t u" . pony-test-up)))
-
+  (("<f9> p d a f" . pony-fabric)
+   ("<f9> p d a d" . pony-fabric-deploy)
+   ("<f9> p d f s" . pony-goto-settings)
+   ("<f9> p d f c" . pony-setting)
+   ("<f9> p d f t" . pony-goto-template)
+   ("<f9> p d f r" . pony-resolve)
+   ("<f9> p d i d" . pony-db-shell)
+   ("<f9> p d i s" . pony-shell)
+   ("<f9> p d m " . pony-manage)
+   ("<f9> p d r d" . pony-stopserver)
+   ("<f9> p d r o" . pony-browser)
+   ("<f9> p d r r" . pony-restart-server)
+   ("<f9> p d r u" . pony-runserver)
+   ("<f9> p d r t" . pony-temp-server)
+   ("<f9> p d s c" . pony-south-convert)
+   ("<f9> p d s h" . pony-south-schemamigration)
+   ("<f9> p d s i" . pony-south-initial)
+   ("<f9> p d s m" . pony-south-migrate)
+   ("<f9> p d s s" . pony-syncdb)
+   ("<f9> p d t d" . pony-test-down)
+   ("<f9> p d t e" . pony-test-goto-err)
+   ("<f9> p d t o" . pony-test-open)
+   ("<f9> p d t t" . pony-test)
+   ("<f9> p d t u" . pony-test-up)))
 ;;;   end
 
 
