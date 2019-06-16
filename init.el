@@ -405,7 +405,7 @@
 
 
 ;;;   ox-reveal for presentations
-(use-package ox-reveal)
+(use-package org-re-reveal)
 ;;;   end
 
 
