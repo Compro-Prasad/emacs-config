@@ -1,3 +1,7 @@
+;; ;;;   Stop loading init.el at a specific point
+;; (with-current-buffer " *load*"
+;;   (goto-char (point-max)))
+;; ;;;   end
 
 
 ;;;   package.el init
