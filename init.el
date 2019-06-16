@@ -443,6 +443,13 @@
 (use-package cmake-mode
   :ensure t)
 ;;;   end
+
+
+;;;   TODO: Manage system packages
+(use-package system-packages)
+;;;   end
+
+
 ;;;   Rust
 (use-package rustic
   :init
