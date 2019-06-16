@@ -517,3 +517,8 @@
   ((prog-mode . yas-minor-mode)))
 (use-package yasnippet-snippets)
 ;;;   end
+
+
+;;;   Syntax checking
+(use-package flycheck)
+;;;   end
