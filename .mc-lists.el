@@ -11,6 +11,7 @@
         c-electric-slash
         c-electric-star
         c-indent-line-or-region
+        compro/smarter-backward-kill-word
         electric-newline-and-maybe-indent
         electric-pair-delete-pair
         end-of-buffer
