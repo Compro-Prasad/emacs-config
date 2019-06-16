@@ -329,12 +329,20 @@
   (setq
    ivy-use-virtual-buffers t
    ivy-count-format "(%d/%d) "
-   ivy-height 15))
+   ivy-height 15
+   ivy-more-chars-alist '((t . 1))))
 (use-package flx)
 (use-package swiper)
 (use-package counsel
   :bind
-  (("M-x" . counsel-M-x)))
+  (("M-x" . counsel-M-x)
+   ("C-c s r" . counsel-rg)
+   ("C-c s a" . counsel-ag)
+   ("C-c s g" . counsel-grep)
+   ("C-c C-r" . counsel-recentf)
+   ("C-c y" . counsel-yank-pop)
+   ("C-c u" . counsel-unicode)
+   ("C-c r" . ivy-resume)))
 ;;;   end
 
 
