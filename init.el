@@ -31,13 +31,13 @@
 ;;;   Install use-package
 (straight-use-package 'use-package)
 (setq use-package-always-defer t
-      use-package-verbose t)
+      use-package-verbose t
+      use-package-always-ensure t)
 ;;;   end
 
 
 ;;;   straight.el configurations
 (setq
- straight-use-package-by-default t       ; use-package should use straight.el
  straight-check-for-modifications 'live  ; build package when modified in Emacs
  )
 ;;;   end
@@ -53,7 +53,6 @@
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
   (use-package f
-    :ensure t
     :config
     (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
     (f-mkdir tramp-persistency-file-name))
