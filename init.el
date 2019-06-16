@@ -1,16 +1,3 @@
-;;;   straight.el bootstrap
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 4))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
-;;;   end
 
 
 ;;;   package.el init
@@ -29,17 +16,11 @@
 
 
 ;;;   Install use-package
-(straight-use-package 'use-package)
+(if (not (package-installed-p 'use-package))
+    (package-install'use-package))
 (setq use-package-always-defer t
       use-package-verbose t
       use-package-always-ensure t)
-;;;   end
-
-
-;;;   straight.el configurations
-(setq
- straight-check-for-modifications 'live  ; build package when modified in Emacs
- )
 ;;;   end
 
 
@@ -222,7 +203,7 @@
 
 ;;;   Sidebar
 (use-package treemacs
-  :straight t
+  :load-path "~/Downloads/github.com/Alexander-Miller/treemacs/src/elisp"
   :bind ("<f9> t" . treemacs))
 
 (use-package dired-sidebar
@@ -230,10 +211,6 @@
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (use-package vscode-icon
-    :straight
-    (vscode-icon
-     :type git :host github
-     :repo "jojojames/vscode-icon-emacs")
     :commands (vscode-icon-for-file))
   (add-hook 'dired-sidebar-mode-hook
             (lambda ()
@@ -281,13 +258,11 @@
 
 ;;;   Language Server Protocol
 (use-package lsp-mode
-  :straight t
   :commands lsp
   :init
   (require 'lsp-clients)
   (add-hook 'prog-mode-hook 'lsp))
 (use-package company-lsp
-  :straight t
   :commands company-lsp)
 (use-package lsp-ui
   :hook (lsp-mode . lsp-ui-mode)
@@ -401,11 +376,6 @@
    ("<f9> h d" . httpd-stop)))
 (use-package impatient-mode
   :bind ("<f9> i" . impatient-mode))
-;;;   end
-
-
-;;;   ox-reveal for presentations
-(use-package org-re-reveal)
 ;;;   end
 
 
