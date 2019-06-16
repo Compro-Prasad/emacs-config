@@ -75,38 +75,29 @@
 
 ;;;   Magit for top notch git integration
 (use-package magit
-  :bind
-  (("C-x g" . magit-status)
-   :map magit-status-mode-map
-   ("q" . project-kill-magit-buffers))
-  :init
-  (defun project-kill-magit-buffers ()
-    "Kill current project's magit buffers."
-    (interactive)
-    (let ((project-magit-buffers-regexp
-           (concat
-            "^magit\\(?:\\|-[a-z]*\\): \\(?:"
-            (regexp-quote (basename default-directory))
-            "\\|"
-            (regexp-quote (basename default-directory))
-            "\\)")))
-      (kill-matching-buffers project-magit-buffers-regexp t t))))
-(use-package forge
-  :straight
-  (forge
-   :type git
-   :host github
-   :repo "magit/forge"))
-;;;   end
-
-
-;;;   Magithub for GitHub integration
-(use-package magithub
-  :after magit
+  :bind (("C-x g" . magit-status))
   :config
-  (magithub-feature-autoinject t)
-  (setq magithub-clone-default-directory "~/github"
-        magithub-dir "~/.emacs.d/.cache/magithub"))
+  (define-key magit-mode-map [C-tab] nil)
+  (define-key magit-mode-map [C-backtab] nil)
+  (define-key magit-mode-map [M-tab] nil)
+  (with-eval-after-load 'magit-status
+    (define-key magit-status-mode-map [C-tab] nil)
+    (define-key magit-status-mode-map [C-backtab] nil)
+    (define-key magit-status-mode-map [M-tab] nil))
+  (with-eval-after-load 'magit-log
+    (define-key magit-log-mode-map [C-tab] nil)
+    (define-key magit-log-mode-map [C-backtab] nil)
+    (define-key magit-log-mode-map [M-tab] nil))
+  (with-eval-after-load 'magit-diff
+    (define-key magit-diff-mode-map [C-tab] nil)
+    (define-key magit-file-section-map [C-tab] nil)
+    (define-key magit-hunk-section-map [C-tab] nil)
+    (define-key magit-diff-mode-map [C-backtab] nil)
+    (define-key magit-file-section-map [C-backtab] nil)
+    (define-key magit-hunk-section-map [C-backtab] nil)
+    (define-key magit-diff-mode-map [M-tab] nil)
+    (define-key magit-file-section-map [M-tab] nil)
+    (define-key magit-hunk-section-map [M-tab] nil)))
 ;;;   end
 
 
