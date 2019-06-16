@@ -423,7 +423,6 @@
 
 ;;;   Org mode
 (use-package org
-  :mode ("\\.org\\'" . org-mode)
   :bind
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
@@ -440,6 +439,8 @@
    '((emacs-lisp . t)
      (python . t)))
   :config
+  (require 'ox-hugo)
+  (require 'org-re-reveal)
   (add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC")))
 
 (add-hook 'org-mode-hook
@@ -459,10 +460,12 @@
    ))
 
 (use-package ox-hugo
-  :after ox
   :config
   (dolist (ext '("zip" "ctf"))
     (push ext org-hugo-external-file-extensions-allowed-for-copying)))
+
+
+(use-package org-re-reveal)
 ;;;   end
 
 
