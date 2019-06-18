@@ -19,17 +19,22 @@
 ;;;   end
 
 
-;;;   Install use-package
-(if (not (package-installed-p 'use-package))
-    (package-install'use-package))
-(setq use-package-always-defer t
-      use-package-verbose t
-      use-package-always-ensure t)
+;;;   leaf is a better alternative to use-package
+(unless (package-installed-p 'leaf)
+  (unless (assoc 'leaf package-archive-contents)
+    (package-refresh-contents))
+  (condition-case err
+      (package-install 'leaf)
+    (error
+     (package-refresh-contents)       ; renew local melpa cache if fail
+     (package-install 'leaf))))
+(leaf leaf
+  :custom ((leaf-defaults . '(:ensure t))))
 ;;;   end
 
 
 ;;;   Load environment variables in Emacs
-(use-package exec-path-from-shell
+(leaf exec-path-from-shell
   :if (memq window-system '(mac ns x))
   :init (exec-path-from-shell-initialize))
 ;;;   end
@@ -37,44 +42,44 @@
 
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
-  (use-package f
+  (leaf f
     :config
     (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
     (f-mkdir tramp-persistency-file-name))
-  (use-package general)
+  (leaf general)
   (load-file "~/.emacs.d/emacs-internals.el"))
 ;;;   end
 
 
 ;;;   Function to get basename of a given path
 (defun basename (path)
-    "Returns just the file name of the given PATH."
-    (file-name-nondirectory (directory-file-name path)))
+  "Returns just the file name of the given PATH."
+  (file-name-nondirectory (directory-file-name path)))
 ;;;   end
 
 
 ;;;   Hungry delete is the best part of editing text!
-(use-package hungry-delete
+(leaf hungry-delete
   :init
   (global-hungry-delete-mode t))
 ;;;   end
 
 
 ;;;   Hide minor modes from modeline
-(use-package minions
+(leaf minions
   :bind ([S-down-mouse-3] . minions-minor-modes-menu)
   :hook (after-init . minions-mode))
 ;;;   end
 
 
 ;;;   Show last keybind and the function in modeline
-(use-package keycast
+(leaf keycast
   :bind ("<f9> k" . keycast-mode))
 ;;;   end
 
 
-;;;   Magit for top notch git integration
-(use-package magit
+;;;   Git integration
+(leaf magit
   :bind (("C-x g" . magit-status))
   :config
   (define-key magit-mode-map [C-tab] nil)
@@ -98,11 +103,13 @@
     (define-key magit-diff-mode-map [M-tab] nil)
     (define-key magit-file-section-map [M-tab] nil)
     (define-key magit-hunk-section-map [M-tab] nil)))
+(leaf git-messenger
+  :bind (("C-x v p" . git-messenger:popup-message)))
 ;;;   end
 
 
 ;;;   Expand region for smart region selection
-(use-package expand-region
+(leaf expand-region
   :bind
   (("C-=" . er/expand-region)
    ("C-+" . er/contract-region)))
@@ -110,33 +117,31 @@
 
 
 ;;;   Project support is very useful
-(use-package projectile
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
+(leaf projectile
+  :bind (("C-c p" . projectile-command-map))
   :init
-  (use-package ag)
+  (leaf ag)
   :config
-  (progn
-    (projectile-mode 1)
-    (setq projectile-completion-system 'default)))
+  (setq projectile-completion-system 'ivy)
+  :custom ((projectile-mode . t)))
 ;;;   end
 
 
 ;;;   Switching windows is a bit hard in Emacs
-(use-package switch-window
+(leaf switch-window
   :bind* (("M-TAB" . switch-window)))
 ;;;   end
 
 
 ;;;   Nice to lookup new keys to learn new stuff
-(use-package which-key
+(leaf which-key
   :init
   (which-key-mode 1))
 ;;;   end
 
 
 ;;;   Multiple cursor for small and fast edits
-(use-package multiple-cursors
+(leaf multiple-cursors
   :bind
   (("C-S-c" . mc/edit-lines)
    ("M-S-<up>" . mc/mark-previous-like-this)
@@ -148,7 +153,7 @@
    ("M-S-<mouse-2>" . mc/add-cursor-on-click)
    ("M-S-<mouse-3>" . mc/add-cursor-on-click))
   :init
-  (use-package phi-search-mc
+  (leaf phi-search-mc
     :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
     :config
     (phi-search-mc/setup-keys)))
@@ -156,17 +161,17 @@
 
 
 ;;;   Undo tree for better visualization of undo in Emacs
-(use-package undo-tree
+(leaf undo-tree
   :bind
-  (:map undo-tree-map
-        ("C-_" . nil))  ; reserved for move-text-up
+  (:undo-tree-map
+   ("C-_" . nil))  ; reserved for move-text-up
   :init
   (global-undo-tree-mode t))
 ;;;   end
 
 
 ;;;   More verbose Emacs documentation lookup
-(use-package helpful
+(leaf helpful
   :bind
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
@@ -175,7 +180,7 @@
 
 
 ;;;   Move text in a buffer
-(use-package move-text
+(leaf move-text
   :bind
   (("C-_" . move-text-up)
    ("C--" . move-text-down)))
@@ -186,31 +191,31 @@
 ;;      C-c C-p - Enable editing in *grep* buffer
 ;;      C-x C-s - Save changes
 ;;    Note: This doesn't save to the file
-(use-package wgrep)
+(leaf wgrep)
 ;;;   end
 
 
 ;;;   The doom theming
-(use-package doom-themes
+(leaf doom-themes
   :init
   (load-theme 'doom-spacegrey))
-(use-package doom-modeline
-  :hook (after-init . doom-modeline-init)
+(leaf doom-modeline
+  :hook (after-init-hook . doom-modeline-init)
   :init
   (setq doom-modeline-buffer-file-name-style 'relative-to-project))
 ;;;   end
 
 
 ;;;   Sidebar
-(use-package treemacs
+(leaf treemacs
   :load-path "~/Downloads/github.com/Alexander-Miller/treemacs/src/elisp"
   :bind ("<f9> t" . treemacs))
 
-(use-package dired-sidebar
+(leaf dired-sidebar
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
   :commands (dired-sidebar-toggle-sidebar)
   :init
-  (use-package vscode-icon
+  (leaf vscode-icon
     :commands (vscode-icon-for-file))
   (add-hook 'dired-sidebar-mode-hook
             (lambda ()
@@ -228,22 +233,31 @@
 
 
 ;;;   Page break char doesn’t look good
-(use-package page-break-lines
+(leaf page-break-lines
   :init
   (global-page-break-lines-mode t))
 ;;;   end
 
 
 ;;;   Completion
-(use-package company
-  :hook
-  (after-init . global-company-mode)
+(defun company-mode/backend-with-yas (backend)
+  (if (and (listp backend) (member 'company-yasnippet backend))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+
+(leaf company
+  :hook (after-init-hook . global-company-mode)
   :bind
-  ("<C-j>" . company-complete)
+  (("C-c C-SPC" . company-complete)
+   (company-active-map
+    ("RET" . nil)
+    ("C-h" . nil)
+    ("ESC" . company-abort)
+    ("<tab>" . company-complete-selection)))
   :config
   (setq company-idle-delay 0.09
-        company-minimum-prefix-length 5
-        company-selection-wrap-around t
+        company-minimum-prefix-length 1
         company-show-numbers t
         company-require-match 'never
         company-dabbrev-downcase nil
@@ -252,20 +266,24 @@
                                        company-css company-capf
                                        (company-dabbrev-code company-keywords)
                                        company-files company-dabbrev)
-        company-jedi-python-bin "python"))
+        company-jedi-python-bin "python")
+  (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends)))
+
+(leaf company-posframe
+  :config (company-posframe-mode 1))
 ;;;   end
 
 
 ;;;   Language Server Protocol
-(use-package lsp-mode
+(leaf lsp-mode
   :commands lsp
   :init
   (require 'lsp-clients)
   (add-hook 'prog-mode-hook 'lsp))
-(use-package company-lsp
+(leaf company-lsp
   :commands company-lsp)
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
+(leaf lsp-ui
+  :hook (lsp-mode-hook . lsp-ui-mode)
   :init
   (setq lsp-ui-doc-use-webkit t)
   :config
@@ -278,16 +296,16 @@
 ;;;   end
 
 
-(use-package py-autopep8)
-(use-package pyvenv)
-(use-package pipenv
+(leaf py-autopep8)
+(leaf pyvenv)
+(leaf pipenv
   :bind
   (("<f9> p v a" . pipenv-activate)
    ("<f9> p v d" . pipenv-deactivate)
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(use-package pony-mode
+(leaf pony-mode
   :bind
   (("<f9> p d a f" . pony-fabric)
    ("<f9> p d a d" . pony-fabric-deploy)
@@ -317,23 +335,28 @@
 
 
 ;;;   C and C++
-(use-package ccls
+(leaf ccls
   :init
   (require 'ccls))
 ;;;   end
 
 ;;;   Complete almost everything in Emacs using ivy
-(use-package ivy
-  :hook (after-init . ivy-mode)
+(leaf ivy
+  :hook (after-init-hook . ivy-mode)
   :init
   (setq
    ivy-use-virtual-buffers t
    ivy-count-format "(%d/%d) "
    ivy-height 15
    ivy-more-chars-alist '((t . 1))))
-(use-package flx)
-(use-package swiper)
-(use-package counsel
+(leaf ivy-posframe
+  :after ivy
+  :config
+  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
+  (ivy-posframe-mode 1))
+(leaf flx)
+(leaf swiper)
+(leaf counsel
   :bind
   (("M-x" . counsel-M-x)
    ("C-c s r" . counsel-rg)
@@ -347,97 +370,86 @@
 
 
 ;;;   Scala
-(use-package ensime)
+(leaf ensime)
 ;;;   end
 
 
 ;;;   Finest mode for multiple HTML based modes
-(use-package web-mode
+(leaf web-mode
   :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
 ;;;   end
 
 
 ;;;   Emmet is wonderful
-(use-package emmet-mode
-  :hook (web-mode . emmet-mode))
+(leaf emmet-mode
+  :hook web-mode-hook)
 ;;;   end
 
 
 ;;;   Hot reloading
-(use-package http
+(leaf http
   :bind
   (("<f9> h e" . httpd-start)
    ("<f9> h d" . httpd-stop)))
-(use-package impatient-mode
+(leaf impatient-mode
   :bind ("<f9> i" . impatient-mode))
 ;;;   end
 
 
 ;;;   Highlight indentation in Emacs
-(use-package indent-guide
-  :hook (prog-mode . indent-guide-mode)
+(leaf indent-guide
+  :hook (prog-mode-hook . indent-guide-mode)
   :init
   (setq indent-guide-char "."
         indent-guide-delay 0.4))
 ;;;   end
 
 
-;;;   MVC framework in Emacs
-(use-package rem
-  :straight
-  (rem
-   :type git :host github
-   :repo "baygeldin/rem.el"))
-;;;   end
-
-
 ;;;   Evil mode
 (setq evil-want-keybinding nil)
-(use-package evil)
-(use-package evil-collection)
+(leaf evil)
+(leaf evil-collection)
 ;;;   end
 
 
 ;;;   Elf mode
-(use-package elf-mode)
+(leaf elf-mode)
 ;;;   end
 
 
 ;;;   Cmake mode
-(use-package cmake-mode
+(leaf cmake-mode
   :ensure t)
 ;;;   end
 
 
 ;;;   TODO: Manage system packages
-(use-package system-packages)
+(leaf system-packages)
 ;;;   end
 
 
 ;;;   Rust
-(use-package rustic
+(leaf rustic
   :init
   (setq rustic-rls-pkg 'lsp-mode))
 ;;;   end
 
 
 ;;;   Org mode
-(use-package org
+(leaf org
   :bind
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
    ("C-c b" . org-iswitchb)
    ("C-c c" . org-capture))
   :bind
-  (:map org-mode-map
+  (:org-mode-map
         ("M-n" . outline-next-visible-heading)
         ("M-p" . outline-previous-visible-heading))
   :custom
-  (org-return-follows-link t)
-  (org-agenda-diary-file "~/.org/diary.org")
-  (org-babel-load-languages
-   '((emacs-lisp . t)
-     (python . t)))
+  ((org-return-follows-link . t)
+   (org-agenda-diary-file . "~/.org/diary.org")
+   (org-babel-load-languages . '((emacs-lisp . t) (python . t))))
   :config
   (require 'ox-hugo)
   (require 'org-re-reveal)
@@ -459,40 +471,38 @@
     "** %T %^L \n%?")
    ))
 
-(use-package ox-hugo
+(leaf ox-hugo
   :config
   (dolist (ext '("zip" "ctf"))
     (push ext org-hugo-external-file-extensions-allowed-for-copying)))
 
 
-(use-package org-re-reveal)
+(leaf org-re-reveal)
 ;;;   end
 
 
 ;;;   PlantUML
-(use-package plantuml-mode
+(leaf plantuml-mode
   :init
   (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
 ;;;   end
 
 
-;;;   Emacs Application Framework
-(use-package eaf
-  :straight (eaf
-             :type git
-             :host github
-             :repo "manateelazycat/emacs-application-framework"))
-;;;   end
-
-
 ;;;   Snippet completion
-(use-package yasnippet
-  :hook
-  ((prog-mode . yas-minor-mode)))
-(use-package yasnippet-snippets)
+(leaf yasnippet
+  :hook (prog-mode-hook . yas-minor-mode))
+(leaf yasnippet-snippets)
 ;;;   end
 
 
 ;;;   Syntax checking
-(use-package flycheck)
+(leaf flycheck)
 ;;;   end
+
+
+(leaf navbar
+  :load-path "~/Downloads/github.com/conao3/navbar.el"
+  :init
+  (require 'navbar)
+  (setq navbar-item-list '("Hello, World!"))
+  (navbar-mode 1))
