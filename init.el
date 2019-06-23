@@ -43,6 +43,7 @@
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
   (leaf f
+    :commands f-mkdir
     :config
     (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
     (f-mkdir tramp-persistency-file-name))
