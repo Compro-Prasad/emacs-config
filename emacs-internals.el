@@ -203,7 +203,6 @@
   (xterm-mouse-mode 0))
 
 (toggle-frame-maximized)
-(toggle-frame-fullscreen)
 
 (when (display-graphic-p)
   (general-define-key
