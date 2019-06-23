@@ -497,7 +497,11 @@
 (leaf flycheck)
 ;;;   end
 
-
+(defmacro p (form)
+  "Output pretty `macroexpand-1'ed form of given FORM."
+  `(progn
+     (pp (macroexpand-1 ',form))
+     nil))
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
   :init
