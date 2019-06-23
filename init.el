@@ -505,6 +505,34 @@
      nil))
 
 
+(leaf tabbar-ruler
+  :leaf-defer nil
+  :require t
+  :bind (([C-tab]           . tabbar-forward-tab)
+         ([C-S-iso-lefttab] . tabbar-backward-tab)
+         ([C-f4]            . kill-current-buffer)
+         (:org-mode-map
+          :package org
+          ([C-tab]           . tabbar-forward-tab)
+          ([C-S-tab]         . tabbar-backward-tab)
+          ([C-S-iso-lefttab] . tabbar-backward-tab)
+          ([C-f4]            . kill-current-buffer))
+         (:magit-mode-map
+          :package magit
+          ([C-tab]           . tabbar-forward-tab)
+          ([C-S-tab]         . tabbar-backward-tab)
+          ([C-S-iso-lefttab] . tabbar-backward-tab)
+          ([C-f4]            . kill-current-buffer)))
+  :custom-face ((tabbar-button              . '((t (:inherit default :box nil :height 104 :width normal :family "Sans Serif"))))
+                (tabbar-highlight           . '((t nil)))
+                (tabbar-selected            . '((t (:inherit default :stipple nil :weight normal :height 160 :width normal :family "Sans Serif"))))
+                (tabbar-selected-modified   . '((t (:inherit default :foreground "red" :box nil :weight normal :height 160 :family "Sans Serif"))))
+                (tabbar-unselected          . '((t (:inherit tabbar-selected :background "#fee" :foreground "#333" :height 160))))
+                (tabbar-unselected-modified . '((t (:inherit tabbar-selected-modified :background "#fee" :height 160)))))
+  :custom (tabbar-ruler-global-tabbar . t)
+  :config (tabbar-ruler-group-by-projectile-project))
+
+
 (setq leaf-defaults nil)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
