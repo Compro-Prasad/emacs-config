@@ -505,7 +505,8 @@
      nil))
 
 
-(leaf tabbar-ruler
+;;;   Tabs
+(leaf tabbar
   :leaf-defer nil
   :require t
   :bind (([C-tab]           . tabbar-forward-tab)
@@ -525,12 +526,33 @@
           ([C-f4]            . kill-current-buffer)))
   :custom-face ((tabbar-button              . '((t (:inherit default :box nil :height 104 :width normal :family "Sans Serif"))))
                 (tabbar-highlight           . '((t nil)))
-                (tabbar-selected            . '((t (:inherit default :stipple nil :weight normal :height 160 :width normal :family "Sans Serif"))))
+                (tabbar-selected            . '((t (:inherit default :weight normal :height 160 :width normal :family "Sans Serif"))))
                 (tabbar-selected-modified   . '((t (:inherit default :foreground "red" :box nil :weight normal :height 160 :family "Sans Serif"))))
                 (tabbar-unselected          . '((t (:inherit tabbar-selected :background "#fee" :foreground "#333" :height 160))))
                 (tabbar-unselected-modified . '((t (:inherit tabbar-selected-modified :background "#fee" :height 160)))))
-  :custom (tabbar-ruler-global-tabbar . t)
-  :config (tabbar-ruler-group-by-projectile-project))
+  :config
+  (defun tabbar-buffer-groups ()
+    "Return the list of group names the current buffer belongs to.
+This function is a custom function for tabbar-mode's tabbar-buffer-groups.
+This function group all buffers into 3 groups:
+Those Dired, those user buffer, and those emacs buffer.
+Emacs buffer are those starting with “*”."
+    (list
+     (let ((project-root (projectile-project-p))
+           (project-name (projectile-project-name)))
+       (cond
+        ((string-equal "*" (substring (buffer-name) 0 1)) "Others")
+        ((eq major-mode 'magit-status-mode) "git status")
+        ((eq major-mode 'dired-mode) "Dired")
+        ((not (null project-root)) project-name)))))
+
+  (setq tabbar-buffer-groups-function 'tabbar-buffer-groups))
+;;;   end
+
+
+;;;   Typescript support
+(leaf typescript-mode)
+;;;   end
 
 
 (setq leaf-defaults nil)
