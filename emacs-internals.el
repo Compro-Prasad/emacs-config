@@ -666,6 +666,27 @@ The return value is nil if no font was found, truthy otherwise."
 ;;;   end
 
 
+;;;   Publish using org mode
+(setq org-publish-website-local "~/Downloads/github.com/Compro-Prasad/website/")
+(setq org-publish-project-alist
+      `(("orgfiles"
+         :auto-sitemap t
+         :sitemap-title "List of pages"
+         :base-directory ,(concat org-publish-website-local "org")
+         :base-extension "org"
+         :publishing-directory ,(concat org-publish-website-local "html")
+         :publishing-function org-html-publish-to-html
+         ;; :exclude "PrivatePage.org"   ;; regexp
+         ;; :headline-levels 3
+         :section-numbers nil
+         :with-toc 1
+         :html-head "<link rel=\"stylesheet\"
+                       href=\"../css/mystyle.css\" type=\"text/css\"/>"
+         :html-preamble t)
+        ("website" :components ("orgfiles"))))
+;;;   end
+
+
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
