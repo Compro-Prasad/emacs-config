@@ -19,6 +19,7 @@
         hungry-delete-backward
         hungry-delete-forward
         indent-for-tab-command
+        isearch-printing-char
         kill-region
         markdown-outdent-or-delete
         my-backward-kill-word
