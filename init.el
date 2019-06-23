@@ -546,7 +546,8 @@ Emacs buffer are those starting with “*”."
         ((eq major-mode 'dired-mode) "Dired")
         ((not (null project-root)) project-name)))))
 
-  (setq tabbar-buffer-groups-function 'tabbar-buffer-groups))
+  (setq tabbar-buffer-groups-function 'tabbar-buffer-groups)
+  (tabbar-mode 1))
 ;;;   end
 
 
