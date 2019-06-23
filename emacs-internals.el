@@ -213,21 +213,21 @@
    [?\C-\[] (kbd "<C-[>")))
 
 (general-define-key
- [down]          nil
- [up]            nil
- [left]          nil
- [right]         nil
- "C-x C-o"       'ff-find-other-file
- [C-m]           'delete-other-windows
- "<C-tab>"       'previous-buffer
- "<C-S-tab>"     'next-buffer
- "<C-backtab>"   'next-buffer
- "C-c <tab>"     'toggle-minibuffer-message-timer
- "<C-S-mouse-1>" 'imenu
- "C-<f4>"        'kill-current-buffer
- "M-/"           'hippie-expand
- [mouse-3]       menu-bar-edit-menu
- "M-^"           'compile)
+ [down]            nil
+ [up]              nil
+ [left]            nil
+ [right]           nil
+ "C-x C-o"         'ff-find-other-file
+ [C-m]             'delete-other-windows
+ "<C-tab>"         'previous-buffer
+ "<C-iso-lefttab>" 'next-buffer
+ "<C-backtab>"     'next-buffer
+ "C-c <tab>"       'toggle-minibuffer-message-timer
+ "<C-S-mouse-1>"   'imenu
+ "C-<f4>"          'kill-current-buffer
+ "M-/"             'hippie-expand
+ [mouse-3]         menu-bar-edit-menu
+ "M-^"             'compile)
 
 ;;;   Automatically change to newest version of file if edited externally
 (global-auto-revert-mode t)
