@@ -503,9 +503,11 @@
   `(progn
      (pp (macroexpand-1 ',form))
      nil))
+
+
+(setq leaf-defaults nil)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
-  :init
-  (require 'navbar)
-  (setq navbar-item-list '("Hello, World!"))
-  (navbar-mode 1))
+  :require t
+  :config
+  (setq navbar-item-list '("Hello, World!" "Hello")))
