@@ -196,9 +196,7 @@
 
 
 ;;;   The doom theming
-(leaf doom-themes
-  :init
-  (load-theme 'doom-spacegrey))
+(leaf doom-themes)
 (leaf doom-modeline
   :hook (after-init-hook . doom-modeline-init)
   :init
