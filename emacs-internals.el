@@ -10,6 +10,9 @@
  )
 
 (setq
+ ;;;   Initial major mode for *scratch* buffer
+ initial-major-mode 'fundamental-mode
+
  ;;;   Node.js path from nvm
  exec-path (append exec-path '("/home/compro/.nvm/versions/node/v9.3.0/bin/"))
 
