@@ -557,6 +557,13 @@ Emacs buffer are those starting with “*”."
 ;;;   end
 
 
+;;;   Better M-< and M->
+(leaf beginend
+  :config
+  (beginend-global-mode))
+;;;   end
+
+
 (setq leaf-defaults nil)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
