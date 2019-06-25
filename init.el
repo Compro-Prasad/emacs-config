@@ -11,6 +11,7 @@
        (proto (if no-ssl "http" "https")))
   ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
   ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
@@ -436,12 +437,14 @@
 
 ;;;   Org mode
 (leaf org
-  :leaf-defer t
-  :require t
+  :init (leaf org-plus-contrib)
   :bind
   (("C-c l" . org-store-link)
    ("C-c b" . org-switchb)
+   ("C-c a" . org-agenda)
+   ("C-c c" . org-capture)
    (:org-mode-map
+    :package org
     ("M-n" . outline-next-visible-heading)
     ("M-p" . outline-previous-visible-heading)))
   :custom
@@ -451,8 +454,6 @@
   :config
   (require 'ox-hugo)
   (require 'org-re-reveal)
-  (leaf org-capture :bind (("C-c c" . org-capture)))
-  (leaf org-agenda  :bind (("C-c a" . org-agenda)))
   (add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC")))
 
 (add-hook 'org-mode-hook
