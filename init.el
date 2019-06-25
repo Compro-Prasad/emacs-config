@@ -436,15 +436,14 @@
 
 ;;;   Org mode
 (leaf org
+  :leaf-defer t
+  :require t
   :bind
   (("C-c l" . org-store-link)
-   ("C-c a" . org-agenda)
-   ("C-c b" . org-iswitchb)
-   ("C-c c" . org-capture))
-  :bind
-  (:org-mode-map
-        ("M-n" . outline-next-visible-heading)
-        ("M-p" . outline-previous-visible-heading))
+   ("C-c b" . org-switchb)
+   (:org-mode-map
+    ("M-n" . outline-next-visible-heading)
+    ("M-p" . outline-previous-visible-heading)))
   :custom
   ((org-return-follows-link . t)
    (org-agenda-diary-file . "~/.org/diary.org")
@@ -452,6 +451,8 @@
   :config
   (require 'ox-hugo)
   (require 'org-re-reveal)
+  (leaf org-capture :bind (("C-c c" . org-capture)))
+  (leaf org-agenda  :bind (("C-c a" . org-agenda)))
   (add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC")))
 
 (add-hook 'org-mode-hook
