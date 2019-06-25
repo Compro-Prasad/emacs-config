@@ -507,9 +507,8 @@
 
 
 ;;;   Tabs
-(leaf tabbar
+(leaf tabbar-ruler
   :leaf-defer nil
-  :require t
   :bind (([C-tab]           . tabbar-forward-tab)
          ([C-S-iso-lefttab] . tabbar-backward-tab)
          ([C-f4]            . kill-current-buffer)
@@ -532,7 +531,7 @@
                 (tabbar-unselected          . '((t (:inherit tabbar-selected :background "#fee" :foreground "#333" :height 160))))
                 (tabbar-unselected-modified . '((t (:inherit tabbar-selected-modified :background "#fee" :height 160)))))
   :config
-  (defun tabbar-buffer-groups ()
+  (defun compro/tabbar-buffer-groups ()
     "Return the list of group names the current buffer belongs to.
 This function is a custom function for tabbar-mode's tabbar-buffer-groups.
 This function group all buffers into 3 groups:
@@ -547,8 +546,9 @@ Emacs buffer are those starting with “*”."
         ((eq major-mode 'dired-mode) "Dired")
         ((not (null project-root)) project-name)))))
 
-  (setq tabbar-buffer-groups-function 'tabbar-buffer-groups)
-  (tabbar-mode 1))
+  ;; (setq tabbar-buffer-groups-function 'compro/tabbar-buffer-groups)
+  ;; (tabbar-mode 1)
+  )
 ;;;   end
 
 
