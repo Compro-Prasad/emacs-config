@@ -513,52 +513,6 @@ is useful."
      nil))
 
 
-;;;   Tabs
-(leaf tabbar-ruler
-  :leaf-defer nil
-  :bind (([C-tab]           . tabbar-forward-tab)
-         ([C-S-iso-lefttab] . tabbar-backward-tab)
-         ([C-f4]            . kill-current-buffer)
-         (:org-mode-map
-          :package org
-          ([C-tab]           . tabbar-forward-tab)
-          ([C-S-tab]         . tabbar-backward-tab)
-          ([C-S-iso-lefttab] . tabbar-backward-tab)
-          ([C-f4]            . kill-current-buffer))
-         (:magit-mode-map
-          :package magit
-          ([C-tab]           . tabbar-forward-tab)
-          ([C-S-tab]         . tabbar-backward-tab)
-          ([C-S-iso-lefttab] . tabbar-backward-tab)
-          ([C-f4]            . kill-current-buffer)))
-  :custom-face ((tabbar-button              . '((t (:inherit default :box nil :height 104 :width normal :family "Sans Serif"))))
-                (tabbar-highlight           . '((t nil)))
-                (tabbar-selected            . '((t (:inherit default :weight normal :height 160 :width normal :family "Sans Serif"))))
-                (tabbar-selected-modified   . '((t (:inherit default :foreground "red" :box nil :weight normal :height 160 :family "Sans Serif"))))
-                (tabbar-unselected          . '((t (:inherit tabbar-selected :background "#fee" :foreground "#333" :height 160))))
-                (tabbar-unselected-modified . '((t (:inherit tabbar-selected-modified :background "#fee" :height 160)))))
-  :config
-  (defun compro/tabbar-buffer-groups ()
-    "Return the list of group names the current buffer belongs to.
-This function is a custom function for tabbar-mode's tabbar-buffer-groups.
-This function group all buffers into 3 groups:
-Those Dired, those user buffer, and those emacs buffer.
-Emacs buffer are those starting with “*”."
-    (list
-     (let ((project-root (projectile-project-p))
-           (project-name (projectile-project-name)))
-       (cond
-        ((string-equal "*" (substring (buffer-name) 0 1)) "Others")
-        ((eq major-mode 'magit-status-mode) "git status")
-        ((eq major-mode 'dired-mode) "Dired")
-        ((not (null project-root)) project-name)))))
-
-  ;; (setq tabbar-buffer-groups-function 'compro/tabbar-buffer-groups)
-  ;; (tabbar-mode 1)
-  )
-;;;   end
-
-
 ;;;   Typescript support
 (leaf typescript-mode)
 ;;;   end
@@ -598,9 +552,88 @@ Emacs buffer are those starting with “*”."
 ;;;   end
 
 
+;;;   Packages below this line are not available on MELPA and leaf
+;;;   always tries to install them if :ensure is t.
 (setq leaf-defaults nil)
+
+
+;;;   Navbar(like Bootstrap Navbar)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
   :require t
   :config
   (setq navbar-item-list '("Hello, World!" "Hello")))
+;;;   end
+
+
+;;;   Tabs in Emacs
+(leaf centaur-tabs
+  :leaf-defer nil
+  :require t
+  :load-path "/home/compro/Downloads/github.com/ema2159/centaur-tabs"
+  :config
+  (setq centaur-tabs-background-color (face-background 'default))
+  (centaur-tabs-inherit-tabbar-faces)
+  (setq centaur-tabs-style "bar")  ;; slant, box, bar
+  (setq centaur-tabs-height 32)
+  (setq centaur-tabs-set-icons t)
+  (setq centaur-tabs-set-bar t)
+  (setq centaur-tabs-set-modified-marker t)
+  (centaur-tabs-mode t)
+  (defun centaur-tabs-buffer-groups ()
+    "`centaur-tabs-buffer-groups' control buffers' group rules.
+
+Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
+All buffer name start with * will group to \"Emacs\".
+Other buffer group by `centaur-tabs-get-group-name' with project name."
+    (list
+     (cond
+      ((or (string-equal "*" (substring (buffer-name) 0 1))
+           (memq major-mode '(magit-process-mode
+                              magit-status-mode
+                              magit-diff-mode
+                              magit-log-mode
+                              magit-file-mode
+                              magit-blob-mode
+                              magit-blame-mode
+                              )))
+       "Emacs")
+      ((derived-mode-p 'prog-mode)
+       "Editing")
+      ((derived-mode-p 'dired-mode)
+       "Dired")
+      ((memq major-mode '(helpful-mode
+                          help-mode))
+       "Help")
+      ((memq major-mode '(org-mode
+                          org-agenda-clockreport-mode
+                          org-src-mode
+                          org-agenda-mode
+                          org-beamer-mode
+                          org-indent-mode
+                          org-bullets-mode
+                          org-cdlatex-mode
+                          org-agenda-log-mode
+                          diary-mode))
+       "OrgMode")
+      (t
+       (centaur-tabs-get-group-name (current-buffer))))))
+  :hook
+  (dashboard-mode . centaur-tabs-local-mode)
+  (term-mode . centaur-tabs-local-mode)
+  (calendar-mode . centaur-tabs-local-mode)
+  (dired-mode . centaur-tabs-local-mode)
+  (org-agenda-mode . centaur-tabs-local-mode)
+  (magit-log-mode . centaur-tabs-local-mode)
+  (magit-diff-mode . centaur-tabs-local-mode)
+  (magit-status-mode . centaur-tabs-local-mode)
+  (magit-process-mode . centaur-tabs-local-mode)
+  (magit-stashes-mode . centaur-tabs-local-mode)
+  (helpful-mode . centaur-tabs-local-mode)
+  (help-mode . centaur-tabs-local-mode)
+  (fundamental-mode . centaur-tabs-local-mode)
+  (lisp-interaction-mode . centaur-tabs-local-mode)
+  :bind
+  (([C-tab] . centaur-tabs-forward)
+   ([C-S-iso-lefttab] . centaur-tabs-backward)))
+;;;   end
