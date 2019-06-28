@@ -585,6 +585,12 @@ Emacs buffer are those starting with “*”."
 ;;;   end
 
 
+;;;   Increase and decrease font size in Emacs
+(leaf default-text-scale
+  :config (default-text-scale-mode 1))
+;;;   end
+
+
 (setq leaf-defaults nil)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
