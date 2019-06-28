@@ -571,6 +571,20 @@ Emacs buffer are those starting with “*”."
 ;;;   end
 
 
+;;;   Manage services from Emacs
+(leaf prodigy
+  :config
+  (prodigy-define-service
+   :name "NIT Durgapur backend"
+   :command "pipenv"
+   :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
+   :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/backend"
+   :tags '(college)
+   :stop-signal 'sigint
+   :kill-process-buffer-on-stop t))
+;;;   end
+
+
 (setq leaf-defaults nil)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
