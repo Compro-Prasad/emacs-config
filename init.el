@@ -591,6 +591,13 @@ Emacs buffer are those starting with “*”."
 ;;;   end
 
 
+;;;   Better buffer jumping
+(leaf frog-jump-buffer
+  :init (require 'projectile) (projectile-mode 1)
+  :bind ("C-x C-b" . frog-jump-buffer))
+;;;   end
+
+
 (setq leaf-defaults nil)
 (leaf navbar
   :load-path "~/Downloads/github.com/conao3/navbar.el"
