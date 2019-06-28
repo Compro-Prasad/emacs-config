@@ -279,7 +279,13 @@
   :commands lsp
   :init
   (require 'lsp-clients)
-  (add-hook 'prog-mode-hook 'lsp))
+  (defun compro/init-lsp ()
+    "Start lsp server only when it is a valid project where lsp
+is useful."
+    (when (and (fboundp 'projectile-project-p) (projectile-project-p))
+      (lsp)))
+  (add-hook 'c++-mode-hook 'compro/init-lsp)
+  (add-hook 'python-mode-hook 'compro/init-lsp))
 (leaf company-lsp
   :commands company-lsp)
 (leaf lsp-ui
