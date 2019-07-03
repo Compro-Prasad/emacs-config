@@ -568,14 +568,43 @@ is useful."
   :leaf-defer nil
   :require t
   :load-path "/home/compro/Downloads/github.com/ema2159/centaur-tabs"
+  :preface
+  (defun compro/centaur-tabs-hide-tab (x)
+    "Do no to show buffer X in tabs."
+    (let ((name (format "%s" x)))
+      (or
+       ;; Current window is not dedicated window.
+       (window-dedicated-p (selected-window))
+
+       ;; Buffer name not match below blacklist.
+       (string-prefix-p "*epc" name)
+       (string-prefix-p "*helm" name)
+       (string-prefix-p "*Compile-Log*" name)
+       (string-prefix-p "*lsp" name)
+       (string-prefix-p "*helpful" name)
+       (string-prefix-p "*refs: " name)
+       (string-prefix-p "*Customize" name)
+
+       ;; Is not magit buffer.
+       (and (string-prefix-p "magit" name)
+	    (not (file-name-extension name)))
+       )))
+  :custom-face
+  ((centaur-tabs-close-mouse-face . '((t (:foreground "#696969")))))
+  :custom
+  ((centaur-tabs-mouse-pointer . 'arrow)
+   (centaur-tabs-style . "bar")  ;; slant, box, bar
+   (centaur-tabs-height . 30)
+   (centaur-tabs-set-icons . t)
+   (centaur-tabs-set-bar . t)
+   (centaur-tabs-cycle-scope . 'tabs)
+   (centaur-tabs-set-modified-marker . t)
+   (centaur-tabs-hide-tab-function . 'compro/centaur-tabs-hide-tab))
   :config
-  (setq centaur-tabs-style "bar")  ;; slant, box, bar
-  (setq centaur-tabs-height 32)
-  (setq centaur-tabs-set-icons t)
-  (setq centaur-tabs-set-bar t)
-  (setq centaur-tabs-set-modified-marker t)
+  (append centaur-tabs-hide-tabs-hooks
+          '(helpful-mode))
   ;; Load theme here before the following three lines
-  (setq centaur-tabs-background-color (face-background 'default))
+  ;; (setq centaur-tabs-background-color (face-background 'default))
   (centaur-tabs-inherit-tabbar-faces)
   (centaur-tabs-mode t)
   ;; Don't load theme after this line
@@ -597,41 +626,10 @@ Other buffer group by `centaur-tabs-get-group-name' with project name."
                               magit-blame-mode
                               )))
        "Emacs")
-      ((derived-mode-p 'prog-mode)
-       "Editing")
-      ((derived-mode-p 'dired-mode)
-       "Dired")
       ((memq major-mode '(helpful-mode
                           help-mode))
        "Help")
-      ((memq major-mode '(org-mode
-                          org-agenda-clockreport-mode
-                          org-src-mode
-                          org-agenda-mode
-                          org-beamer-mode
-                          org-indent-mode
-                          org-bullets-mode
-                          org-cdlatex-mode
-                          org-agenda-log-mode
-                          diary-mode))
-       "OrgMode")
-      (t
-       (centaur-tabs-get-group-name (current-buffer))))))
-  :hook
-  (dashboard-mode . centaur-tabs-local-mode)
-  (term-mode . centaur-tabs-local-mode)
-  (calendar-mode . centaur-tabs-local-mode)
-  (dired-mode . centaur-tabs-local-mode)
-  (org-agenda-mode . centaur-tabs-local-mode)
-  (magit-log-mode . centaur-tabs-local-mode)
-  (magit-diff-mode . centaur-tabs-local-mode)
-  (magit-status-mode . centaur-tabs-local-mode)
-  (magit-process-mode . centaur-tabs-local-mode)
-  (magit-stashes-mode . centaur-tabs-local-mode)
-  (helpful-mode . centaur-tabs-local-mode)
-  (help-mode . centaur-tabs-local-mode)
-  (fundamental-mode . centaur-tabs-local-mode)
-  (lisp-interaction-mode . centaur-tabs-local-mode)
+      (t "Files and Dirs"))))
   :bind
   (([C-tab] . centaur-tabs-forward)
    ([C-S-iso-lefttab] . centaur-tabs-backward)))
