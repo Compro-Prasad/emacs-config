@@ -75,19 +75,25 @@
 
 ;;;   Git integration
 (leaf magit
-  :bind (("C-x g" . magit-status))
+  :bind (("C-x g" . magit-status)
+         (magit-mode-map
+          ([C-tab] . nil)
+          ([C-backtab] . nil)
+          ([M-tab] . nil))
+         (magit-status-mode-map
+          ("q" . compro/kill-magit-buffers)
+          ([C-tab] . nil)
+          ([C-backtab] . nil)
+          ([M-tab] . nil))
+         (magit-log-mode-map
+          ([C-tab] . nil)
+          ([C-backtab] . nil)
+          ([M-tab] . nil)))
   :config
-  (define-key magit-mode-map [C-tab] nil)
-  (define-key magit-mode-map [C-backtab] nil)
-  (define-key magit-mode-map [M-tab] nil)
-  (with-eval-after-load 'magit-status
-    (define-key magit-status-mode-map [C-tab] nil)
-    (define-key magit-status-mode-map [C-backtab] nil)
-    (define-key magit-status-mode-map [M-tab] nil))
-  (with-eval-after-load 'magit-log
-    (define-key magit-log-mode-map [C-tab] nil)
-    (define-key magit-log-mode-map [C-backtab] nil)
-    (define-key magit-log-mode-map [M-tab] nil))
+  (defun compro/kill-magit-buffers ()
+    "Kill magit buffers related to a project."
+    (interactive)
+    (magit-mode-bury-buffer 16))
   (with-eval-after-load 'magit-diff
     (define-key magit-diff-mode-map [C-tab] nil)
     (define-key magit-file-section-map [C-tab] nil)
