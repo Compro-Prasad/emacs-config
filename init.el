@@ -274,8 +274,7 @@
 is useful."
     (when (and (fboundp 'projectile-project-p) (projectile-project-p))
       (lsp)))
-  (add-hook 'c++-mode-hook 'compro/init-lsp)
-  (add-hook 'python-mode-hook 'compro/init-lsp))
+  )
 (leaf company-lsp
   :commands company-lsp)
 (leaf lsp-ui
