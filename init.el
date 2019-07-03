@@ -193,7 +193,6 @@
 ;;;   The doom theming
 (leaf doom-themes :require t :leaf-defer nil)
 (leaf doom-modeline
-  :hook (after-init-hook . doom-modeline-init)
   :init
   (setq doom-modeline-buffer-file-name-style 'relative-to-project))
 ;;;   end
