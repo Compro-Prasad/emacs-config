@@ -561,14 +561,16 @@ is useful."
   :require t
   :load-path "/home/compro/Downloads/github.com/ema2159/centaur-tabs"
   :config
-  (setq centaur-tabs-background-color (face-background 'default))
-  (centaur-tabs-inherit-tabbar-faces)
   (setq centaur-tabs-style "bar")  ;; slant, box, bar
   (setq centaur-tabs-height 32)
   (setq centaur-tabs-set-icons t)
   (setq centaur-tabs-set-bar t)
   (setq centaur-tabs-set-modified-marker t)
+  ;; Load theme here before the following three lines
+  (setq centaur-tabs-background-color (face-background 'default))
+  (centaur-tabs-inherit-tabbar-faces)
   (centaur-tabs-mode t)
+  ;; Don't load theme after this line
   (defun centaur-tabs-buffer-groups ()
     "`centaur-tabs-buffer-groups' control buffers' group rules.
 
