@@ -34,13 +34,6 @@
 ;;;   end
 
 
-;;;   Load environment variables in Emacs
-(leaf exec-path-from-shell
-  :if (memq window-system '(mac ns x))
-  :init (exec-path-from-shell-initialize))
-;;;   end
-
-
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
   (leaf f
