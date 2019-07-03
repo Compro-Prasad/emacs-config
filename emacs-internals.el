@@ -649,6 +649,20 @@ The return value is nil if no font was found, truthy otherwise."
 (add-hook 'org-after-todo-statistics-hook 'my-org-autodone)
 
 
+(defun compro/rename-file-buffer ()
+  "Rename current buffer and the file it is linked to."
+  (interactive)
+  (let ((filename (basename (buffer-file-name))))
+    (if (and filename (file-exists-p filename))
+        (let* ((new-name (read-string
+                         (concat "Rename '" filename "' to: ")
+                         filename)))
+          (rename-file filename new-name 1)
+          (set-visited-file-name new-name t t))
+      (message "This buffer is not linked to a file"))))
+(global-set-key (kbd "C-c f r") 'compro/rename-file-buffer)
+
+
 ;;;   Fontify exported PDF using minted
 ;; Include the latex-exporter
 (require 'ox-latex)
