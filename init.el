@@ -634,3 +634,29 @@ Other buffer group by `centaur-tabs-get-group-name' with project name."
   (([C-tab] . centaur-tabs-forward)
    ([C-S-iso-lefttab] . centaur-tabs-backward)))
 ;;;   end
+
+
+;;;   Dired customizations
+(leaf dired-x
+  :bind ("C-x <C-j>" . dired-jump))
+(leaf dired
+  :hook (dired-mode-hook . dired-hide-details-mode)
+  :bind ((dired-mode-map
+          ("q"      . kill-current-buffer)
+          ("RET"    . compro/dired-open-dir)
+          ("^"      . compro/dired-up-dir)
+          ("DEL"    . compro/dired-up-dir)
+          ("<left>" . compro/dired-up-dir)))
+  :preface
+  (defun compro/dired-up-dir ()
+    (interactive)
+    (find-alternate-file ".."))
+  (defun compro/dired-open-dir ()
+    (interactive)
+    (set-buffer-modified-p nil)
+    (let ((file-or-dir (dired-get-file-for-visit)))
+      (if (f-dir-p file-or-dir)
+          (find-alternate-file file-or-dir)
+        (find-file file-or-dir))))
+  :custom ((dired-dwim-target . t)))
+;;;   end
