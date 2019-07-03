@@ -446,6 +446,8 @@ is useful."
    ("C-c c" . org-capture)
    (:org-mode-map
     :package org
+    ([C-tab] . nil)
+    ([C-backtab] . nil)
     ("M-n" . outline-next-visible-heading)
     ("M-p" . outline-previous-visible-heading)))
   :custom
