@@ -63,7 +63,7 @@
 ;;;   Hide minor modes from modeline
 (leaf minions
   :bind ([S-down-mouse-3] . minions-minor-modes-menu)
-  :hook (after-init . minions-mode))
+  :hook (after-init-hook . minions-mode))
 ;;;   end
 
 
