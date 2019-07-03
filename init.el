@@ -363,10 +363,10 @@ is useful."
    ("C-c s r" . counsel-rg)
    ("C-c s a" . counsel-ag)
    ("C-c s g" . counsel-grep)
-   ("C-c C-r" . counsel-recentf)
+   ("C-c r" . counsel-recentf)
    ("C-c y" . counsel-yank-pop)
    ("C-c u" . counsel-unicode)
-   ("C-c r" . ivy-resume)))
+   ("C-c R" . ivy-resume)))
 ;;;   end
 
 
