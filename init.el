@@ -261,8 +261,6 @@
         company-jedi-python-bin "python")
   (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends)))
 
-(leaf company-posframe
-  :config (company-posframe-mode 1))
 ;;;   end
 
 
