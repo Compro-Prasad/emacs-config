@@ -191,7 +191,7 @@
 
 
 ;;;   The doom theming
-(leaf doom-themes)
+(leaf doom-themes :require t :leaf-defer nil)
 (leaf doom-modeline
   :hook (after-init-hook . doom-modeline-init)
   :init
