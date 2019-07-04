@@ -253,7 +253,7 @@
    (company-active-map
     ("RET" . nil)
     ("C-h" . nil)
-    ("ESC" . company-abort)
+    ("ESC ESC" . company-abort)
     ("<tab>" . company-complete-selection)))
   :config
   (setq company-idle-delay 0.09
