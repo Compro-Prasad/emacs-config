@@ -608,37 +608,10 @@ is useful."
    (centaur-tabs-set-bar . t)
    (centaur-tabs-cycle-scope . 'tabs)
    (centaur-tabs-set-modified-marker . t)
-   (centaur-tabs-hide-tab-function . 'compro/centaur-tabs-hide-tab))
+   (centaur-tabs-hide-tab-function . 'compro/centaur-tabs-hide-tab)
+   (centaur-tabs-buffer-groups-function . 'compro/centaur-tabs-buffer-groups))
   :config
-  (append centaur-tabs-hide-tabs-hooks
-          '(helpful-mode))
-  ;; Load theme here before the following three lines
-  ;; (setq centaur-tabs-background-color (face-background 'default))
-  (centaur-tabs-inherit-tabbar-faces)
   (centaur-tabs-mode t)
-  ;; Don't load theme after this line
-  (defun centaur-tabs-buffer-groups ()
-    "`centaur-tabs-buffer-groups' control buffers' group rules.
-
-Group centaur-tabs with mode if buffer is derived from `eshell-mode' `emacs-lisp-mode' `dired-mode' `org-mode' `magit-mode'.
-All buffer name start with * will group to \"Emacs\".
-Other buffer group by `centaur-tabs-get-group-name' with project name."
-    (list
-     (cond
-      ((or (string-equal "*" (substring (buffer-name) 0 1))
-           (memq major-mode '(magit-process-mode
-                              magit-status-mode
-                              magit-diff-mode
-                              magit-log-mode
-                              magit-file-mode
-                              magit-blob-mode
-                              magit-blame-mode
-                              )))
-       "Emacs")
-      ((memq major-mode '(helpful-mode
-                          help-mode))
-       "Help")
-      (t "Files and Dirs"))))
   :bind
   (([C-tab] . centaur-tabs-forward)
    ([C-S-iso-lefttab] . centaur-tabs-backward)))
