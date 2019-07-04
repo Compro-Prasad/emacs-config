@@ -591,6 +591,13 @@ is useful."
        (and (string-prefix-p "magit" name)
 	    (not (file-name-extension name)))
        )))
+  (defun compro/centaur-tabs-buffer-groups ()
+    `(,(cond
+        ((or (buffer-file-name)
+             (eq major-mode 'dired-mode))    "Files")
+        ((eq major-mode 'magit-status-mode)  "Magit")
+        ((eq major-mode 'helpful-mode)       "Helpful")
+        ((string-prefix-p "*" (buffer-name)) "Emacs"))))
   :custom-face
   ((centaur-tabs-close-mouse-face . '((t (:foreground "#696969")))))
   :custom
