@@ -197,7 +197,9 @@
 
 
 ;;;   The doom theming
-(leaf doom-themes :require t :leaf-defer nil)
+(leaf doom-themes)
+(leaf kaolin-themes :require t :leaf-defer nil
+  :config (load-theme 'kaolin-dark))
 (leaf doom-modeline
   :init
   (setq doom-modeline-buffer-file-name-style 'relative-to-project))
