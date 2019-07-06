@@ -36,6 +36,9 @@
  ;;;   Jump by words separated by punctuations
  global-subword-mode t
 
+ ;;;   Prompt GNUPG passwords in the minibuffer only
+ epg-pinentry-mode 'loopback
+
  ;;;   Show keystrokes in minibuffer after 0.5 seconds
  echo-keystrokes 0.5
 
