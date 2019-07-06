@@ -551,17 +551,75 @@ is useful."
 ;;;   end
 
 
+;;;   EXWM - Emacs Window Manager
+(leaf exwm :require t :leaf-defer nil
+  :init
+  (require 'exwm)
+  (require 'exwm-config)
+  (require 'exwm-systemtray)
+  (setq exwm-input-global-keys `(,(kbd "s-&") .
+                               (lambda (command)
+                                 (interactive (list (read-shell-command "$ ")))
+                                 (start-process-shell-command command nil command))))
+  (exwm-systemtray-enable)
+  (exwm-config-default))
+;;;   end
+
+
 ;;;   Packages below this line are not available on MELPA and leaf
 ;;;   always tries to install them if :ensure is t.
 (setq leaf-defaults nil)
 
 
 ;;;   Navbar(like Bootstrap Navbar)
-(leaf navbar
+(leaf navbar :require t :leaf-defer t
   :load-path "~/Downloads/github.com/conao3/navbar.el"
-  :require t
   :config
-  (setq navbar-item-list '("Hello, World!" "Hello")))
+  (defun get-exwm-buffers ()
+    (let ((str ""))
+      (mapcar
+       (lambda (buffer)
+         (let* ((buf-name (propertize (concat (buffer-name buffer) " x")
+                                      'mouse-face 'highlight))
+                (cross-start (length (buffer-name buffer)))
+                (cross-end (length buf-name))
+                (select-map (make-sparse-keymap))
+                (close-map (make-sparse-keymap)))
+           (define-key close-map [mouse-1]
+             `(lambda (event)
+                (interactive "e")
+                (kill-buffer ,buffer)))
+           (define-key select-map [mouse-1]
+             `(lambda (event)
+                (interactive "e")
+                (call-interactively 'other-window)
+                (switch-to-buffer ,buffer)))
+           (add-text-properties
+            0 cross-start
+            (list
+             'help-echo (concat "Switch to " (buffer-name buffer))
+             'keymap select-map)
+            buf-name)
+           (add-text-properties
+            (1+ cross-start) cross-end
+            (list
+             'help-echo (concat "Kill " (buffer-name buffer))
+             'keymap close-map
+             'face '((t (:foreground "#0ff")))
+             'mouse-face '((t (:background "#f00"))))
+            buf-name)
+           (setq str (concat str buf-name " | "))))
+       (seq-filter
+        (lambda (buffer)
+          (with-current-buffer buffer
+            (eq major-mode 'exwm-mode)))
+        (buffer-list)))
+      str))
+  (setq navbar-item-list '(get-exwm-buffers))
+  (setq navbar-update-timer
+        (run-with-timer 1.1 1.4 'navbar-sync))
+  ;; (navbar-sync)
+  )
 ;;;   end
 
 
