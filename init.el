@@ -632,23 +632,25 @@ is useful."
   (defun compro/centaur-tabs-hide-tab (x)
     "Do no to show buffer X in tabs."
     (let ((name (format "%s" x)))
-      (or
-       ;; Current window is not dedicated window.
-       (window-dedicated-p (selected-window))
+      (and
+       (not
+        (or
+         ;; Whitelist - Will not be hidden
+         (string-equal "*Messages*" name)
+         (string-equal "*scratch*" name)
+         (string-equal "*Help*" name)
+         (string-prefix-p "*eww" name)
+         (string-prefix-p "*terminal" name)))
+       (or
+        ;; Current window is not dedicated window.
+        (window-dedicated-p (selected-window))
 
-       ;; Buffer name not match below blacklist.
-       (string-prefix-p "*epc" name)
-       (string-prefix-p "*helm" name)
-       (string-prefix-p "*Compile-Log*" name)
-       (string-prefix-p "*lsp" name)
-       (string-prefix-p "*helpful" name)
-       (string-prefix-p "*refs: " name)
-       (string-prefix-p "*Customize" name)
+        ;; Blacklist - Will be hidden
 
-       ;; Is not magit buffer.
-       (and (string-prefix-p "magit" name)
-	    (not (file-name-extension name)))
-       )))
+        ;; Is not magit buffer.
+        (and (string-prefix-p "magit" name)
+	     (not (file-name-extension name)))
+        ))))
   (defun compro/centaur-tabs-buffer-groups ()
     `(,(cond
         ((or (buffer-file-name)
@@ -661,7 +663,7 @@ is useful."
   :custom
   ((centaur-tabs-mouse-pointer . 'arrow)
    (centaur-tabs-style . "bar")  ;; slant, box, bar
-   (centaur-tabs-height . 30)
+   (centaur-tabs-height . 15)
    (centaur-tabs-set-icons . t)
    (centaur-tabs-set-bar . t)
    (centaur-tabs-cycle-scope . 'tabs)
