@@ -562,7 +562,8 @@ is useful."
                                  (interactive (list (read-shell-command "$ ")))
                                  (start-process-shell-command command nil command))))
   (exwm-systemtray-enable)
-  (exwm-config-default))
+  (exwm-config-default)
+  (ido-mode 0))
 ;;;   end
 
 
