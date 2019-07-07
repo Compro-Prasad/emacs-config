@@ -7,6 +7,9 @@
 
  ;;;   Org
  org-src-fontify-natively t ;; Fontify source blocks
+
+ ;;;   More number of characters on a single line
+ fill-column 80
  )
 
 (setq
