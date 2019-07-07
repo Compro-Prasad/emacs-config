@@ -532,9 +532,31 @@ is useful."
    :command "pipenv"
    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/backend"
-   :tags '(college)
+   :tags '(college django python)
    :stop-signal 'sigint
-   :kill-process-buffer-on-stop t))
+   :kill-process-buffer-on-stop t)
+  (prodigy-define-service
+   :name "NIT Durgapur frontend"
+   :command "npm"
+   :args '("run" "dev")
+   :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/frontend"
+   :tags '(college node js vue)
+   :stop-signal 'sigint
+   :kill-process-buffer-on-stop t)
+  (prodigy-define-service
+    :name "Start Mariadb"
+    :sudo t
+    :command "systemctl"
+    :args '("start" "mariadb.service")
+    :tags '(system db)
+    :kill-process-buffer-on-stop t)
+  (prodigy-define-service
+    :name "Stop Mariadb"
+    :sudo t
+    :command "systemctl"
+    :args '("stop" "mariadb.service")
+    :tags '(system db)
+    :kill-process-buffer-on-stop t))
 ;;;   end
 
 
