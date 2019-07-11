@@ -725,7 +725,8 @@ made unique when necessary."
              `(lambda (event)
                 (interactive "e")
                 (call-interactively 'other-window)
-                (switch-to-buffer ,buffer)))
+                (sit-for 0.1)
+                (exwm-workspace-switch-to-buffer ,buffer)))
            (add-text-properties
             0 cross-start
             (list
