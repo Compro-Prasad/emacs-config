@@ -823,9 +823,11 @@ made unique when necessary."
           ("DEL"    . compro/dired-up-dir)
           ("<left>" . compro/dired-up-dir)))
   :preface
+
   (defun compro/dired-up-dir ()
     (interactive)
     (find-alternate-file ".."))
+
   (defun compro/dired-open-dir ()
     (interactive)
     (set-buffer-modified-p nil)
@@ -833,5 +835,24 @@ made unique when necessary."
       (if (f-dir-p file-or-dir)
           (find-alternate-file file-or-dir)
         (find-file file-or-dir))))
+
+  (defun compro/dired/mp3-to-ogg ()
+    "Used in dired to convert mp3 files to ogg"
+    (interactive)
+    (let* ((files (dired-get-marked-files)))
+      (dolist (file files)
+        (let* ((basename (file-name-nondirectory file))
+               (file-base (file-name-base file))
+               (dirname (file-name-directory file))
+               (extension (file-name-extension file))
+               (ogg-file (concat dirname file-base ".ogg"))
+               (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+          (if (string= "mp3" (downcase extension))
+              (progn
+                (shell-command command nil nil)
+                (message command)
+                (if (file-exists-p ogg-file)
+                    (delete-file file))))))))
+
   :custom ((dired-dwim-target . t)))
 ;;;   end
