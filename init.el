@@ -356,7 +356,8 @@ is useful."
   :after ivy
   :config
   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
-  (ivy-posframe-mode 1))
+  ;; TODO: Disable when using EXWM
+  (ivy-posframe-mode 0))
 (leaf flx)
 (leaf swiper)
 (leaf counsel
