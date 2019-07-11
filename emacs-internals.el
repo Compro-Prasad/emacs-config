@@ -717,6 +717,30 @@ The return value is nil if no font was found, truthy otherwise."
   txt)
 
 
+(defun read-from-buffer (value &optional buffer-name)
+  "Edits string and returns it"
+  (let ((this-buffer (buffer-name))
+    (new-value value)
+    (buffy (if buffer-name buffer-name "*edit-string*")))
+    (save-excursion
+      (switch-to-buffer buffy)
+      (set-buffer buffy)
+      (text-mode)
+      (local-set-key (kbd "C-c C-c") 'exit-recursive-edit)
+      (local-set-key (kbd "<f9>") 'exit-recursive-edit)
+      (if (stringp value) (insert value))
+      ;; (speak "You may quit the buffer with Control C Control C")
+      (message "When you're done editing press C-c C-c or C-M-c or F9 to continue.")
+      (unwind-protect
+      (recursive-edit)
+    (if (get-buffer-window buffy)
+        (progn
+          (setq new-value (buffer-substring (point-min) (point-max)))
+          (kill-buffer buffy))))
+      (switch-to-buffer this-buffer)
+      new-value)))
+
+
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
