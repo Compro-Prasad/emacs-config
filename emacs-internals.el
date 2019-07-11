@@ -711,6 +711,12 @@ The return value is nil if no font was found, truthy otherwise."
 ;;;   end
 
 
+(defun strip-text-properties(txt)
+  "Removes all properties and formating from a string."
+  (set-text-properties 0 (length txt) nil txt)
+  txt)
+
+
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
