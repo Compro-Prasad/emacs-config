@@ -441,7 +441,19 @@ is useful."
 
 ;;;   Org mode
 (leaf org
-  :init (leaf org-plus-contrib)
+  :preface
+  (leaf org-plus-contrib)
+  (use-package ox-hugo
+    :after ox
+    :disabled t
+    :config
+    (dolist (ext '("zip" "ctf"))
+      (push ext org-hugo-external-file-extensions-allowed-for-copying)))
+  (use-package org-re-reveal :after ox)
+  (add-hook 'org-mode-hook
+            '(lambda ()
+               (setq line-spacing 0.2) ;; Add more line padding for readability
+               ))
   :bind
   (("C-c l" . org-store-link)
    ("C-c b" . org-switchb)
@@ -458,33 +470,129 @@ is useful."
    (org-agenda-diary-file . "~/.org/diary.org")
    (org-babel-load-languages . '((emacs-lisp . t) (python . t))))
   :config
-  (require 'ox-hugo)
-  (require 'org-re-reveal)
-  (add-to-list 'org-structure-template-alist '("el" "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC")))
+  (require 'org-tempo)
+  (define-minor-mode unpackaged/org-export-html-with-useful-ids-mode
+    "Attempt to export Org as HTML with useful link IDs.
+Instead of random IDs like \"#orga1b2c3\", use heading titles,
+made unique when necessary."
+    :global t
+    (if unpackaged/org-export-html-with-useful-ids-mode
+        (progn
+          (advice-add #'org-export-new-title-reference :override #'unpackaged/org-export-new-title-reference)
+          (advice-add #'org-export-get-reference :override #'unpackaged/org-export-get-reference))
+      (advice-remove #'org-export-new-title-reference #'unpackaged/org-export-new-title-reference)
+      (advice-remove #'org-export-get-reference #'unpackaged/org-export-get-reference)))
 
-(add-hook 'org-mode-hook
-          '(lambda ()
-             (setq line-spacing 0.2) ;; Add more line padding for readability
-             ))
+  (defun unpackaged/org-export-get-reference (datum info)
+    "Like `org-export-get-reference', except uses heading titles instead of random numbers."
+    (let ((cache (plist-get info :internal-references)))
+      (or (car (rassq datum cache))
+          (let* ((crossrefs (plist-get info :crossrefs))
+                 (cells (org-export-search-cells datum))
+                 ;; Preserve any pre-existing association between
+                 ;; a search cell and a reference, i.e., when some
+                 ;; previously published document referenced a location
+                 ;; within current file (see
+                 ;; `org-publish-resolve-external-link').
+                 ;;
+                 ;; However, there is no guarantee that search cells are
+                 ;; unique, e.g., there might be duplicate custom ID or
+                 ;; two headings with the same title in the file.
+                 ;;
+                 ;; As a consequence, before re-using any reference to
+                 ;; an element or object, we check that it doesn't refer
+                 ;; to a previous element or object.
+                 (new (or (cl-some
+                           (lambda (cell)
+                             (let ((stored (cdr (assoc cell crossrefs))))
+                               (when stored
+                                 (let ((old (org-export-format-reference stored)))
+                                   (and (not (assoc old cache)) stored)))))
+                           cells)
+                          (when (org-element-property :raw-value datum)
+                            ;; Heading with a title
+                            (unpackaged/org-export-new-title-reference datum cache))
+                          ;; NOTE: This probably breaks some Org Export
+                          ;; feature, but if it does what I need, fine.
+                          (org-export-format-reference
+                           (org-export-new-reference cache))))
+                 (reference-string new))
+            ;; Cache contains both data already associated to
+            ;; a reference and in-use internal references, so as to make
+            ;; unique references.
+            (dolist (cell cells) (push (cons cell new) cache))
+            ;; Retain a direct association between reference string and
+            ;; DATUM since (1) not every object or element can be given
+            ;; a search cell (2) it permits quick lookup.
+            (push (cons reference-string datum) cache)
+            (plist-put info :internal-references cache)
+            reference-string))))
 
-(setq org-startup-indented t
-      org-hide-emphasis-markers t
-      org-pretty-entities t)
+  (defun unpackaged/org-export-new-title-reference (datum cache)
+    "Return new reference for DATUM that is unique in CACHE."
+    (cl-macrolet ((inc-suffixf (place)
+                               `(progn
+                                  (string-match (rx bos
+                                                    (minimal-match (group (1+ anything)))
+                                                    (optional "--" (group (1+ digit)))
+                                                    eos)
+                                                ,place)
+                                  ;; HACK: `s1' instead of a gensym.
+                                  (-let* (((s1 suffix) (list (match-string 1 ,place)
+                                                             (match-string 2 ,place)))
+                                          (suffix (if suffix
+                                                      (string-to-number suffix)
+                                                    0)))
+                                    (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
+      (let* ((title (org-element-property :raw-value datum))
+             (ref (url-hexify-string (substring-no-properties title)))
+             (parent (org-element-property :parent datum)))
+        (while (--any (equal ref (car it))
+                      cache)
+          ;; Title not unique: make it so.
+          (if parent
+              ;; Append ancestor title.
+              (setf title (concat (org-element-property :raw-value parent)
+                                  "--" title)
+                    ref (url-hexify-string (substring-no-properties title))
+                    parent (org-element-property :parent parent))
+            ;; No more ancestors: add and increment a number.
+            (inc-suffixf ref)))
+        ref)))
+  (defun org-generate-custom-ids-based-on-headings ()
+    (interactive)
+    (let ((hlist nil))
+      (save-excursion
+        (goto-char (point-min))
+        (while (outline-next-heading)
+          (let* ((old-id (plist-get (org-element--get-node-properties) :CUSTOM_ID))
+                 (heading (replace-regexp-in-string "[^A-Za-z0-9]" "-" (strip-text-properties (org-get-heading t t t t))))
+                 (new-id (concat "h-" heading))
+                 (dup (assoc heading hlist))
+                 (dup-count (if dup (1+ (cdr dup)) 1)))
+            (setq new-id (concat new-id (if (= dup-count 1) "" (number-to-string dup-count))))
+            (unless (string-equal old-id new-id)
+              (org-set-property "CUSTOM_ID" new-id))
+            (setq hlist (delete dup hlist))
+            (push `(,heading . ,dup-count) hlist))))))
+  (fset 'org-dedent-properties
+        (kmacro-lambda-form
+         [?\C-s ?: ?P ?R ?O ?P ?E ?R ?T ?I ?E ?S ?: return
+                ?\C-a ?\C-x ? ?\C-s ?: ?E ?N ?D ?: return
+                ?\C-b ?\C-b ?\C-b ?\C-b ?\C-b
+                134217848 ?k ?i ?l ?l ?- ?r ?e ?c ?t ?a ?n ?g ?l ?e return] 0 "%d"))
+  (add-to-list 'org-structure-template-alist '("el" . "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC"))
 
-(setq org-capture-templates
- '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
-    "** TODO %?\n  %i\n  %a")
-   ("l" "Link" entry (file+headline "~/notes.org" "Links")
-    "** %T %^L \n%?")
-   ))
+  (setq org-startup-indented t
+        org-hide-emphasis-markers t
+        org-pretty-entities t
 
-(leaf ox-hugo
-  :config
-  (dolist (ext '("zip" "ctf"))
-    (push ext org-hugo-external-file-extensions-allowed-for-copying)))
+        org-capture-templates
+        '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
+           "** TODO %?\n  %i\n  %a")
+          ("l" "Link" entry (file+headline "~/notes.org" "Links")
+           "** %T %^L \n%?"))))
 
-
-(leaf org-re-reveal)
 ;;;   end
 
 
