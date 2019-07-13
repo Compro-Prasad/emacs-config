@@ -355,13 +355,13 @@ minibuffer using `display-startup-echo-area-message'.")
 
 
 (defun toggle-minibuffer-message-timer ()
-   "Toggle minibuffer message showing per
+  "Toggle minibuffer message showing per
 `minibuffer-message-display-interval'."
-   (interactive)
-   (if (null minibuffer-message-echo-timer)
-       (restart-minibuffer-message-display-timer 'display-startup-echo-area-message)
-     (cancel-timer minibuffer-message-echo-timer)
-     (setq minibuffer-message-echo-timer)))
+  (interactive)
+  (if (null minibuffer-message-echo-timer)
+      (restart-minibuffer-message-display-timer 'display-startup-echo-area-message)
+    (cancel-timer minibuffer-message-echo-timer)
+    (setq minibuffer-message-echo-timer)))
 
 
 (setq recentf-max-saved-items 512
@@ -661,8 +661,8 @@ The return value is nil if no font was found, truthy otherwise."
   (let ((filename (basename (buffer-file-name))))
     (if (and filename (file-exists-p filename))
         (let* ((new-name (read-string
-                         (concat "Rename '" filename "' to: ")
-                         filename)))
+                          (concat "Rename '" filename "' to: ")
+                          filename)))
           (rename-file filename new-name 1)
           (set-visited-file-name new-name t t))
       (message "This buffer is not linked to a file"))))
@@ -720,8 +720,8 @@ The return value is nil if no font was found, truthy otherwise."
 (defun read-from-buffer (value &optional buffer-name)
   "Edits string and returns it"
   (let ((this-buffer (buffer-name))
-    (new-value value)
-    (buffy (if buffer-name buffer-name "*edit-string*")))
+        (new-value value)
+        (buffy (if buffer-name buffer-name "*edit-string*")))
     (save-excursion
       (switch-to-buffer buffy)
       (set-buffer buffy)
@@ -732,11 +732,11 @@ The return value is nil if no font was found, truthy otherwise."
       ;; (speak "You may quit the buffer with Control C Control C")
       (message "When you're done editing press C-c C-c or C-M-c or F9 to continue.")
       (unwind-protect
-      (recursive-edit)
-    (if (get-buffer-window buffy)
-        (progn
-          (setq new-value (buffer-substring (point-min) (point-max)))
-          (kill-buffer buffy))))
+          (recursive-edit)
+        (if (get-buffer-window buffy)
+            (progn
+              (setq new-value (buffer-substring (point-min) (point-max)))
+              (kill-buffer buffy))))
       (switch-to-buffer this-buffer)
       new-value)))
 
