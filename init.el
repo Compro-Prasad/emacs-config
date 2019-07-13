@@ -29,14 +29,13 @@
     (error
      (package-refresh-contents)       ; renew local melpa cache if fail
      (package-install 'leaf))))
-(leaf leaf
-  :custom ((leaf-defaults . '(:ensure t))))
+(leaf leaf)
 ;;;   end
 
 
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
-  (leaf f
+  (leaf f :ensure t
     :commands f-mkdir
     :config
     (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
@@ -54,27 +53,27 @@
 
 
 ;;;   Hungry delete is the best part of editing text!
-(leaf hungry-delete
+(leaf hungry-delete :ensure t
   :init
   (global-hungry-delete-mode t))
 ;;;   end
 
 
 ;;;   Hide minor modes from modeline
-(leaf minions
+(leaf minions :ensure t
   :bind ([S-down-mouse-3] . minions-minor-modes-menu)
   :hook (after-init-hook . minions-mode))
 ;;;   end
 
 
 ;;;   Show last keybind and the function in modeline
-(leaf keycast
+(leaf keycast :ensure t
   :bind ("<f9> k" . keycast-mode))
 ;;;   end
 
 
 ;;;   Git integration
-(leaf magit
+(leaf magit :ensure t
   :bind (("C-x g" . magit-status)
          (magit-mode-map
           ([C-tab] . nil)
@@ -104,13 +103,13 @@
     (define-key magit-diff-mode-map [M-tab] nil)
     (define-key magit-file-section-map [M-tab] nil)
     (define-key magit-hunk-section-map [M-tab] nil)))
-(leaf git-messenger
+(leaf git-messenger :ensure t
   :bind (("C-x v p" . git-messenger:popup-message)))
 ;;;   end
 
 
 ;;;   Expand region for smart region selection
-(leaf expand-region
+(leaf expand-region :ensure t
   :bind
   (("C-=" . er/expand-region)
    ("C-+" . er/contract-region)))
@@ -118,10 +117,10 @@
 
 
 ;;;   Project support is very useful
-(leaf projectile
+(leaf projectile :ensure t
   :bind (("C-c p" . projectile-command-map))
   :init
-  (leaf ag)
+  (leaf ag :ensure t)
   :config
   (setq projectile-completion-system 'ivy)
   :custom ((projectile-mode . t)))
@@ -129,20 +128,20 @@
 
 
 ;;;   Switching windows is a bit hard in Emacs
-(leaf switch-window
+(leaf switch-window :ensure t
   :bind* (("M-TAB" . switch-window)))
 ;;;   end
 
 
 ;;;   Nice to lookup new keys to learn new stuff
-(leaf which-key
+(leaf which-key :ensure t
   :init
   (which-key-mode 1))
 ;;;   end
 
 
 ;;;   Multiple cursor for small and fast edits
-(leaf multiple-cursors
+(leaf multiple-cursors :ensure t
   :bind
   (("C-S-c" . mc/edit-lines)
    ("M-S-<up>" . mc/mark-previous-like-this)
@@ -154,7 +153,7 @@
    ("M-S-<mouse-2>" . mc/add-cursor-on-click)
    ("M-S-<mouse-3>" . mc/add-cursor-on-click))
   :init
-  (leaf phi-search-mc
+  (leaf phi-search-mc :ensure t
     :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
     :config
     (phi-search-mc/setup-keys)))
@@ -162,7 +161,7 @@
 
 
 ;;;   Undo tree for better visualization of undo in Emacs
-(leaf undo-tree
+(leaf undo-tree :ensure t
   :bind
   (:undo-tree-map
    ("C-_" . nil))  ; reserved for move-text-up
@@ -172,7 +171,7 @@
 
 
 ;;;   More verbose Emacs documentation lookup
-(leaf helpful
+(leaf helpful :ensure t
   :bind
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
@@ -181,7 +180,7 @@
 
 
 ;;;   Move text in a buffer
-(leaf move-text
+(leaf move-text :ensure t
   :bind
   (("C-_" . move-text-up)
    ("C--" . move-text-down)))
@@ -192,15 +191,15 @@
 ;;      C-c C-p - Enable editing in *grep* buffer
 ;;      C-x C-s - Save changes
 ;;    Note: This doesn't save to the file
-(leaf wgrep)
+(leaf wgrep :ensure t)
 ;;;   end
 
 
 ;;;   The doom theming
-(leaf doom-themes)
-(leaf kaolin-themes :require t :leaf-defer nil
+(leaf doom-themes :ensure t)
+(leaf kaolin-themes :ensure t :require t :leaf-defer nil
   :config (load-theme 'kaolin-dark))
-(leaf doom-modeline
+(leaf doom-modeline :ensure t
   :init
   (setq doom-modeline-buffer-file-name-style 'relative-to-project))
 ;;;   end
@@ -211,11 +210,11 @@
   :load-path "~/Downloads/github.com/Alexander-Miller/treemacs/src/elisp"
   :bind ("<f9> t" . treemacs))
 
-(leaf dired-sidebar
+(leaf dired-sidebar :ensure t
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
   :commands (dired-sidebar-toggle-sidebar)
   :init
-  (leaf vscode-icon
+  (leaf vscode-icon :ensure t
     :commands (vscode-icon-for-file))
   (add-hook 'dired-sidebar-mode-hook
             (lambda ()
@@ -233,7 +232,7 @@
 
 
 ;;;   Page break char doesn’t look good
-(leaf page-break-lines
+(leaf page-break-lines :ensure t
   :init
   (global-page-break-lines-mode t))
 ;;;   end
@@ -246,7 +245,7 @@
     (append (if (consp backend) backend (list backend))
             '(:with company-yasnippet))))
 
-(leaf company
+(leaf company :ensure t
   :hook (after-init-hook . global-company-mode)
   :bind
   (("C-c C-SPC" . company-complete)
@@ -273,7 +272,7 @@
 
 
 ;;;   Language Server Protocol
-(leaf lsp-mode
+(leaf lsp-mode :ensure t
   :commands lsp
   :init
   (require 'lsp-clients)
@@ -283,9 +282,9 @@ is useful."
     (when (and (fboundp 'projectile-project-p) (projectile-project-p))
       (lsp)))
   )
-(leaf company-lsp
+(leaf company-lsp :ensure t
   :commands company-lsp)
-(leaf lsp-ui
+(leaf lsp-ui :ensure t
   :hook (lsp-mode-hook . lsp-ui-mode)
   :init
   (setq lsp-ui-doc-use-webkit t)
@@ -299,16 +298,16 @@ is useful."
 ;;;   end
 
 
-(leaf py-autopep8)
-(leaf pyvenv)
-(leaf pipenv
+(leaf py-autopep8 :ensure t)
+(leaf pyvenv :ensure t)
+(leaf pipenv :ensure t
   :bind
   (("<f9> p v a" . pipenv-activate)
    ("<f9> p v d" . pipenv-deactivate)
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(leaf pony-mode
+(leaf pony-mode :ensure t
   :bind
   (("<f9> p d a f" . pony-fabric)
    ("<f9> p d a d" . pony-fabric-deploy)
@@ -338,13 +337,11 @@ is useful."
 
 
 ;;;   C and C++
-(leaf ccls
-  :init
-  (require 'ccls))
+(leaf ccls :ensure t :after lsp-mode :require t)
 ;;;   end
 
 ;;;   Complete almost everything in Emacs using ivy
-(leaf ivy
+(leaf ivy :ensure t
   :hook (after-init-hook . ivy-mode)
   :init
   (setq
@@ -352,15 +349,14 @@ is useful."
    ivy-count-format "(%d/%d) "
    ivy-height 15
    ivy-more-chars-alist '((t . 1))))
-(leaf ivy-posframe
-  :after ivy
+(leaf ivy-posframe :ensure t :require t :after ivy
   :config
   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
   ;; TODO: Disable when using EXWM
   (ivy-posframe-mode 0))
-(leaf flx)
-(leaf swiper)
-(leaf counsel
+(leaf flx :ensure t)
+(leaf swiper :ensure t)
+(leaf counsel :ensure t
   :bind
   (("M-x" . counsel-M-x)
    ("C-c s r" . counsel-rg)
@@ -373,35 +369,35 @@ is useful."
 ;;;   end
 
 
-;;;   Scala
-(leaf ensime)
+;;;   Scala - TODO: Look for metals
+;;; (leaf ensime :ensure t)
 ;;;   end
 
 
 ;;;   Finest mode for multiple HTML based modes
-(leaf web-mode
+(leaf web-mode :ensure t
   :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
 ;;;   end
 
 
 ;;;   Emmet is wonderful
-(leaf emmet-mode
+(leaf emmet-mode :ensure t
   :hook web-mode-hook)
 ;;;   end
 
 
 ;;;   Hot reloading
-(leaf http
+(leaf http :ensure t
   :bind
   (("<f9> h e" . httpd-start)
    ("<f9> h d" . httpd-stop)))
-(leaf impatient-mode
+(leaf impatient-mode :ensure t
   :bind ("<f9> i" . impatient-mode))
 ;;;   end
 
 
 ;;;   Highlight indentation in Emacs
-(leaf indent-guide
+(leaf indent-guide :ensure t
   :hook (prog-mode-hook . indent-guide-mode)
   :init
   (setq indent-guide-char "."
@@ -411,45 +407,42 @@ is useful."
 
 ;;;   Evil mode
 (setq evil-want-keybinding nil)
-(leaf evil)
-(leaf evil-collection)
+(leaf evil :ensure t)
+(leaf evil-collection :ensure t)
 ;;;   end
 
 
 ;;;   Elf mode
-(leaf elf-mode)
+(leaf elf-mode :ensure t)
 ;;;   end
 
 
 ;;;   Cmake mode
-(leaf cmake-mode
-  :ensure t)
+(leaf cmake-mode :ensure t)
 ;;;   end
 
 
 ;;;   TODO: Manage system packages
-(leaf system-packages)
+(leaf system-packages :ensure t)
 ;;;   end
 
 
 ;;;   Rust
-(leaf rustic
+(leaf rustic :ensure t
   :init
   (setq rustic-rls-pkg 'lsp-mode))
 ;;;   end
 
 
 ;;;   Org mode
-(leaf org
+(leaf org :ensure t
   :preface
-  (leaf org-plus-contrib)
-  (use-package ox-hugo
-    :after ox
-    :disabled t
+  (leaf org-plus-contrib :ensure t)
+  (leaf ox-hugo :require t :ensure t :after ox :disabled t
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
-  (use-package org-re-reveal :after ox)
+  (leaf org-re-reveal :ensure t :require t :after ox)
   (add-hook 'org-mode-hook
             '(lambda ()
                (setq line-spacing 0.2) ;; Add more line padding for readability
@@ -597,21 +590,21 @@ made unique when necessary."
 
 
 ;;;   PlantUML
-(leaf plantuml-mode
+(leaf plantuml-mode :ensure t
   :init
   (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
 ;;;   end
 
 
 ;;;   Snippet completion
-(leaf yasnippet
+(leaf yasnippet :ensure t
   :hook (prog-mode-hook . yas-minor-mode))
-(leaf yasnippet-snippets)
+(leaf yasnippet-snippets :ensure t)
 ;;;   end
 
 
 ;;;   Syntax checking
-(leaf flycheck)
+(leaf flycheck :ensure t)
 ;;;   end
 
 (defmacro p (form)
@@ -622,19 +615,19 @@ made unique when necessary."
 
 
 ;;;   Typescript support
-(leaf typescript-mode)
+(leaf typescript-mode :ensure t)
 ;;;   end
 
 
 ;;;   Better M-< and M->
-(leaf beginend
+(leaf beginend :ensure t
   :config
   (beginend-global-mode))
 ;;;   end
 
 
 ;;;   Manage services from Emacs
-(leaf prodigy
+(leaf prodigy :ensure t
   :config
   (prodigy-define-service
    :name "NIT Durgapur backend"
@@ -670,20 +663,20 @@ made unique when necessary."
 
 
 ;;;   Increase and decrease font size in Emacs
-(leaf default-text-scale
+(leaf default-text-scale :ensure t
   :config (default-text-scale-mode 1))
 ;;;   end
 
 
 ;;;   Better buffer jumping
-(leaf frog-jump-buffer
+(leaf frog-jump-buffer :ensure t
   :init (require 'projectile) (projectile-mode 1)
   :bind ("C-x C-b" . frog-jump-buffer))
 ;;;   end
 
 
 ;;;   EXWM - Emacs Window Manager
-(leaf exwm :require t :leaf-defer nil
+(leaf exwm :ensure t :require t :leaf-defer nil
   :init
   (require 'exwm)
   (require 'exwm-config)
@@ -698,9 +691,6 @@ made unique when necessary."
 ;;;   end
 
 
-;;;   Packages below this line are not available on MELPA and leaf
-;;;   always tries to install them if :ensure is t.
-(setq leaf-defaults nil)
 
 
 ;;;   Navbar(like Bootstrap Navbar)
