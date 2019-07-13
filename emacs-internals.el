@@ -21,7 +21,7 @@
 
  ;;;   User details
  user-mail-address "comproprasad@gmail.com"
- user-full-name    "Abhishek(Compro) Prasad"
+ user-full-name "Compro Prasad"
 
  ;;;   Only use ~/.authinfo.gpg
  auth-sources (list (expand-file-name "~/.authinfo.gpg"))
