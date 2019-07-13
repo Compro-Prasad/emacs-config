@@ -786,6 +786,9 @@ made unique when necessary."
         ))))
   (defun compro/centaur-tabs-buffer-groups ()
     `(,(cond
+        ((or (string-prefix-p "*sent mail" (buffer-name))
+             (string-prefix-p "*notmuch" (buffer-name))
+             (string-equal "*unsent mail*" (buffer-name))) "Mail")
         ((or (buffer-file-name)
              (eq major-mode 'dired-mode))    "Files")
         ((eq major-mode 'magit-status-mode)  "Magit")
