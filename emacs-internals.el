@@ -741,6 +741,56 @@ The return value is nil if no font was found, truthy otherwise."
       new-value)))
 
 
+;;;   Mail config here
+(leaf message
+  :hook (message-send-hook . compro/message/change-smtp-settings)
+  :bind ((message-mode-map
+          ("C-c <C-tab>" . compro/message/toggle-from-header)))
+  :preface
+  (defun compro/message/toggle-from-header ()
+    "Toggle between two mail address that I have."
+    (interactive)
+    (save-excursion
+      (save-restriction
+        (message-narrow-to-headers)
+        (while (not (looking-at "From: "))
+          (message-next-header))
+        (let ((from (message-fetch-field "from")))
+          (search-forward from)
+          (if (string-match-p (regexp-quote "comproprasad@gmail.com") from)
+              (replace-match "Abhishek Prasad <prasadabhishekdgp@gmail.com>")
+            (replace-match "Compro Prasad <comproprasad@gmail.com>"))))))
+  (defun compro/message/change-smtp-settings ()
+    "Change any SMTP details according to the current From line.
+For me it was only `smtpmail-smtp-user'. Other cases include
+`smtpmail-default-smtp-server' or `smtpmail-smtp-service' which
+is not configured in my implementation.
+
+This needs to be added to `message-send-hook' to change details
+before sending the message."
+    (save-excursion
+      (save-restriction
+        (message-narrow-to-headers)
+        (let* ((from-field (message-fetch-field "from"))
+               (from-mailid
+                (when from-field
+                  (cadr (mail-extract-address-components
+                         (message-fetch-field "from"))))))
+          (if from-mailid
+              (setq smtpmail-smtp-user from-mailid)
+            (error "Can't fetch `From' field from message headers"))))))
+  :init
+  (setq message-alternative-emails (regexp-opt '("comproprasad@gmail.com"
+                                                 "prasadabhishekdgp@gmail.com"))
+        message-send-mail-function 'smtpmail-send-it)
+  )
+(leaf smtpmail
+  :init
+  (setq smtpmail-smtp-service 25
+        smtpmail-default-smtp-server "smtp.gmail.com"))
+;;;   end
+
+
 ;; No box around modeline
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."

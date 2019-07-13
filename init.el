@@ -701,6 +701,25 @@ made unique when necessary."
 ;;;   end
 
 
+;;;   Mail search using notmuch
+(leaf notmuch :ensure t
+  :bind ((notmuch-search-mode-map
+          ("d" . compro/notmuch/tag-as-deleted)
+          ("<delchar>" . compro/notmuch/tag-as-deleted)
+          ("u" . compro/notmuch/remove-deleted-tag)
+          ("D" . compro/notmuch/remove-deleted-tag)
+          ("f" . compro/notmuch/tag-as-flagged)
+          ("F" . compro/notmuch/remove-flagged-tag)))
+  :init
+  (fset 'compro/notmuch/tag-as-deleted
+        (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+  (fset 'compro/notmuch/remove-deleted-tag
+        (kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+  (fset 'compro/notmuch/tag-as-flagged
+        (kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
+  (fset 'compro/notmuch/remove-flagged-tag
+        (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
+;;;   end
 
 
 ;;;   Navbar(like Bootstrap Navbar)
