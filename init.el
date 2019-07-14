@@ -349,6 +349,7 @@ is useful."
    ivy-count-format "(%d/%d) "
    ivy-height 15
    ivy-more-chars-alist '((t . 1))))
+(leaf ivy-rich :ensure t :require t :after ivy)
 (leaf ivy-posframe :ensure t :require t :after ivy
   :config
   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
