@@ -810,10 +810,11 @@ made unique when necessary."
              (string-prefix-p "*notmuch" (buffer-name))
              (string-equal "*unsent mail*" (buffer-name))) "Mail")
         ((or (buffer-file-name)
-             (eq major-mode 'dired-mode))    "Files")
-        ((eq major-mode 'magit-status-mode)  "Magit")
-        ((eq major-mode 'helpful-mode)       "Helpful")
-        ((string-prefix-p "*" (buffer-name)) "Emacs"))))
+             (eq major-mode 'dired-mode))                  "Files")
+        ((eq major-mode 'magit-status-mode)                "Magit")
+        ((eq major-mode 'helpful-mode)                     "Helpful")
+        ((string-prefix-p "*" (buffer-name))               "Emacs")
+        (t                                                 "Unregistered"))))
   :custom-face
   ((centaur-tabs-close-mouse-face . '((t (:foreground "#696969")))))
   :custom
