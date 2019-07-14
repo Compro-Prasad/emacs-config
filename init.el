@@ -802,7 +802,7 @@ made unique when necessary."
 
         ;; Is not magit buffer.
         (and (string-prefix-p "magit" name)
-	     (not (file-name-extension name)))
+             (not (file-name-extension name)))
         ))))
   (defun compro/centaur-tabs-buffer-groups ()
     `(,(cond
