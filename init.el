@@ -239,12 +239,6 @@
 
 
 ;;;   Completion
-(defun company-mode/backend-with-yas (backend)
-  (if (and (listp backend) (member 'company-yasnippet backend))
-      backend
-    (append (if (consp backend) backend (list backend))
-            '(:with company-yasnippet))))
-
 (leaf company :ensure t
   :hook (after-init-hook . global-company-mode)
   :bind
@@ -254,6 +248,12 @@
     ("C-h" . nil)
     ("ESC ESC" . company-abort)
     ("<tab>" . company-complete-selection)))
+  :preface
+  (defun compro/company-mode/backend-with-yas (backend)
+    (if (and (listp backend) (member 'company-yasnippet backend))
+        backend
+      (append (if (consp backend) backend (list backend))
+              '(:with company-yasnippet))))
   :config
   (setq company-idle-delay 0.09
         company-minimum-prefix-length 1
@@ -266,7 +266,7 @@
                                        (company-dabbrev-code company-keywords)
                                        company-files company-dabbrev)
         company-jedi-python-bin "python")
-  (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends)))
+  (setq company-backends (mapcar #'compro/company-mode/backend-with-yas company-backends)))
 
 ;;;   end
 
