@@ -766,8 +766,8 @@ For me it was only `smtpmail-smtp-user'. Other cases include
 `smtpmail-default-smtp-server' or `smtpmail-smtp-service' which
 is not configured in my implementation.
 
-This needs to be added to `message-send-hook' to change details
-before sending the message."
+This function needs to be added to `message-send-hook' to change
+details before sending the message."
     (save-excursion
       (save-restriction
         (message-narrow-to-headers)
