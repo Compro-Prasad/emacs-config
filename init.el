@@ -249,6 +249,10 @@
     ("ESC ESC" . company-abort)
     ("<tab>" . company-complete-selection)))
   :preface
+  (leaf company-quickhelp :after company :require t
+    :config
+    (setq company-quickhelp-delay 0.311)
+    (company-quickhelp-mode 1))
   (defun compro/company-mode/backend-with-yas (backend)
     (if (and (listp backend) (member 'company-yasnippet backend))
         backend
@@ -267,7 +271,6 @@
                                        company-files company-dabbrev)
         company-jedi-python-bin "python")
   (setq company-backends (mapcar #'compro/company-mode/backend-with-yas company-backends)))
-
 ;;;   end
 
 
