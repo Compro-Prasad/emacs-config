@@ -401,7 +401,7 @@ is useful."
 
 
 ;;;   Highlight indentation in Emacs
-(leaf indent-guide :ensure t
+(leaf indent-guide :ensure t :disabled t
   :hook (prog-mode-hook . indent-guide-mode)
   :init
   (setq indent-guide-char "."
