@@ -775,7 +775,7 @@ made unique when necessary."
   (setq navbar-item-list '(get-exwm-buffers))
   (setq navbar-update-timer
         (run-with-timer 1.1 1.4 'navbar-sync))
-  ;; (navbar-sync)
+  (navbar-mode)
   )
 ;;;   end
 
