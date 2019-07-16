@@ -714,6 +714,7 @@ made unique when necessary."
           ("D" . compro/notmuch/remove-deleted-tag)
           ("f" . compro/notmuch/tag-as-flagged)
           ("F" . compro/notmuch/remove-flagged-tag)))
+  :hook (message-mode-hook . notmuch-company-setup)
   :init
   (fset 'compro/notmuch/tag-as-deleted
         (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
