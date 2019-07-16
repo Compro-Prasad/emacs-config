@@ -729,6 +729,18 @@ made unique when necessary."
 ;;;   end
 
 
+;;;   Eldoc in top left corner
+(leaf pos-tip :ensure t :after eldoc :require t
+  :config
+  (defun compro/eldoc/display-message-momentary (format-string &rest args)
+    "Display eldoc message near point."
+    (when format-string
+      (sit-for 0.5)
+      (pos-tip-show (apply 'format format-string args) nil nil nil 25)))
+  (setq eldoc-message-function #'compro/eldoc/display-message-momentary))
+;;;   end
+
+
 ;;;   Navbar(like Bootstrap Navbar)
 (leaf navbar :require t :leaf-defer t
   :load-path "~/Downloads/github.com/conao3/navbar.el"
