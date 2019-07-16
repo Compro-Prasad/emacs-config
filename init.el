@@ -824,7 +824,7 @@ made unique when necessary."
   :custom
   ((centaur-tabs-mouse-pointer . 'arrow)
    (centaur-tabs-style . "bar")  ;; slant, box, bar
-   (centaur-tabs-height . 15)
+   (centaur-tabs-height . 22)
    (centaur-tabs-set-icons . t)
    (centaur-tabs-set-bar . t)
    (centaur-tabs-cycle-scope . 'tabs)
