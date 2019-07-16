@@ -278,7 +278,6 @@
 
 ;;;   Language Server Protocol
 (leaf lsp-mode :ensure t
-  :commands lsp
   :init
   (require 'lsp-clients)
   (defun compro/init-lsp ()
@@ -291,15 +290,20 @@ is useful."
   :commands company-lsp)
 (leaf lsp-ui :ensure t
   :hook (lsp-mode-hook . lsp-ui-mode)
-  :init
-  (setq lsp-ui-doc-use-webkit t)
   :config
   (setq lsp-ui-doc-enable t
         lsp-enable-completion-at-point t
-        ;lsp-ui-doc-position 'at-point
         lsp-ui-doc-header nil
         lsp-ui-doc-include-signature t
         lsp-ui-sideline-enable nil))
+;; M$ Python Language Server
+(leaf lsp-python-ms :ensure t :after lsp-mode :require t
+  :preface
+  (add-hook 'python-mode-hook (lambda () (require 'lsp-python-ms) (lsp)))
+  :init
+  (setq lsp-python-ms-executable "~/Downloads/github.com/Microsoft/python-language-server/output/bin/Release/linux-x64/publish/Microsoft.Python.LanguageServer"))
+;; C and C++
+(leaf ccls :ensure t :after lsp-mode :require t)
 ;;;   end
 
 
@@ -340,10 +344,6 @@ is useful."
    ("<f9> p d t u" . pony-test-up)))
 ;;;   end
 
-
-;;;   C and C++
-(leaf ccls :ensure t :after lsp-mode :require t)
-;;;   end
 
 ;;;   Complete almost everything in Emacs using ivy
 (leaf ivy :ensure t
