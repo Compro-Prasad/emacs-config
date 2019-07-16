@@ -249,6 +249,8 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 
+(global-display-fill-column-indicator-mode 1)
+
 
 
 (defun my/set-show-whitespace-mode ()
