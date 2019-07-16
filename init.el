@@ -208,7 +208,9 @@
 ;;;   Sidebar
 (leaf treemacs
   :load-path "~/Downloads/github.com/Alexander-Miller/treemacs/src/elisp"
-  :bind ("<f9> t" . treemacs))
+  :bind (("<f9> t" . treemacs)
+         (treemacs-mode-map
+          ([mouse-1] . treemacs-single-click-expand-action))))
 
 (leaf dired-sidebar :ensure t
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
