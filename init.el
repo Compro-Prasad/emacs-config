@@ -301,7 +301,11 @@ is useful."
 ;; M$ Python Language Server
 (leaf lsp-python-ms :ensure t :after lsp-mode :require t
   :preface
-  (add-hook 'python-mode-hook (lambda () (require 'lsp-python-ms) (lsp)))
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (pipenv-activate)
+              (require 'lsp-python-ms)
+              (lsp)))
   :init
   (setq lsp-python-ms-executable "~/Downloads/github.com/Microsoft/python-language-server/output/bin/Release/linux-x64/publish/Microsoft.Python.LanguageServer"))
 ;; C and C++
