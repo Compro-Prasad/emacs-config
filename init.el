@@ -801,9 +801,7 @@ made unique when necessary."
 
 
 ;;;   Tabs in Emacs
-(leaf centaur-tabs
-  :leaf-defer nil
-  :require t
+(leaf centaur-tabs :leaf-defer nil :require t
   :load-path "/home/compro/Downloads/github.com/ema2159/centaur-tabs"
   :preface
   (defun compro/centaur-tabs-hide-tab (x)
@@ -840,7 +838,7 @@ made unique when necessary."
         ((string-prefix-p "*" (buffer-name))               "Emacs")
         (t                                                 "Unregistered"))))
   :custom-face
-  ((centaur-tabs-close-mouse-face . '((t (:foreground "#696969")))))
+  ((centaur-tabs-close-mouse-face . '((default (:foreground "#696969")))))
   :custom
   ((centaur-tabs-mouse-pointer . 'arrow)
    (centaur-tabs-style . "bar")  ;; slant, box, bar
