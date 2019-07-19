@@ -816,6 +816,7 @@ made unique when necessary."
 (leaf centaur-tabs :leaf-defer nil :require t
   :load-path "/home/compro/Downloads/github.com/ema2159/centaur-tabs"
   :preface
+  (leaf powerline :ensure t)
   (defun compro/centaur-tabs-hide-tab (x)
     "Do no to show buffer X in tabs."
     (let ((name (format "%s" x)))
