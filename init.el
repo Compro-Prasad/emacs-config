@@ -754,8 +754,7 @@ made unique when necessary."
                     (setq eldoc-message-function
                           (if (eq eldoc-message-function 'ignore)
                               #'compro/eldoc/display-message-momentary
-                            #'ignore))))
-  (setq eldoc-message-function ))
+                            #'ignore)))))
 ;;;   end
 
 
