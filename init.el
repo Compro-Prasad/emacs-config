@@ -35,6 +35,8 @@
 
 ;;;   Load Emacs internal configurations
 (when (file-readable-p "~/.emacs.d/emacs-internals.el")
+  ;; Install general for customizing keybinds
+  (leaf general :ensure t)
   (leaf f :ensure t
     :commands f-mkdir
     :config

@@ -272,15 +272,15 @@
 (add-hook 'package-menu-mode-hook 'hl-line-mode)
 
 (when (fboundp 'xwidget-webkit-browse-url)
-  (use-package xwidget
-    :general
-    (:keymaps 'xwidget-webkit-mode-map
-              "<mouse-4>" 'xwidget-webkit-scroll-down
-              "<mouse-5>" 'xwidget-webkit-scroll-up
-              "<up>" 'xwidget-webkit-scroll-down
-              "<down>" 'xwidget-webkit-scroll-up
-              "M-w" 'xwidget-webkit-copy-selection-as-kill
-              "C-c" 'xwidget-webkit-copy-selection-as-kill)
+  (leaf xwidget
+    :bind
+    (xwidget-webkit-mode-map
+     ("<mouse-4>" . xwidget-webkit-scroll-down)
+     ("<mouse-5>" . xwidget-webkit-scroll-up)
+     ("<up>" . xwidget-webkit-scroll-down)
+     ("<down>" . xwidget-webkit-scroll-up)
+     ("M-w" . xwidget-webkit-copy-selection-as-kill)
+     ("C-c" . xwidget-webkit-copy-selection-as-kill))
     :hook
     (window-configuration-change-hook
      . (lambda ()
@@ -521,7 +521,7 @@ minibuffer using `display-startup-echo-area-message'.")
 
 (minibuffer-depth-indicate-mode 1)
 
-(use-package winner
+(leaf winner
   :init
   (winner-mode 1))
 
