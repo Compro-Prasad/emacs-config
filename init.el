@@ -735,6 +735,12 @@ made unique when necessary."
 ;;;   end
 
 
+;;;   Different background colors for special buffers
+;; TODO: Enable it properly
+(leaf solaire-mode :ensure t)
+;;;   end
+
+
 ;;;   Eldoc in top left corner
 (leaf pos-tip :ensure t :after eldoc :require t
   :config
