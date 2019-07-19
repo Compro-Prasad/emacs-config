@@ -281,11 +281,12 @@
      ("<down>" . xwidget-webkit-scroll-up)
      ("M-w" . xwidget-webkit-copy-selection-as-kill)
      ("C-c" . xwidget-webkit-copy-selection-as-kill))
+    :preface
+    (defun compro/xwidget-webkit/adjust-size ()
+      (when (equal major-mode 'xwidget-webkit-mode)
+        (xwidget-webkit-adjust-size-dispatch)))
     :hook
-    (window-configuration-change-hook
-     . (lambda ()
-         (when (equal major-mode 'xwidget-webkit-mode)
-           (xwidget-webkit-adjust-size-dispatch))))
+    (window-configuration-change-hook . compro/xwidget-webkit/adjust-size)
     :init
     ;; by default, xwidget reuses previous xwidget window,
     ;; thus overriding your current website, unless a prefix argument
