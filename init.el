@@ -741,9 +741,15 @@ made unique when necessary."
   (defun compro/eldoc/display-message-momentary (format-string &rest args)
     "Display eldoc message near point."
     (when format-string
-      (sit-for 0.5)
-      (pos-tip-show (apply 'format format-string args) nil nil nil 25)))
-  (setq eldoc-message-function #'compro/eldoc/display-message-momentary))
+      (pos-tip-show (apply 'format format-string args) nil nil nil 0)))
+  (global-set-key (kbd "C-c e")
+                  (lambda ()
+                    (interactive)
+                    (setq eldoc-message-function
+                          (if (eq eldoc-message-function 'ignore)
+                              #'compro/eldoc/display-message-momentary
+                            #'ignore))))
+  (setq eldoc-message-function ))
 ;;;   end
 
 
