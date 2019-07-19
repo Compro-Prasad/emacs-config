@@ -199,7 +199,7 @@
 
 ;;;   The doom theming
 (leaf doom-themes :ensure t :require t :leaf-defer nil
-  :config (load-theme 'doom-solarized-light))
+  :config (load-theme 'doom-Iosvkem))
 (leaf kaolin-themes :ensure t)
 (leaf doom-modeline :ensure t
   :init
