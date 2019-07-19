@@ -173,7 +173,7 @@
 
 
 ;;;   More verbose Emacs documentation lookup
-(leaf helpful :ensure t
+(leaf helpful :ensure t :disabled t
   :bind
   (("C-h f" . helpful-callable)
    ("C-h v" . helpful-variable)
