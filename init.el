@@ -674,13 +674,13 @@ made unique when necessary."
 ;;;   end
 
 
-;;;   Increase and decrease font size in Emacs
+;;;   Increase and decrease font size in Emacs (C-M-= and C-M--)
 (leaf default-text-scale :ensure t
   :config (default-text-scale-mode 1))
 ;;;   end
 
 
-;;;   Better buffer jumping
+;;;   Better buffer jumping (C-x C-b)
 (leaf frog-jump-buffer :ensure t
   :init (require 'projectile) (projectile-mode 1)
   :bind ("C-x C-b" . frog-jump-buffer))
@@ -688,7 +688,7 @@ made unique when necessary."
 
 
 ;;;   EXWM - Emacs Window Manager
-(leaf exwm :ensure t :require t :leaf-defer nil
+(leaf exwm :ensure t :require t :leaf-defer nil :disabled t
   :init
   (require 'exwm)
   (require 'exwm-config)
@@ -735,13 +735,13 @@ made unique when necessary."
 ;;;   end
 
 
-;;;   Different background colors for special buffers
+;;;   Different background colors for special buffers like file tree
 ;; TODO: Enable it properly
 (leaf solaire-mode :ensure t)
 ;;;   end
 
 
-;;;   Eldoc in top left corner
+;;;   Eldoc(Function args help) at the point. Toggle using (C-c e).
 (leaf pos-tip :ensure t :after eldoc :require t
   :config
   (defun compro/eldoc/display-message-momentary (format-string &rest args)
@@ -759,7 +759,7 @@ made unique when necessary."
 
 
 ;;;   Navbar(like Bootstrap Navbar)
-(leaf navbar :require t :leaf-defer t
+(leaf navbar :require t :leaf-defer t :disabled t
   :load-path "~/Downloads/github.com/conao3/navbar.el"
   :config
   (defun get-exwm-buffers ()
