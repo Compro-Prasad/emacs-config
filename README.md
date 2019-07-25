@@ -1,6 +1,8 @@
 Compro's Emacs configuration
 ---
 
+Out of date. Will be updated someday.
+
 ## Introduction
 
 This is my Emacs configuration greatly inspired by the Emacs community itself.
