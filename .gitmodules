@@ -1,0 +1,12 @@
+[submodule ".repos/treemacs"]
+	path = .repos/treemacs
+	url = https://github.com/Alexander-Miller/treemacs
+[submodule ".repos/telega.el"]
+	path = .repos/telega.el
+	url = https://github.com/zevlg/telega.el
+[submodule ".repos/navbar.el"]
+	path = .repos/navbar.el
+	url = https://github.com/conao3/navbar.el
+[submodule ".repos/centaur-tabs"]
+	path = .repos/centaur-tabs
+	url = https://github.com/ema2159/centaur-tabs

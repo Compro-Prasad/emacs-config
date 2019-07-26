@@ -1,0 +1,1 @@
+/home/compro/Downloads/github.com/conao3/navbar.el

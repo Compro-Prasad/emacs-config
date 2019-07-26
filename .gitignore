@@ -4,11 +4,13 @@
 *.eld
 *.elc
 *.pyc
+*
+.*
 !init.el
 !emacs-internals.el
 !early-init.el
 !.mc-lists.el
 !.gitignore
+!.gitmodules
+!.repos/
 !README.md
-*
-.*
