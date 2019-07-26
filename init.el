@@ -217,8 +217,7 @@
 
 
 ;;;   Sidebar
-(leaf treemacs
-  :load-path "~/.emacs.d/.repos/treemacs/src/elisp"
+(leaf treemacs :ensure t
   :bind (("<f9> t" . treemacs)
          (treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action))))
