@@ -209,7 +209,7 @@
 
 ;;;   Telegram in Emacs
 (leaf telega
-  :load-path "~/Downloads/github.com/zevlg/telega.el"
+  :load-path "~/.emacs.d/.repos/telega.el"
   :bind ("C-c t" . telega)
   :preface
   (leaf visual-fill-column :ensure t))
@@ -218,7 +218,7 @@
 
 ;;;   Sidebar
 (leaf treemacs
-  :load-path "~/Downloads/github.com/Alexander-Miller/treemacs/src/elisp"
+  :load-path "~/.emacs.d/.repos/treemacs/src/elisp"
   :bind (("<f9> t" . treemacs)
          (treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action))))
@@ -769,7 +769,7 @@ made unique when necessary."
 
 ;;;   Navbar(like Bootstrap Navbar)
 (leaf navbar :require t :leaf-defer t :disabled t
-  :load-path "~/Downloads/github.com/conao3/navbar.el"
+  :load-path "~/.emacs.d/.repos/navbar.el"
   :config
   (defun get-exwm-buffers ()
     (let ((str ""))
@@ -822,7 +822,7 @@ made unique when necessary."
 
 ;;;   Tabs in Emacs
 (leaf centaur-tabs :leaf-defer nil :require t
-  :load-path "/home/compro/Downloads/github.com/ema2159/centaur-tabs"
+  :load-path "~/.emacs.d/.repos/centaur-tabs"
   :preface
   (leaf powerline :ensure t)
   (defun compro/centaur-tabs-hide-tab (x)
