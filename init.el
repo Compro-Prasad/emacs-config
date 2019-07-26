@@ -207,6 +207,15 @@
 ;;;   end
 
 
+;;;   Telegram in Emacs
+(leaf telega
+  :load-path "~/Downloads/github.com/zevlg/telega.el"
+  :bind ("C-c t" . telega)
+  :preface
+  (leaf visual-fill-column :ensure t))
+;;;   end
+
+
 ;;;   Sidebar
 (leaf treemacs
   :load-path "~/Downloads/github.com/Alexander-Miller/treemacs/src/elisp"
