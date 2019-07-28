@@ -221,6 +221,7 @@
   :bind (("<f9> t" . treemacs)
          (treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action))))
+(leaf lsp-treemacs :ensure t)
 
 (leaf dired-sidebar :ensure t
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
