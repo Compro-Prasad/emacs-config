@@ -856,6 +856,8 @@ made unique when necessary."
              (eq major-mode 'dired-mode))                  "Files")
         ((eq major-mode 'magit-status-mode)                "Magit")
         ((eq major-mode 'helpful-mode)                     "Helpful")
+        ((or (eq major-mode 'telega-chat-mode)
+             (eq major-mode 'telega-root-mode))            "Telegram")
         ((string-prefix-p "*" (buffer-name))               "Emacs")
         (t                                                 "Unregistered"))))
   :custom-face
