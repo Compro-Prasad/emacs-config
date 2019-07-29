@@ -385,7 +385,7 @@ is useful."
    ("C-c s g" . counsel-grep)
    ("C-c r" . counsel-recentf)
    ("C-c y" . counsel-yank-pop)
-   ("C-c u" . counsel-unicode)
+   ("C-c u" . counsel-unicode-char)
    ("C-c R" . ivy-resume)))
 ;;;   end
 
