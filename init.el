@@ -470,7 +470,6 @@ is useful."
                ))
   :bind
   (("C-c l" . org-store-link)
-   ("C-c b" . org-switchb)
    ("C-c a" . org-agenda)
    ("C-c c" . org-capture)
    (:org-mode-map
@@ -823,7 +822,8 @@ made unique when necessary."
 ;;;   Tabs in Emacs
 (leaf centaur-tabs :leaf-defer nil :require t
   :bind (("<C-M-S-iso-lefttab>" . centaur-tabs-forward-group)
-         ("<C-M-tab>" . centaur-tabs-backward-group))
+         ("<C-M-tab>" . centaur-tabs-backward-group)
+         ("C-c b" . centaur-tabs-counsel-switch-group))
   :preface
   (leaf powerline :ensure t)
   (defun compro/centaur-tabs-hide-tab (x)
