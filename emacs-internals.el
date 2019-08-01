@@ -744,6 +744,25 @@ The return value is nil if no font was found, truthy otherwise."
       new-value)))
 
 
+;;;   simple.el
+(leaf simple
+  :bind ("C-a" . compro/beginning-of-line)
+  :config
+  (defun compro/beginning-of-line ()
+    (interactive)
+    (if (bolp)
+        (back-to-indentation)
+      (let ((pos (point))
+            npos)
+        (save-excursion
+          (back-to-indentation)
+          (setq npos (point)))
+        (if (= pos npos)
+            (beginning-of-line)
+          (back-to-indentation))))))
+;;;   end
+
+
 ;;;   Mail config here
 (leaf message
   :hook (message-send-hook . compro/message/change-smtp-settings)
