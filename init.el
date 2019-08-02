@@ -756,8 +756,16 @@ made unique when necessary."
 
 
 ;;;   Different background colors for special buffers like file tree
-;; TODO: Enable it properly
-(leaf solaire-mode :ensure t)
+(leaf solaire-mode :ensure t
+  :hook
+  (((ediff-prepare-buffer-hook
+     after-revert-hook
+     treemacs-mode-hook
+     magit-mode-hook
+     terminal-mode-hook
+     shell-mode-hook
+     eshell-mode-hook) . solaire-mode)
+   (minibuffer-setup-hook . solaire-mode-in-minibuffer)))
 ;;;   end
 
 
