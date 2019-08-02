@@ -962,3 +962,9 @@ made unique when necessary."
         "http://planet.emacsen.org/atom.xml"
         "http://emacshorrors.com/feed.atom")))
 ;;;   end
+
+
+;;;   writeroom-mode - Center align a buffer and remove any distractions
+(leaf writeroom-mode :ensure t
+  :bind ("M-SPC" . writeroom-mode))
+;;;   end
