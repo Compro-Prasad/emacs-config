@@ -256,7 +256,7 @@
 (leaf company :ensure t
   :hook (after-init-hook . global-company-mode)
   :bind
-  (("C-c C-SPC" . company-complete)
+  (("S-SPC" . company-complete)
    (company-active-map
     ("RET" . nil)
     ("C-h" . nil)
