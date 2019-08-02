@@ -174,6 +174,9 @@
  display-line-numbers-type 'relative
  )
 
+;; Disable coloring in modes
+(global-font-lock-mode -1)
+
 (with-eval-after-load 'ox-latex
   ;;;   Set colors when exporting to latex
   (setq org-latex-listings t))
