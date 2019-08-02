@@ -723,16 +723,6 @@ made unique when necessary."
 ;;;   end
 
 
-;;;   Show age in the modeline
-(leaf memento-mori :ensure t
-  :leaf-defer nil
-  :require t
-  :init
-  (setq memento-mori-birth-date "1997-05-07")
-  (memento-mori-mode 1))
-;;;   end
-
-
 ;;;   Mail search using notmuch
 (leaf notmuch :ensure t
   :bind ((notmuch-search-mode-map
