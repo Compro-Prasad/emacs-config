@@ -201,6 +201,7 @@
 (leaf doom-themes :ensure t :require t :leaf-defer nil
   :config (load-theme 'doom-Iosvkem))
 (leaf kaolin-themes :ensure t)
+(leaf chocolate-theme :ensure t)
 (leaf doom-modeline :ensure t
   :init
   (setq doom-modeline-buffer-file-name-style 'relative-to-project))
