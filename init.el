@@ -273,7 +273,7 @@
       (append (if (consp backend) backend (list backend))
               '(:with company-yasnippet))))
   :config
-  (setq company-idle-delay 0.09
+  (setq company-idle-delay nil
         company-minimum-prefix-length 1
         company-show-numbers t
         company-require-match 'never
