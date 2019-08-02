@@ -951,3 +951,14 @@ made unique when necessary."
 
   :custom ((dired-dwim-target . t)))
 ;;;   end
+
+
+;;;   elfeed - Reading articles(news feed) in Emacs
+(leaf elfeed :ensure t
+  :bind ("C-c w" . elfeed)
+  :config
+  (setq elfeed-feeds
+      '("http://nullprogram.com/feed/"
+        "http://planet.emacsen.org/atom.xml"
+        "http://emacshorrors.com/feed.atom")))
+;;;   end
