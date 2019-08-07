@@ -751,7 +751,6 @@ made unique when necessary."
 (leaf solaire-mode :ensure t
   :hook
   (((ediff-prepare-buffer-hook
-     after-revert-hook
      treemacs-mode-hook
      magit-mode-hook
      terminal-mode-hook
