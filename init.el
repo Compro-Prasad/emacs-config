@@ -213,7 +213,9 @@
   :load-path "~/.emacs.d/.repos/telega.el"
   :bind ("C-c t" . telega)
   :preface
-  (leaf visual-fill-column :ensure t))
+  (leaf visual-fill-column :ensure t)
+  :config
+  (setq telega-chat-use-markdown-formatting t))
 ;;;   end
 
 
