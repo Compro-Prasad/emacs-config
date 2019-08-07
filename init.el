@@ -886,10 +886,10 @@ made unique when necessary."
         '("Internal"))
        (t '("Unregistered")))))
   :custom-face
-  ((centaur-tabs-close-mouse-face . '((default (:foreground "#696969")))))
+  ((centaur-tabs-close-mouse-face . '((default (:foreground "orange red")))))
   :custom
   ((centaur-tabs-mouse-pointer . 'arrow)
-   (centaur-tabs-style . "bar")  ;; slant, box, bar
+   (centaur-tabs-style . "slant")  ;; slant, box, bar, wave, chamfer
    (centaur-tabs-height . 22)
    (centaur-tabs-set-icons . t)
    (centaur-tabs-set-bar . t)
