@@ -260,10 +260,9 @@
   :bind
   (("S-SPC" . company-complete)
    (company-active-map
-    ("RET" . nil)
     ("C-h" . nil)
     ("ESC ESC" . company-abort)
-    ("<tab>" . company-complete-selection)))
+    ("<tab>" . company-complete-common-or-cycle)))
   :preface
   (leaf company-quickhelp :after company :require t
     :config
