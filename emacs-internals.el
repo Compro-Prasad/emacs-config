@@ -199,8 +199,6 @@
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(set-frame-font "Source Code Pro-10")
-
 (menu-bar-mode 0)
 (tool-bar-mode 0)
 (menu-bar-no-scroll-bar)
