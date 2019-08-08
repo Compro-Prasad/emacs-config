@@ -747,7 +747,9 @@ The return value is nil if no font was found, truthy otherwise."
 
 ;;;   simple.el
 (leaf simple
-  :bind ("C-a" . compro/beginning-of-line)
+  :bind (("C-a" . compro/beginning-of-line)
+         ("C-o" . compro/open-line-below)
+         ("C-S-o" . compro/open-line-above))
   :config
   (defun compro/beginning-of-line ()
     (interactive)
@@ -760,7 +762,17 @@ The return value is nil if no font was found, truthy otherwise."
           (setq npos (point)))
         (if (= pos npos)
             (beginning-of-line)
-          (back-to-indentation))))))
+          (back-to-indentation)))))
+  (defun compro/open-line-below ()
+    (interactive)
+    (end-of-line)
+    (newline-and-indent))
+  (defun compro/open-line-above ()
+    (interactive)
+    (back-to-indentation)
+    (newline-and-indent)
+    (previous-line 1)
+    (indent-according-to-mode)))
 ;;;   end
 
 
