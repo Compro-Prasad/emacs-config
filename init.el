@@ -889,7 +889,7 @@ made unique when necessary."
   :custom
   ((centaur-tabs-mouse-pointer . 'arrow)
    (centaur-tabs-style . "slant")  ;; slant, box, bar, wave, chamfer
-   (centaur-tabs-height . 22)
+   (centaur-tabs-height . 25)
    (centaur-tabs-set-icons . t)
    (centaur-tabs-set-bar . t)
    (centaur-tabs-cycle-scope . 'tabs)
