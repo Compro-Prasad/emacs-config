@@ -969,6 +969,16 @@ made unique when necessary."
 ;;;   end
 
 
+;;;   Assign specific positions for specific buffers
+(leaf shackle :ensure t :require t
+  :config
+  (setq shackle-default-rule '(:select t))
+  (setq shackle-rules
+        '((help-mode :size 0.33 :select t :align bottom)))
+  (shackle-mode 1))
+;;;   end
+
+
 ;;;   libvterm integration - Requires Emacs module support
 (leaf vterm
   :load-path "~/.emacs.d/.repos/emacs-libvterm/"
