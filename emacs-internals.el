@@ -175,7 +175,10 @@
  )
 
 ;; Disable coloring in modes
-(global-font-lock-mode -1)
+(defun disable-font-lock () (font-lock-mode -1))
+(add-hook 'lisp-mode-hook 'disable-font-lock)
+(add-hook 'emacs-lisp-mode-hook 'disable-font-lock)
+(add-hook 'org-mode-hook 'disable-font-lock)
 
 (with-eval-after-load 'ox-latex
   ;;;   Set colors when exporting to latex
