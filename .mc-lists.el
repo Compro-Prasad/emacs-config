@@ -16,6 +16,7 @@
         electric-pair-delete-pair
         end-of-buffer
         fill-paragraph
+        forward-sexp
         hungry-delete-backward
         hungry-delete-forward
         indent-for-tab-command
