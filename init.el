@@ -898,6 +898,7 @@ made unique when necessary."
    (centaur-tabs-buffer-groups-function . 'compro/centaur-tabs-buffer-groups))
   :config
   (centaur-tabs-mode t)
+  (centaur-tabs-headline-match)
   :bind
   (([C-tab] . centaur-tabs-forward)
    ([C-S-iso-lefttab] . centaur-tabs-backward)))
