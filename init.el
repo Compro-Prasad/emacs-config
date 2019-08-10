@@ -967,3 +967,11 @@ made unique when necessary."
 (leaf writeroom-mode :ensure t
   :bind ("M-SPC" . writeroom-mode))
 ;;;   end
+
+
+;;;   libvterm integration - Requires Emacs module support
+(leaf vterm
+  :load-path "~/.emacs.d/.repos/emacs-libvterm/"
+  :commands (vterm)
+  :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf)))))
+;;;   end

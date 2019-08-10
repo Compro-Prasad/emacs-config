@@ -10,3 +10,6 @@
 [submodule ".repos/centaur-tabs"]
 	path = .repos/centaur-tabs
 	url = https://github.com/ema2159/centaur-tabs
+[submodule ".repos/emacs-libvterm"]
+	path = .repos/emacs-libvterm
+	url = https://github.com/akermu/emacs-libvterm
