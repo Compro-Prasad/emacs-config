@@ -264,7 +264,7 @@
     ("ESC ESC" . company-abort)
     ("<tab>" . company-complete-common-or-cycle)))
   :preface
-  (leaf company-quickhelp :after company :require t
+  (leaf company-quickhelp :after company :require t :ensure t
     :config
     (setq company-quickhelp-delay 0.311)
     (company-quickhelp-mode 1))
