@@ -901,6 +901,7 @@ made unique when necessary."
   (centaur-tabs-headline-match)
   :bind
   (([C-tab] . centaur-tabs-forward)
+   ([C-S-tab] . centaur-tabs-backward)
    ([C-S-iso-lefttab] . centaur-tabs-backward)))
 ;;;   end
 
