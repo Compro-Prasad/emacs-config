@@ -712,7 +712,8 @@ made unique when necessary."
 
 
 ;;;   EXWM - Emacs Window Manager
-(leaf exwm :ensure t :require t :leaf-defer nil :disabled t
+(leaf exwm :ensure t :require t :leaf-defer nil
+  :disabled (not (eq (getenv "DESKTOP_SESSION") nil))
   :init
   (require 'exwm)
   (require 'exwm-config)
@@ -723,7 +724,10 @@ made unique when necessary."
                                  (start-process-shell-command command nil command))))
   (exwm-systemtray-enable)
   (exwm-config-default)
-  (ido-mode 0))
+  (ido-mode 0)
+  (setenv "DESKTOP_SESSION" "exwm")
+  (setenv "XDG_CURRENT_DESKTOP" "exwm")
+  (setenv "XDG_SESSION_DESKTOP" "exwm"))
 ;;;   end
 
 
