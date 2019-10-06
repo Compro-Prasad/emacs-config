@@ -459,7 +459,7 @@ minibuffer using `display-startup-echo-area-message'.")
 ;;;   Switch to file buffers using next-buffer and previous-buffer
 (defun compro/files-buffer-predicate (buffer)
   (stringp (buffer-file-name buffer)))
-(set-frame-parameter nil 'buffer-predicate 'compro/files-buffer-predicate)
+;; (set-frame-parameter nil 'buffer-predicate 'compro/files-buffer-predicate)
 ;;;   end
 
 (defun compro/smarter-backward-kill-word ()
