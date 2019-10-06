@@ -837,7 +837,7 @@ made unique when necessary."
 
 
 ;;;   Tabs in Emacs
-(leaf centaur-tabs :leaf-defer nil :require t
+(leaf centaur-tabs :leaf-defer nil :require t :disabled t
   :load-path "~/.emacs.d/.repos/centaur-tabs"
   :bind (("<C-M-S-iso-lefttab>" . centaur-tabs-forward-group)
          ("<C-M-tab>" . centaur-tabs-backward-group)
