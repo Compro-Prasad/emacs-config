@@ -378,7 +378,8 @@ is useful."
   :config
   (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
   ;; TODO: Disable when using EXWM
-  (ivy-posframe-mode 0))
+  ;; UPDATE: It currently works on EXWM
+  (ivy-posframe-mode 1))
 (leaf prescient :ensure t :require t
   :config
   (prescient-persist-mode 1))
