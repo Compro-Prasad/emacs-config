@@ -90,6 +90,8 @@
           ([C-tab] . nil)
           ([C-backtab] . nil)
           ([M-tab] . nil)))
+  :preface
+  (leaf forge :after magit :require t :leaf-defer nil)
   :config
   (defun compro/kill-magit-buffers ()
     "Kill magit buffers related to a project."
