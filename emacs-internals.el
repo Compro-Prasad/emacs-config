@@ -134,13 +134,13 @@
  enable-remote-dir-locals t
 
  ;;;   Backup configuration
- tramp-persistency-file-name "~/.emacs.d/.cache/tramp"
- backup-directory-alist '(("." . "~/.emacs.d/.cache/backups"))
+ tramp-persistency-file-name (concat user-emacs-directory ".cache/tramp")
+ backup-directory-alist `(("." . ,(concat user-emacs-directory ".cache/backups")))
  delete-old-versions -1
  version-control t
  vc-make-backup-files t
- auto-save-file-name-transforms '((".*" "~/.emacs.d/.cache/auto-save-list" t))
- auto-save-list-file-prefix "~/.emacs.d/.cache/auto-save-list/saves-"
+ auto-save-file-name-transforms `((".*" ,(concat user-emacs-directory ".cache/auto-save-list") t))
+ auto-save-list-file-prefix (concat user-emacs-directory ".cache/auto-save-list/saves-")
 
  ;;;   ERC configurations
  erc-hide-list '("PART" "QUIT" "JOIN")
@@ -168,7 +168,7 @@
 
  ;;;   Ido mode
  ido-enable-flex-matching t
- ido-save-directory-list-file "~/.emacs.d/.cache/ido.last"
+ ido-save-directory-list-file (concat user-emacs-directory ".cache/ido.last")
 
  ;;;   Line numbers
  display-line-numbers-type 'relative
@@ -374,9 +374,9 @@ minibuffer using `display-startup-echo-area-message'.")
 (setq recentf-max-saved-items 512
       history-length t
       history-delete-duplicates t
-      recentf-save-file "~/.emacs.d/.cache/recentf"
-      savehist-file "~/.emacs.d/.cache/savehist"
-      save-place-file "~/.emacs.d/.cache/saveplace"
+      recentf-save-file (concat user-emacs-directory ".cache/recentf")
+      savehist-file (concat user-emacs-directory ".cache/savehist")
+      save-place-file (concat user-emacs-directory ".cache/saveplace")
       savehist-additional-variables '(kill-ring
 				      extended-command-history
 				      global-mark-ring

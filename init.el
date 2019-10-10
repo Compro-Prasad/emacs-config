@@ -34,16 +34,16 @@
 
 
 ;;;   Load Emacs internal configurations
-(when (file-readable-p "~/.emacs.d/emacs-internals.el")
+(when (file-readable-p (concat user-emacs-directory "emacs-internals.el"))
   ;; Install general for customizing keybinds
   (leaf general :ensure t)
   (leaf f :ensure t
     :commands f-mkdir
     :config
-    (f-mkdir "~/.emacs.d/.cache" "auto-save-list")
+    (f-mkdir (concat user-emacs-directory ".cache") "auto-save-list")
     (f-mkdir tramp-persistency-file-name))
   (leaf general)
-  (load-file "~/.emacs.d/emacs-internals.el"))
+  (load-file (concat user-emacs-directory "emacs-internals.el")))
 ;;;   end
 
 
@@ -212,7 +212,7 @@
 
 ;;;   Telegram in Emacs
 (leaf telega
-  :load-path "~/.emacs.d/.repos/telega.el"
+  :load-path `,(concat user-emacs-directory ".repos/telega.el")
   :bind ("C-c t" . telega)
   :preface
   (leaf visual-fill-column :ensure t)
@@ -785,7 +785,7 @@ made unique when necessary."
 
 ;;;   Navbar(like Bootstrap Navbar)
 (leaf navbar :require t :leaf-defer t :disabled t
-  :load-path "~/.emacs.d/.repos/navbar.el"
+  :load-path `,(concat user-emacs-directory ".repos/navbar.el")
   :config
   (defun get-exwm-buffers ()
     (let ((str ""))
@@ -838,7 +838,7 @@ made unique when necessary."
 
 ;;;   Tabs in Emacs
 (leaf centaur-tabs :leaf-defer nil :require t :disabled t
-  :load-path "~/.emacs.d/.repos/centaur-tabs"
+  :load-path `,(concat user-emacs-directory ".repos/centaur-tabs")
   :bind (("<C-M-S-iso-lefttab>" . centaur-tabs-forward-group)
          ("<C-M-tab>" . centaur-tabs-backward-group)
          ("C-c b" . centaur-tabs-counsel-switch-group))
@@ -989,7 +989,27 @@ made unique when necessary."
 
 ;;;   libvterm integration - Requires Emacs module support
 (leaf vterm
-  :load-path "~/.emacs.d/.repos/emacs-libvterm/"
+  :load-path `,(concat user-emacs-directory ".repos/emacs-libvterm/")
   :commands (vterm)
   :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf)))))
 ;;;   end
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("a2286409934b11f2f3b7d89b1eaebb965fd63bc1e0be1c159c02e396afb893c8" default))
+ '(dired-dwim-target t t)
+ '(org-agenda-diary-file "~/.org/diary.org" t)
+ '(org-babel-load-languages '((emacs-lisp . t) (python . t)) t)
+ '(org-return-follows-link t t)
+ '(package-selected-packages
+   '(shackle writeroom-mode elfeed solaire-mode notmuch exwm frog-jump-buffer default-text-scale prodigy beginend typescript-mode flycheck yasnippet-snippets yasnippet plantuml-mode org-re-reveal org-plus-contrib rustic system-packages cmake-mode elf-mode evil-collection evil impatient-mode http emmet-mode web-mode counsel swiper company-prescient ivy-prescient prescient ivy-posframe ivy-rich ivy pony-mode pipenv pyvenv py-autopep8 ccls lsp-python-ms lsp-ui company-lsp lsp-mode company-quickhelp page-break-lines vscode-icon dired-sidebar lsp-treemacs treemacs visual-fill-column doom-modeline chocolate-theme kaolin-themes doom-themes wgrep move-text undo-tree phi-search-mc multiple-cursors which-key switch-window ag projectile expand-region git-messenger forge keycast minions hungry-delete leaf))
+ '(projectile-mode t nil (projectile)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
