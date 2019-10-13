@@ -113,10 +113,34 @@
 
 
 ;;;   Expand region for smart region selection
-(leaf expand-region :ensure t
-  :bind
-  (("C-=" . er/expand-region)
-   ("C-+" . er/contract-region)))
+(leaf expand-region
+  :commands (er/expand-region
+             er/mark-paragraph
+             er/mark-inside-pairs
+             er/mark-outside-pairs
+             er/mark-inside-quotes
+             er/mark-outside-quotes
+             er/contract-region)
+  :bind (("C-=" . hydra-er/body))
+  :config (defhydra hydra-er (:hint nil)
+            "
+^Expand^           ^Mark^
+^──────^───────────^────^─────────────────
+_C-=_: expand region _(_: inside pairs
+_C-+_: reduce region _)_: around pairs
+_=_: expand region   _q_: inside quotes
+_+_: reduce region   _Q_: around quotes
+_-_: reduce region   _p_: paragraph"
+            ("C-=" er/expand-region :color pink)
+            ("=" er/expand-region :color pink)
+            ("C-+" er/contract-region :color pink)
+            ("+" er/contract-region :color pink)
+            ("-" er/contract-region :color pink)
+            ("p" er/mark-paragraph)
+            ("(" er/mark-inside-pairs)
+            (")" er/mark-outside-pairs)
+            ("q" er/mark-inside-quotes)
+            ("Q" er/mark-outside-quotes)))
 ;;;   end
 
 
@@ -207,6 +231,43 @@
 (leaf doom-modeline :ensure t
   :init
   (setq doom-modeline-buffer-file-name-style 'relative-to-project))
+;;;   end
+
+
+;;;   Emacs 27 tabs tab-line-mode
+(unless (version< emacs-version "27")
+  (leaf tab-line :leaf-defer nil :require t :disabled t
+    :init
+    (global-tab-line-mode)
+    :config
+    (defun tab-line-close-tab (&optional e)
+      (interactive "e")
+      (let* ((posnp (event-start e))
+             (window (posn-window posnp))
+             (buffer (get-pos-property 1 'tab (car (posn-string posnp)))))
+        (with-selected-window window
+          (cond ((cdr (get-buffer-window-list buffer))
+                 (cond ((cdr (tab-line-tabs))
+                        (if (eq buffer (current-buffer))
+                            (bury-buffer)
+                          (set-window-prev-buffers nil (assq-delete-all buffer (window-prev-buffers)))
+                          (set-window-next-buffers nil (delq buffer (window-next-buffers)))))
+                       (t
+                        (delete-window window))))
+                (t
+                 (kill-buffer buffer)
+                 (delete-window window))))
+        (force-mode-line-update)))
+    (setq tab-line-new-tab-choice nil
+          tab-line-close-button-show nil)
+    (when (fboundp 'doom-color)
+      (let ((bg (doom-color 'bg))
+            (fg (doom-color 'fg))
+            (base1 (doom-color 'base1))
+            (box-width 7))
+        (set-face-attribute 'tab-line nil :background base1 :foreground fg)
+        (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
+        (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1))))))
 ;;;   end
 
 
@@ -666,21 +727,21 @@ made unique when necessary."
 (leaf prodigy :ensure t
   :config
   (prodigy-define-service
-   :name "NIT Durgapur backend"
-   :command "pipenv"
-   :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
-   :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/backend"
-   :tags '(college django python)
-   :stop-signal 'sigint
-   :kill-process-buffer-on-stop t)
+    :name "NIT Durgapur backend"
+    :command "pipenv"
+    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
+    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/backend"
+    :tags '(college django python)
+    :stop-signal 'sigint
+    :kill-process-buffer-on-stop t)
   (prodigy-define-service
-   :name "NIT Durgapur frontend"
-   :command "npm"
-   :args '("run" "dev")
-   :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/frontend"
-   :tags '(college node js vue)
-   :stop-signal 'sigint
-   :kill-process-buffer-on-stop t)
+    :name "NIT Durgapur frontend"
+    :command "npm"
+    :args '("run" "dev")
+    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/frontend"
+    :tags '(college node js vue)
+    :stop-signal 'sigint
+    :kill-process-buffer-on-stop t)
   (prodigy-define-service
     :name "Start Mariadb"
     :sudo t
@@ -719,9 +780,9 @@ made unique when necessary."
   (require 'exwm-config)
   (require 'exwm-systemtray)
   (setq exwm-input-global-keys `(,(kbd "s-&") .
-                               (lambda (command)
-                                 (interactive (list (read-shell-command "$ ")))
-                                 (start-process-shell-command command nil command))))
+                                 (lambda (command)
+                                   (interactive (list (read-shell-command "$ ")))
+                                   (start-process-shell-command command nil command))))
   (exwm-systemtray-enable)
   (exwm-config-default)
   (ido-mode 0)
@@ -834,6 +895,11 @@ made unique when necessary."
   (navbar-mode)
   )
 ;;;   end
+
+
+;;;   snails - A simple and modern completion framework
+(leaf snails :leaf-defer nil :require t
+  :load-path "~/.emacs.d/.repos/snails")
 
 
 ;;;   Tabs in Emacs
@@ -965,9 +1031,9 @@ made unique when necessary."
   :bind ("C-c w" . elfeed)
   :config
   (setq elfeed-feeds
-      '("http://nullprogram.com/feed/"
-        "http://planet.emacsen.org/atom.xml"
-        "http://emacshorrors.com/feed.atom")))
+        '("http://nullprogram.com/feed/"
+          "http://planet.emacsen.org/atom.xml"
+          "http://emacshorrors.com/feed.atom")))
 ;;;   end
 
 
@@ -990,7 +1056,7 @@ made unique when necessary."
 ;;;   libvterm integration - Requires Emacs module support
 (leaf vterm
   :load-path `,(concat user-emacs-directory ".repos/emacs-libvterm/")
-  :commands (vterm)
+  :bind ("<C-M-return>" . vterm)
   :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf)))))
 ;;;   end
 (custom-set-variables
