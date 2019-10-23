@@ -13,4 +13,6 @@
 !.gitignore
 !.gitmodules
 !.repos/
+!elisp/
+!elisp/*.el
 !README.md
