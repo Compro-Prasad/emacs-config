@@ -122,25 +122,20 @@
              er/mark-outside-quotes
              er/contract-region)
   :bind (("C-=" . hydra-er/body))
-  :config (defhydra hydra-er (:hint nil)
-            "
-^Expand^           ^Mark^
-^──────^───────────^────^─────────────────
-_C-=_: expand region _(_: inside pairs
-_C-+_: reduce region _)_: around pairs
-_=_: expand region   _q_: inside quotes
-_+_: reduce region   _Q_: around quotes
-_-_: reduce region   _p_: paragraph"
-            ("C-=" er/expand-region :color pink)
-            ("=" er/expand-region :color pink)
-            ("C-+" er/contract-region :color pink)
-            ("+" er/contract-region :color pink)
-            ("-" er/contract-region :color pink)
-            ("p" er/mark-paragraph)
-            ("(" er/mark-inside-pairs)
-            (")" er/mark-outside-pairs)
-            ("q" er/mark-inside-quotes)
-            ("Q" er/mark-outside-quotes)))
+  :config
+  (defhydra hydra-er (:hint nil)
+    "
+^Expand^  ^Reduce^
+^──────^──^────^─────────────────
+_C-=_     _C-+_
+_=_       _+_
+        _-_"
+    ("C-=" er/expand-region)
+    ("=" er/expand-region)
+    ("C-+" er/contract-region)
+    ("C--" er/contract-region)
+    ("+" er/contract-region)
+    ("-" er/contract-region)))
 ;;;   end
 
 
