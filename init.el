@@ -480,12 +480,21 @@ is useful."
 
 
 ;;;   Hot reloading
-(leaf http :ensure t
-  :bind
-  (("<f9> h e" . httpd-start)
-   ("<f9> h d" . httpd-stop)))
 (leaf impatient-mode :ensure t
-  :bind ("<f9> i" . impatient-mode))
+  :bind (("<C-i>" . hydra-imp/body))
+  :preface
+  (leaf http :ensure t)
+  :config
+  (defhydra hydra-imp (:hint nil)
+    "
+^Impatient Mode    ^Httpd
+^──────────────────^──────────────────^
+_<C-i>_, _i_: Toggle  _s_: Start
+                  _S_: Stop"
+    ("<C-i>" impatient-mode :color pink)
+    ("i" impatient-mode :color pink)
+    ("s" httpd-start :color pink)
+    ("S" httpd-stop :color pink)))
 ;;;   end
 
 
