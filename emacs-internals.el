@@ -461,49 +461,11 @@ minibuffer using `display-startup-echo-area-message'.")
 ;; (set-frame-parameter nil 'buffer-predicate 'compro/files-buffer-predicate)
 ;;;   end
 
-(defun compro/smarter-backward-kill-word ()
-  "Deletes the previous word, respecting:
-1. If the cursor is at the beginning of line, delete the '\n'.
-2. If there is only whitespace, delete only to beginning of line.
-3. If there is whitespace, delete whitespace and check 4-5.
-4. If there are other characters instead of words, delete one only char.
-5. If it's a word at point, delete it."
-  (interactive)
-
-  (if (bolp)
-      ;; 1
-      (delete-char -1)
-
-    (if (string-match-p "^[[:space:]]+$"
-                        (buffer-substring-no-properties
-                         (line-beginning-position) (point)))
-        ;; 2
-        (delete-horizontal-space)
-
-      (when (thing-at-point 'whitespace)
-        ;; 3
-        (delete-horizontal-space))
-
-      (if (thing-at-point 'word)
-          ;; 5
-          (let ((start (car (bounds-of-thing-at-point 'word)))
-                (end (point)))
-            (if (> end start)
-                (delete-region start end)
-              (delete-char -1)))
-        ;; 4
-        (delete-char -1)))))
-
 (with-eval-after-load 'comint
   (general-define-key
    :kemaps 'comint-mode-map
    "<remap> <kill-word>" 'my-kill-word
-   "<remap> <backward-kill-word>" 'compro/smarter-backward-kill-word
    "C-S-l" 'my-comint-clear-last-output))
-
-(general-define-key
- :keymaps 'global-map
- "<remap> <backward-kill-word>" 'compro/smarter-backward-kill-word)
 
 (defun my-shell-turn-echo-off ()
   (setq comint-process-echoes t))
