@@ -1079,7 +1079,7 @@ made unique when necessary."
       map))
   (hercules-def
    :show-funs '(next-line previous-line backward-char forward-char)
-   :hide-funs '(self-insert-command)
+   :transient t
    :keymap 'compro/move-map)
   (define-key global-map (kbd "C-S-h") (rebinder-dynamic-binding "C-h"))
   (define-key rebinder-mode-map (kbd "<C-j>") 'next-line)
