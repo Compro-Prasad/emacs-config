@@ -1365,7 +1365,8 @@ made unique when necessary."
 ;;;   libvterm integration - Requires Emacs module support
 (leaf vterm
   :load-path `,(concat user-emacs-directory ".repos/emacs-libvterm/")
-  :bind ("<C-M-return>" . vterm)
+  :bind (("C-`" . vterm)
+         ("<C-M-return>" . vterm))
   :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf)))))
 ;;;   end
 (custom-set-variables
