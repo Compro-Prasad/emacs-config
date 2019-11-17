@@ -490,6 +490,22 @@ minibuffer using `display-startup-echo-area-message'.")
 ;;;   Show directories first in dired
 ;;;     Source - https://www.emacswiki.org/emacs/DiredSortDirectoriesFirst
 (leaf dired
+  :bind (dired-mode-map
+         ("C-c C-c" . dired-collapse-mode)
+         ("C-c C-d C-u" . dired-du-mode)
+         ("." . dired-hide-dotfiles-mode)
+         ("<tab>" . dired-subtree-toggle))
+  :preface
+  (leaf dired-collapse :ensure t
+    :after dired
+    :hook (dired-mode-hook . dired-collapse-mode))
+  (leaf dired-du :ensure t :after dired)
+  (leaf dired-dups :ensure t :after dired)
+  (leaf dired-filetype-face :ensure t :after dired)
+  (leaf dired-hide-dotfiles :ensure t
+    :after dired
+    :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+  (leaf dired-subtree :ensure t :after dired)
   :config
   (defun mydired-sort ()
     "Sort dired listings with directories first."
