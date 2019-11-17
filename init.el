@@ -1362,35 +1362,6 @@ made unique when necessary."
 ;;;   end
 
 
-;;;   rebinder.el - Rebind non rebindable prefix keys
-(leaf rebinder :require t :leaf-defer nil
-  :load-path `,(concat user-emacs-directory "elisp/")
-  :config
-  (setq compro/move-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "<C-j>") 'next-line)
-      (define-key map (kbd "C-k") 'previous-line)
-      (define-key map (kbd "C-h") 'backward-char)
-      (define-key map (kbd "C-l") 'forward-char)
-      (define-key map (kbd "j") 'next-line)
-      (define-key map (kbd "k") 'previous-line)
-      (define-key map (kbd "h") 'backward-char)
-      (define-key map (kbd "l") 'forward-char)
-      map))
-  (hercules-def
-   :show-funs '(next-line previous-line backward-char forward-char)
-   :transient t
-   :keymap 'compro/move-map)
-  (define-key global-map (kbd "C-S-h") (rebinder-dynamic-binding "C-h"))
-  (define-key rebinder-mode-map (kbd "<C-j>") 'next-line)
-  (define-key rebinder-mode-map (kbd "C-k") 'previous-line)
-  (define-key rebinder-mode-map (kbd "C-h") 'backward-char)
-  (define-key rebinder-mode-map (kbd "C-l") 'forward-char)
-  (define-key rebinder-mode-map (kbd "C-S-k") 'kill-line)
-  (define-key rebinder-mode-map (kbd "C-S-l") 'recenter-top-bottom)
-  (rebinder-hook-to-mode 't 'after-change-major-mode-hook))
-;;;   end
-
 ;;;   libvterm integration - Requires Emacs module support
 (leaf vterm
   :load-path `,(concat user-emacs-directory ".repos/emacs-libvterm/")
