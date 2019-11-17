@@ -735,6 +735,7 @@ The return value is nil if no font was found, truthy otherwise."
 (leaf simple
   :bind (("C-a" . compro/beginning-of-line)
          ("C-o" . compro/open-line-below)
+         ("C-S-p" . list-processes)
          ("C-S-o" . compro/open-line-above))
   :config
   (defun compro/beginning-of-line ()

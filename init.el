@@ -1038,6 +1038,14 @@ made unique when necessary."
     :stop-signal 'sigint
     :kill-process-buffer-on-stop t)
   (prodigy-define-service
+    :name "NIT Durgapur new frontend"
+    :command "yarn"
+    :args '("serve")
+    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp-website-new"
+    :tags '(college node js vue)
+    :stop-signal 'sigint
+    :kill-process-buffer-on-stop t)
+  (prodigy-define-service
     :name "Start Mariadb"
     :sudo t
     :command "systemctl"
