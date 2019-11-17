@@ -525,8 +525,7 @@ _=_       _+_
       "Set treemacs theme, open treemacs, and expand all projects."
       (treemacs-load-theme "Atom")
       (setq treemacs-collapse-dirs 0)
-      (treemacs)
-      (aorst/treemacs-expand-all-projects))
+      )
     (defun aorst/treemacs-setup ()
       "Set treemacs buffer common settings."
       (setq tab-width 1
