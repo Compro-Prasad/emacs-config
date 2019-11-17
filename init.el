@@ -1020,6 +1020,7 @@ made unique when necessary."
 
 ;;;   Manage services from Emacs
 (leaf prodigy :ensure t
+  :bind ("C-c C-p" . prodigy)
   :config
   (prodigy-define-service
     :name "NIT Durgapur backend"
