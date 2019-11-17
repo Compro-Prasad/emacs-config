@@ -219,8 +219,49 @@ _=_       _+_
 
 
 ;;;   The doom theming
-(leaf doom-themes :ensure t :require t :leaf-defer nil
-  :config (load-theme 'doom-Iosvkem))
+(leaf doom-themes
+  :commands (doom-themes-org-config)
+  :config
+  (doom-themes-org-config)
+  (setq doom-themes-enable-bold t
+        doom-themes-enable-italic t)
+  (when (>= emacs-major-version 27)
+    (with-eval-after-load 'org
+      (dolist (face '(org-block
+                      org-block-begin-line
+                      org-block-end-line
+                      org-level-1
+                      org-quote))
+        (set-face-attribute face nil :extend t)))
+    (with-eval-after-load 'ediff
+      (dolist (face '(ediff-current-diff-A
+                      ediff-current-diff-Ancestor
+                      ediff-current-diff-B
+                      ediff-current-diff-C
+                      ediff-even-diff-A
+                      ediff-even-diff-Ancestor
+                      ediff-even-diff-B
+                      ediff-even-diff-C
+                      ediff-fine-diff-A
+                      ediff-fine-diff-Ancestor
+                      ediff-fine-diff-B
+                      ediff-fine-diff-C
+                      ediff-odd-diff-A
+                      ediff-odd-diff-Ancestor
+                      ediff-odd-diff-B
+                      ediff-odd-diff-C))
+        (set-face-attribute face nil :extend t)))
+    (with-eval-after-load 'hl-line
+      (set-face-attribute 'hl-line nil :extend t))
+    (with-eval-after-load 'faces
+      (dolist (face '(region
+                      secondary-selection))
+        (set-face-attribute face nil :extend t)))
+    (with-eval-after-load 'markdown-mode
+      (dolist (face '(markdown-code-face
+                      markdown-pre-face))
+        (set-face-attribute face nil :extend t))))
+  :init (load-theme 'doom-one t))
 (leaf kaolin-themes :ensure t)
 (leaf chocolate-theme :ensure t)
 (leaf doom-modeline :ensure t
@@ -274,6 +315,11 @@ _=_       _+_
   (leaf visual-fill-column :ensure t)
   :config
   (setq telega-chat-use-markdown-formatting t))
+;;;   end
+
+
+;;;   "All the icons" font
+(leaf all-the-icons :ensure t :require t :leaf-defer nil)
 ;;;   end
 
 
