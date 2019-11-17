@@ -487,6 +487,28 @@ minibuffer using `display-startup-echo-area-message'.")
 
 (minibuffer-depth-indicate-mode 1)
 
+;;;   Show directories first in dired
+;;;     Source - https://www.emacswiki.org/emacs/DiredSortDirectoriesFirst
+(leaf dired
+  :config
+  (defun mydired-sort ()
+    "Sort dired listings with directories first."
+    (save-excursion
+      (let (buffer-read-only)
+        (forward-line 2) ;; beyond dir. header
+        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+      (set-buffer-modified-p nil)))
+
+  (defadvice dired-readin
+      (after dired-after-updating-hook first () activate)
+    "Sort dired listings with directories first before adding marks."
+    (mydired-sort)))
+;;;   end
+
+(leaf ls-lisp
+  :config
+  (setq ls-lisp-dirs-first t))
+
 (leaf winner
   :init
   (winner-mode 1))
