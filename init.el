@@ -260,8 +260,7 @@ _=_       _+_
     (with-eval-after-load 'markdown-mode
       (dolist (face '(markdown-code-face
                       markdown-pre-face))
-        (set-face-attribute face nil :extend t))))
-  :init (load-theme 'doom-one t))
+        (set-face-attribute face nil :extend t)))))
 (leaf kaolin-themes :ensure t)
 (leaf chocolate-theme :ensure t)
 (leaf doom-modeline :ensure t
