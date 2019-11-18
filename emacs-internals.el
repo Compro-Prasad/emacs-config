@@ -229,13 +229,12 @@
  [up]              nil
  [left]            nil
  [right]           nil
- "C-z"             nil
+ "C-z"             'undo
  "C-x C-o"         'ff-find-other-file
  [C-m]             'delete-other-windows
  "<C-tab>"         'previous-buffer
  "<C-iso-lefttab>" 'next-buffer
  "<C-backtab>"     'next-buffer
- "C-z <tab>"       'toggle-minibuffer-message-timer
  "<C-S-mouse-1>"   'imenu
  "C-<f4>"          'kill-current-buffer
  "M-/"             'hippie-expand
