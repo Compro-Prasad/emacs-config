@@ -1202,7 +1202,7 @@ made unique when necessary."
 
 
 ;;;   snails - A simple and modern completion framework
-(leaf snails :leaf-defer nil :require t
+(leaf snails :leaf-defer nil :require t :disabled t
   :load-path "~/.emacs.d/.repos/snails")
 
 
