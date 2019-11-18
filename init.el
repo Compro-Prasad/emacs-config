@@ -113,7 +113,7 @@
 
 
 ;;;   Expand region for smart region selection
-(leaf expand-region
+(leaf expand-region :ensure t :require t :leaf-defer nil
   :commands (er/expand-region
              er/mark-paragraph
              er/mark-inside-pairs
