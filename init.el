@@ -1077,7 +1077,7 @@ made unique when necessary."
 
 ;;;   EXWM - Emacs Window Manager
 (leaf exwm :ensure t :require t :leaf-defer nil
-  :disabled (not (eq (getenv "DESKTOP_SESSION") nil))
+  :disabled t
   :init
   (require 'exwm)
   (require 'exwm-config)
