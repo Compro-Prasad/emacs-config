@@ -1358,3 +1358,10 @@ made unique when necessary."
          ("<C-M-return>" . vterm))
   :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf)))))
 ;;;   end
+
+
+;;;   prettier.js for formating js related files
+(leaf prettier-js :ensure t
+  :hook ((js-mode-hook js2-mode-hook typescript-mode-hook web-mode-hook) .
+         prettier-js-mode))
+;;;   end
