@@ -1129,20 +1129,11 @@ made unique when necessary."
 ;;;   end
 
 
-;;;   Eldoc(Function args help) at the point. Toggle using (C-c e).
-(leaf pos-tip :ensure t :after eldoc :require t
+;;;   Child frame eldoc support
+(leaf eldoc-box :ensure t :require t
   :config
-  (defun compro/eldoc/display-message-momentary (format-string &rest args)
-    "Display eldoc message near point."
-    (when format-string
-      (pos-tip-show (apply 'format format-string args) nil nil nil 0)))
-  (global-set-key (kbd "C-c e")
-                  (lambda ()
-                    (interactive)
-                    (setq eldoc-message-function
-                          (if (eq eldoc-message-function 'ignore)
-                              #'compro/eldoc/display-message-momentary
-                            #'ignore)))))
+  (setq eldoc-box-only-multi-line t)
+  (eldoc-box-hover-at-point-mode 1))
 ;;;   end
 
 
