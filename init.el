@@ -1057,7 +1057,25 @@ made unique when necessary."
     :command "systemctl"
     :args '("stop" "mariadb.service")
     :tags '(system db)
-    :kill-process-buffer-on-stop t))
+    :kill-process-buffer-on-stop t)
+  (prodigy-define-service
+    :name "Webtorrent Desktop"
+    :command "npm"
+    :args '("start")
+    :cwd "~/Downloads/github.com/webtorrent/webtorrent-desktop/"
+    :tags '(torrent desktop app node js electron video))
+  (prodigy-define-service
+    :name "IGI 1"
+    :command "wine"
+    :args '("igi.exe")
+    :cwd "~/games/Project_IGI_1/"
+    :tags '(game fps story igi))
+  (prodigy-define-service
+    :name "IGI 2"
+    :command "wine"
+    :args '("igi2.exe")
+    :cwd "~/games/IGI 2 - Covert Strike/pc/"
+    :tags '(game fps story igi)))
 ;;;   end
 
 
