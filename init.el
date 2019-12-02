@@ -1383,3 +1383,11 @@ made unique when necessary."
   :hook ((js-mode-hook js2-mode-hook typescript-mode-hook web-mode-hook) .
          prettier-js-mode))
 ;;;   end
+
+
+;;;   Highlight symbol at point
+(leaf highlight-symbol :ensure t :leaf-defer nil :require t
+  :bind (("C-S-s" . highlight-symbol-next)
+         ("C-S-r" . highlight-symbol-prev))
+  :hook (prog-mode-hook . highlight-symbol-mode))
+;;;   end
