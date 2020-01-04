@@ -1407,3 +1407,12 @@ made unique when necessary."
          ("C-S-r" . highlight-symbol-prev))
   :hook (prog-mode-hook . highlight-symbol-mode))
 ;;;   end
+
+
+;;;   Dashboard
+(leaf dashboard :ensure t :require t :leaf-defer nil
+  :init
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+  :config
+  (dashboard-setup-startup-hook))
+;;;   end
