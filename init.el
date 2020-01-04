@@ -1373,8 +1373,24 @@ made unique when necessary."
 (leaf vterm
   :load-path `,(concat user-emacs-directory ".repos/emacs-libvterm/")
   :bind (("C-`" . vterm)
-         ("<C-M-return>" . vterm))
-  :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf)))))
+         ("<C-M-return>" . open-or-switch-vterm))
+  :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf))))
+  :init
+  (defun open-or-switch-vterm (&optional arg)
+    "Open or switch between existing vterms."
+    (interactive "p")
+    (let* ((vterms (-sort
+                    (lambda (buf1 buf2)
+                      (string< (buffer-name buf1) (buffer-name buf2)))
+                    (-filter
+                     (lambda (buf)
+                       (with-current-buffer buf (eq major-mode 'vterm-mode)))
+                     (buffer-list))))
+           (no-vterms (= (length vterms) 0)))
+      (if no-vterms
+          (vterm)
+        (switch-to-buffer (nth 0 vterms)))))
+  )
 ;;;   end
 
 
