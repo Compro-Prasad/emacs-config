@@ -251,7 +251,9 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 
-(global-display-fill-column-indicator-mode 1)
+
+;;;   Show a line at 80 column mark
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
 
 
 
