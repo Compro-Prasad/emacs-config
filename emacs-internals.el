@@ -260,11 +260,11 @@
 
 
 
-(defun my/set-show-whitespace-mode ()
+(defun compro/set-show-whitespace-mode ()
   "Show white space in current buffer"
   (setq show-trailing-whitespace t))
 ;; Show whitespaces only in buffers pointing to specific files
-(add-hook 'find-file-hook 'my/set-show-whitespace-mode)
+(add-hook 'find-file-hook 'compro/set-show-whitespace-mode)
 ;; Remove the trailing whitespaces on save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
@@ -471,10 +471,10 @@ minibuffer using `display-startup-echo-area-message'.")
    "<remap> <kill-word>" 'my-kill-word
    "C-S-l" 'my-comint-clear-last-output))
 
-(defun my-shell-turn-echo-off ()
+(defun compro/shell-turn-echo-off ()
   (setq comint-process-echoes t))
 
-(add-hook 'shell-mode-hook 'my-shell-turn-echo-off)
+(add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
 
 (setq hippie-expand-try-functions-list
       '(yas-hippie-try-expand
