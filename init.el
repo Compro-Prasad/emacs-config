@@ -749,7 +749,9 @@ is useful."
    ("C-c r" . counsel-recentf)
    ("C-c y" . counsel-yank-pop)
    ("C-c u" . counsel-unicode-char)
-   ("C-c R" . ivy-resume)))
+   ("C-c R" . ivy-resume)
+   ("C-h b" . counsel-descbinds)
+   ("C-h w" . counsel-descbinds)))
 ;;;   end
 
 
