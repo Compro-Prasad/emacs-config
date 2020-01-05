@@ -13,6 +13,9 @@
  )
 
 (setq
+ ;;;   Is it my laptop running Arch Linux?
+ compro/laptop-p (equal system-name "c-p-dell")
+
  ;;;   Initial major mode for *scratch* buffer
  initial-major-mode 'fundamental-mode
 
