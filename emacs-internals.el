@@ -374,6 +374,7 @@ minibuffer using `display-startup-echo-area-message'.")
     (setq minibuffer-message-echo-timer)))
 
 
+;;;   Saving history for future Emacs sessions
 (setq recentf-max-saved-items 512
       history-length t
       history-delete-duplicates t
@@ -389,6 +390,7 @@ minibuffer using `display-startup-echo-area-message'.")
 (save-place-mode 1)
 (savehist-mode 1)
 (recentf-mode 1)
+;;;   end
 
 (defun my-comint-preoutput-read-only (text)
   (propertize text 'read-only t))
