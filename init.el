@@ -968,7 +968,7 @@ made unique when necessary."
                 ?\C-a ?\C-x ? ?\C-s ?: ?E ?N ?D ?: return
                 ?\C-b ?\C-b ?\C-b ?\C-b ?\C-b
                 134217848 ?k ?i ?l ?l ?- ?r ?e ?c ?t ?a ?n ?g ?l ?e return] 0 "%d"))
-  (add-to-list 'org-structure-template-alist '("el" . "#+BEGIN_SRC emacs-lisp :tangle yes?\n\n#+END_SRC"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp :tangle yes"))
 
   (setq org-startup-indented t
         org-hide-emphasis-markers t
