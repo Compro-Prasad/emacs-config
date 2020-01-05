@@ -1025,6 +1025,22 @@ made unique when necessary."
   :bind ("C-c C-p" . prodigy)
   :config
   (prodigy-define-service
+    :name "Personal Server"
+    :command "pipenv"
+    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
+    :cwd "~/Downloads/gitlab.com/Compro-Prasad/personal_server/"
+    :tags '(django python)
+    :stop-signal 'sigint
+    :kill-process-buffer-on-stop t)
+  (prodigy-define-service
+    :name "School Backend"
+    :command "pipenv"
+    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
+    :cwd "~/Downloads/github.com/Compro-Prasad/Bhatauli_School/backend/"
+    :tags '(school django python)
+    :stop-signal 'sigint
+    :kill-process-buffer-on-stop t)
+  (prodigy-define-service
     :name "NIT Durgapur backend"
     :command "pipenv"
     :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
@@ -1213,7 +1229,7 @@ made unique when necessary."
 
 
 ;;;   snails - A simple and modern completion framework
-(leaf snails :leaf-defer nil :require t :disabled t
+(leaf snails :leaf-defer nil :require t
   :load-path "~/.emacs.d/.repos/snails")
 
 
