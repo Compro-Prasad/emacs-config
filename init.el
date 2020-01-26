@@ -977,7 +977,15 @@ made unique when necessary."
         '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
            "** TODO %?\n  %i\n  %a")
           ("l" "Link" entry (file+headline "~/notes.org" "Links")
-           "** %T %^L \n%?"))))
+           "** %T %^L \n%?"))
+
+        org-todo-keyword-faces
+        '(("DONE" . (:inherit org-done :strike-through t))
+          ("TODO" . (:inherit org-warning :inverse-video t))
+          ("CANCELED" . (:inherit org-verbatim
+                         :box-around-text t
+                         :strike-through t))
+          ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
 
 ;;;   end
 
