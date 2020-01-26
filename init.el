@@ -637,6 +637,13 @@ _=_       _+_
 
 ;;;   Language Server Protocol
 (leaf lsp-mode :ensure t
+  :hook (c-mode-common-hook . compro/init-lsp)
+  :preface
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (pipenv-activate)
+              (sleep-for 1)
+              (lsp)))
   :init
   (require 'lsp-clients)
   (defun compro/init-lsp ()
