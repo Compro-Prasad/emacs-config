@@ -140,13 +140,12 @@ _=_       _+_
 
 
 ;;;   Project support is very useful
-(leaf projectile :ensure t
+(leaf projectile :ensure t :require t
   :bind (("C-c p" . projectile-command-map))
-  :init
-  (leaf ag :ensure t)
   :config
-  (setq projectile-completion-system 'ivy)
-  :custom ((projectile-mode . t)))
+  (projectile-mode 1)
+  (setq projectile-completion-system 'ivy))
+(leaf ag :ensure t)
 ;;;   end
 
 
@@ -852,11 +851,10 @@ _<C-i>_, _i_: Toggle  _s_: Start
     ([C-backtab] . nil)
     ("M-n" . outline-next-visible-heading)
     ("M-p" . outline-previous-visible-heading)))
-  :custom
-  ((org-return-follows-link . t)
-   (org-agenda-diary-file . "~/.org/diary.org")
-   (org-babel-load-languages . '((emacs-lisp . t) (python . t))))
   :config
+  (setq org-return-follows-link t
+        org-agenda-diary-file "~/.org/diary.org"
+        org-babel-load-languages '((emacs-lisp . t) (python . t)))
   (require 'org-tempo)
   (define-minor-mode unpackaged/org-export-html-with-useful-ids-mode
     "Attempt to export Org as HTML with useful link IDs.
@@ -917,20 +915,22 @@ made unique when necessary."
 
   (defun unpackaged/org-export-new-title-reference (datum cache)
     "Return new reference for DATUM that is unique in CACHE."
-    (cl-macrolet ((inc-suffixf (place)
-                               `(progn
-                                  (string-match (rx bos
-                                                    (minimal-match (group (1+ anything)))
-                                                    (optional "--" (group (1+ digit)))
-                                                    eos)
-                                                ,place)
-                                  ;; HACK: `s1' instead of a gensym.
-                                  (-let* (((s1 suffix) (list (match-string 1 ,place)
-                                                             (match-string 2 ,place)))
-                                          (suffix (if suffix
-                                                      (string-to-number suffix)
-                                                    0)))
-                                    (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
+    (cl-macrolet
+        ((inc-suffixf
+          (place)
+          `(progn
+             (string-match (rx bos
+                               (minimal-match (group (1+ anything)))
+                               (optional "--" (group (1+ digit)))
+                               eos)
+                           ,place)
+             ;; HACK: `s1' instead of a gensym.
+             (-let* (((s1 suffix) (list (match-string 1 ,place)
+                                        (match-string 2 ,place)))
+                     (suffix (if suffix
+                                 (string-to-number suffix)
+                               0)))
+               (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
       (let* ((title (org-element-property :raw-value datum))
              (ref (url-hexify-string (substring-no-properties title)))
              (parent (org-element-property :parent datum)))
@@ -1107,7 +1107,7 @@ made unique when necessary."
 
 ;;;   Better buffer jumping (C-x C-b)
 (leaf frog-jump-buffer :ensure t
-  :init (require 'projectile) (projectile-mode 1)
+  :after projectile
   :bind ("C-x C-b" . frog-jump-buffer))
 ;;;   end
 
@@ -1290,17 +1290,16 @@ made unique when necessary."
        (t '("Unregistered")))))
   :custom-face
   ((centaur-tabs-close-mouse-face . '((default (:foreground "orange red")))))
-  :custom
-  ((centaur-tabs-mouse-pointer . 'arrow)
-   (centaur-tabs-style . "slant")  ;; slant, box, bar, wave, chamfer
-   (centaur-tabs-height . 25)
-   (centaur-tabs-set-icons . t)
-   (centaur-tabs-set-bar . t)
-   (centaur-tabs-cycle-scope . 'tabs)
-   (centaur-tabs-set-modified-marker . t)
-   (centaur-tabs-hide-tab-function . 'compro/centaur-tabs-hide-tab)
-   (centaur-tabs-buffer-groups-function . 'compro/centaur-tabs-buffer-groups))
   :config
+  (setq centaur-tabs-mouse-pointer 'arrow
+        centaur-tabs-style "slant"  ;; slant, box, bar, wave, chamfer
+        centaur-tabs-height 25
+        centaur-tabs-set-icons t
+        centaur-tabs-set-bar t
+        centaur-tabs-cycle-scope 'tabs
+        centaur-tabs-set-modified-marker t
+        centaur-tabs-hide-tab-function 'compro/centaur-tabs-hide-tab
+        centaur-tabs-buffer-groups-function 'compro/centaur-tabs-buffer-groups)
   (centaur-tabs-mode t)
   (centaur-tabs-headline-match)
   :bind
@@ -1353,7 +1352,8 @@ made unique when necessary."
                 (if (file-exists-p ogg-file)
                     (delete-file file))))))))
 
-  :custom ((dired-dwim-target . t)))
+  :config
+  (setq dired-dwim-target t))
 ;;;   end
 
 
