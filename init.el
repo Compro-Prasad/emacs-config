@@ -656,15 +656,7 @@ is useful."
         lsp-ui-doc-include-signature t
         lsp-ui-sideline-enable nil))
 ;; M$ Python Language Server
-(leaf lsp-python-ms :ensure t :after lsp-mode :require t
-  :preface
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (pipenv-activate)
-              (require 'lsp-python-ms)
-              (lsp)))
-  :init
-  (setq lsp-python-ms-executable "~/Downloads/github.com/Microsoft/python-language-server/output/bin/Release/linux-x64/publish/Microsoft.Python.LanguageServer"))
+(leaf lsp-python-ms :ensure t :after lsp-mode :require t)
 ;; C and C++
 (leaf ccls :ensure t :after lsp-mode :require t)
 ;;;   end
