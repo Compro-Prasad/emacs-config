@@ -7,12 +7,7 @@
 *
 .*
 !init.el
-!emacs-internals.el
 !early-init.el
-!.mc-lists.el
 !.gitignore
 !.gitmodules
-!.repos/
-!elisp/
-!elisp/*.el
-!README.md
+!README.org

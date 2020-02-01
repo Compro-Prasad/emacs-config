@@ -1,97 +1,701 @@
-;; ;;;   Stop loading init.el at a specific point
-;; (with-current-buffer " *load*"
-;;   (goto-char (point-max)))
-;; ;;;   end
+;;; init.el ---                                      -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2018-2020  Abhishek(Compro) Prasad
 
-;;;   package.el init
+;; Author: Abhishek(Compro) Prasad
+;; Keywords: emacs, configuration, elisp
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;; Comment
+
+
+;;; Code:
+
+(setq debug-on-error  t
+      init-file-debug t)
+
+(defalias 'ft 'file-truename)
+(defvaralias 'emacs-d 'user-emacs-directory)
+
+(defun mplist-remove (plist prop)
+  "Return a copy of a modified PLIST without PROP and its values.
+
+If there are multiple properties with the same keyword, only the first property
+and its values are removed."
+  (let ((tail plist)
+        result)
+    (while (and (consp tail) (not (eq prop (car tail))))
+      (push (pop tail) result))
+    (when (eq prop (car tail))
+      (pop tail)
+      (while (and (consp tail) (not (keywordp (car tail))))
+        (pop tail)))
+    (while (consp tail)
+      (push (pop tail) result))
+    (nreverse result)))
+
+(defun set-default-font (plists)
+  "Set the font given the passed PLISTS.
+
+PLISTS has either the form (\"fontname\" :prop1 val1 :prop2 val2 ...)
+or is a list of such. The first font that can be found will be used.
+
+The return value is nil if no font was found, truthy otherwise."
+  (unless (listp (car plists))
+    (setq plists (list plists)))
+  (catch 'break
+    (dolist (plist plists)
+      (when (find-font (font-spec :name (car plist)))
+        (let* ((font (car plist))
+               (props (cdr plist))
+               (font-props (mplist-remove
+                            ;; although this keyword does not exist anymore
+                            ;; we keep it for backward compatibility
+                            (mplist-remove props :powerline-scale)
+                            :powerline-offset))
+               (fontspec (apply 'font-spec :name font font-props)))
+          (set-frame-font fontspec nil t)
+          (push `(font . ,(frame-parameter nil 'font)) default-frame-alist)
+          (pcase system-type
+            (`gnu/linux
+             (setq fallback-font-name "NanumGothic")
+             (setq fallback-font-name2 "NanumGothic"))
+            (`darwin
+             (setq fallback-font-name "Arial Unicode MS")
+             (setq fallback-font-name2 "Arial Unicode MS"))
+            (`windows-nt
+             (setq fallback-font-name "MS Gothic")
+             (setq fallback-font-name2 "Lucida Sans Unicode"))
+            (`cygwin
+             (setq fallback-font-name "MS Gothic")
+             (setq fallback-font-name2 "Lucida Sans Unicode"))
+            (other
+             (setq fallback-font-name nil)
+             (setq fallback-font-name2 nil)))
+          (when (and fallback-font-name fallback-font-name2)
+            ;; remove any size or height properties in order to be able to
+            ;; scale the fallback fonts with the default one (for zoom-in/out
+            ;; for instance)
+            (let* ((fallback-props (mplist-remove
+                                    (mplist-remove font-props :size)
+                                    :height))
+                   (fallback-spec (apply 'font-spec
+                                         :name fallback-font-name
+                                         fallback-props))
+                   (fallback-spec2 (apply 'font-spec
+                                          :name fallback-font-name2
+                                          fallback-props)))
+              ;; window numbers
+              (set-fontset-font "fontset-default"
+                                '(#x2776 . #x2793) fallback-spec nil 'prepend)
+              ;; mode-line circled letters
+              (set-fontset-font "fontset-default"
+                                '(#x24b6 . #x24fe) fallback-spec nil 'prepend)
+              ;; mode-line additional characters
+              (set-fontset-font "fontset-default"
+                                '(#x2295 . #x22a1) fallback-spec nil 'prepend)
+              ;; new version lighter
+              (set-fontset-font "fontset-default"
+                                '(#x2190 . #x2200) fallback-spec2 nil 'prepend))))
+        (throw 'break t)))
+    nil))
+
+(defun compro/comint/kill-word (arg)
+  (interactive "p")
+  (unless buffer-read-only
+    (let ((beg (point))
+          (end (save-excursion (forward-word arg) (point)))
+          (point (save-excursion (goto-char
+                                  (if (> arg 0)
+                                      (next-single-char-property-change
+                                       (point) 'read-only)
+                                    (previous-single-char-property-change
+                                     (point) 'read-only)))
+                                 (point))))
+      (unless (get-char-property (point) 'read-only)
+        (if (if (> arg 0) (< point end) (> point end))
+            (kill-region beg point)
+          (kill-region beg end))))))
+
+(defun compro/comint/last-output-beg ()
+  (save-excursion
+    (comint-goto-process-mark)
+    (while (not (or (eq (get-char-property (point) 'field) 'boundary)
+                    (= (point) (point-min))))
+      (goto-char (previous-char-property-change (point) (point-min))))
+    (if (= (point) (point-min))
+        (point)
+      (1+ (point)))))
+
+(defun compro/comint/last-output-end ()
+  (save-excursion
+    (comint-goto-process-mark)
+    (while (not (or (eq (get-char-property (point) 'font-lock-face)
+                        'comint-highlight-prompt)
+                    (= (point) (point-min))))
+      (goto-char (previous-char-property-change (point) (point-min))))
+    (let ((overlay (car (overlays-at (point)))))
+      (when (and overlay (eq (overlay-get overlay 'font-lock-face)
+                             'comint-highlight-prompt))
+        (goto-char (overlay-start overlay))))
+    (1- (point))))
+
+(defun compro/comint/clear-last-output ()
+  (interactive)
+  (let ((start (compro/comint/last-output-beg))
+        (end (compro/comint/last-output-end)))
+    (let ((inhibit-read-only t))
+      (delete-region start end)
+      (save-excursion
+        (goto-char start)
+        (insert (propertize "output cleared"
+                            'font-lock-face 'font-lock-comment-face))))))
+
+(defun compro/comint/preoutput-read-only (text)
+  (propertize text 'read-only t))
+
+(setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/")))
+
+(setq is-windows
+      (seq-filter
+       (lambda (x) (string= system-type x))
+       '("ms-dos" "windows-nt" "cygwin")))
+(setq is-unix
+      (seq-filter
+       (lambda (x) (string= system-type x))
+       '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
+(setq is-gnu
+      (seq-filter
+       (lambda (x) (string= system-type x))
+       '("gnu" "gnu/linux" "gnu/kfreebsd")))
+(setq is-linux
+      (or
+       (string= system-type "gnu")
+       (string= system-type "gnu/linux")))
+(setq is-mac (string= system-type "darwin"))
+(setq is-bsd
+      (or
+       (string= system-type "gnu/kfreebsd")
+       (string= system-type "darwin")))
+
+(setq compro/laptop-p (equal system-name "c-p-dell"))
+
+(defun tangle-README.org-to-init.el ()
+  "Tangle README.org to init.el"
+  (let ((readme (ft (concat emacs-d "README.org")))
+	(current-file (ft (buffer-file-name))))
+    (when (string= readme current-file)
+      (call-interactively 'org-babel-tangle))))
+
+(add-hook 'after-save-hook 'tangle-README.org-to-init.el)
+
+(setq package-user-dir (concat cache-d "elpa/"))
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
-  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-  ;;(add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
-  (when (< emacs-major-version 24)
-    ;; For important compatibility libraries like cl-lib
-    (add-to-list 'package-archives '("gnu" . (concat proto "://elpa.gnu.org/packages/")))))
+  (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t))
 (package-initialize)
-;;;   end
 
-
-;;;   leaf is a better alternative to use-package
 (unless (package-installed-p 'leaf)
-  (unless (assoc 'leaf package-archive-contents)
-    (package-refresh-contents))
-  (condition-case err
-      (package-install 'leaf)
-    (error
-     (package-refresh-contents)       ; renew local melpa cache if fail
-     (package-install 'leaf))))
+  (package-refresh-contents)
+  (package-install 'leaf))
+
 (leaf leaf)
-;;;   end
 
+(leaf general :leaf-defer nil :ensure t :require t)
 
-;;;   Load Emacs internal configurations
-(when (file-readable-p (concat user-emacs-directory "emacs-internals.el"))
-  ;; Install general for customizing keybinds
-  (leaf general :ensure t)
-  (leaf f :ensure t
-    :commands f-mkdir
-    :config
-    (f-mkdir (concat user-emacs-directory ".cache") "auto-save-list")
-    (f-mkdir tramp-persistency-file-name))
-  (leaf general)
-  (load-file (concat user-emacs-directory "emacs-internals.el")))
-;;;   end
+(leaf f :leaf-defer nil :ensure t :require t)
 
+(leaf tab-line :leaf-defer nil :require t
+  :when (string-greaterp emacs-version "27")
+  :init (global-tab-line-mode)
+  :config
+  (setq tab-line-new-tab-choice nil
+	tab-line-close-button-show nil)
+  (when (fboundp 'doom-color)
+    (let ((bg (doom-color 'bg))
+	  (fg (doom-color 'fg))
+	  (base1 (doom-color 'base1))
+	  (box-width 7))
+      (set-face-attribute 'tab-line nil :background base1 :foreground fg)
+      (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
+      (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
 
-;;;   Function to get basename of a given path
-(defun basename (path)
-  "Returns just the file name of the given PATH."
-  (file-name-nondirectory (directory-file-name path)))
-;;;   end
+(leaf dired
+  :hook (dired-mode-hook . dired-hide-details-mode)
+  :bind ((dired-mode-map
+          ("C-c C-c" . dired-collapse-mode)
+          ("C-c C-d C-u" . dired-du-mode)
+          ("." . dired-hide-dotfiles-mode)
+          ("<tab>" . dired-subtree-toggle)
+          ("q"      . kill-current-buffer)
+          ("RET"    . compro/dired-open-dir)
+          ("^"      . compro/dired-up-dir)
+          ("DEL"    . compro/dired-up-dir)
+          ("<left>" . compro/dired-up-dir)))
+  :preface
+  (leaf dired-x
+    :bind ("C-x <C-j>" . dired-jump))
+  (leaf dired-collapse :ensure t
+    :after dired
+    :hook (dired-mode-hook . dired-collapse-mode))
+  (leaf dired-du :ensure t :after dired)
+  (leaf dired-dups :ensure t :after dired)
+  (leaf dired-filetype-face :ensure t :after dired)
+  (leaf dired-hide-dotfiles :ensure t
+    :after dired
+    :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+  (leaf dired-subtree :ensure t :after dired)
+  (defun compro/dired-up-dir ()
+    (interactive)
+    (find-alternate-file ".."))
 
+  (defun compro/dired-open-dir ()
+    (interactive)
+    (set-buffer-modified-p nil)
+    (let ((file-or-dir (dired-get-file-for-visit)))
+      (if (f-dir-p file-or-dir)
+          (find-alternate-file file-or-dir)
+        (find-file file-or-dir))))
 
-;;;   Hungry delete is the best part of editing text!
-(leaf hungry-delete :ensure t
+  (defun compro/dired/mp3-to-ogg ()
+    "Used in dired to convert mp3 files to ogg"
+    (interactive)
+    (let* ((files (dired-get-marked-files)))
+      (dolist (file files)
+        (let* ((basename (file-name-nondirectory file))
+               (file-base (file-name-base file))
+               (dirname (file-name-directory file))
+               (extension (file-name-extension file))
+               (ogg-file (concat dirname file-base ".ogg"))
+               (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+          (if (string= "mp3" (downcase extension))
+              (progn
+                (shell-command command nil nil)
+                (message command)
+                (if (file-exists-p ogg-file)
+                    (delete-file file))))))))
+
+  :config
+  (setq dired-dwim-target t)
+  (defun mydired-sort ()
+    "Sort dired listings with directories first."
+    (save-excursion
+      (let (buffer-read-only)
+        (forward-line 2) ;; beyond dir. header
+        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+      (set-buffer-modified-p nil)))
+
+  (defadvice dired-readin
+      (after dired-after-updating-hook first () activate)
+    "Sort dired listings with directories first before adding marks."
+    (mydired-sort)))
+
+(setq-default
+ ;;;   Use spaces and not tabs for indentation
+ indent-tabs-mode nil
+
+ ;;;   Don't highlight trailing whitespaces by default
+ show-trailing-whitespace nil
+
+ ;;;   Org
+ org-src-fontify-natively t ;; Fontify source blocks
+
+ ;;;   More number of characters on a single line
+ fill-column 80
+ )
+
+(setq
+ ;;;   Initial major mode for *scratch* buffer
+ initial-major-mode 'fundamental-mode
+
+ ;;;   Node.js path from nvm
+ exec-path (append exec-path '("/home/compro/.nvm/versions/node/v12.13.0/bin/"))
+
+ ;;;   User details
+ user-mail-address "comproprasad@gmail.com"
+ user-full-name "Compro Prasad"
+
+ ;;;   Only use ~/.authinfo.gpg
+ auth-sources (list (ft "~/.authinfo.gpg"))
+
+ ;;;   Security settings
+ gnutls-verify-error t
+
+ ;;;   Customizations go to this file
+ custom-file (expand-file-name "custom.el" cache-d)
+
+ ;;;   Follow symlinks to the actual file
+ find-file-visit-truename t
+ vc-follow-symlinks t
+
+ ;;;   Jump by words separated by punctuations
+ global-subword-mode t
+
+ ;;;   Prompt GNUPG passwords in the minibuffer only
+ epg-pinentry-mode 'loopback
+
+ ;;;   Show keystrokes in minibuffer after 0.5 seconds
+ echo-keystrokes 0.5
+
+ ;;;   Turn on every disabled function
+ disabled-command-function nil
+
+ ;;;   Use UTF-8 characters in buffer
+ buffer-file-coding-system 'utf-8
+
+ ;;;   Disable bidirectional text for tiny performance boost
+ bidi-display-reordering nil
+
+ ;;;   Don't blink parens
+ blink-matching-paren nil
+
+ ;;;   Hide cursors in other windows
+ cursor-in-non-selected-windows nil
+
+ ;;;   Prevent frames from automatically resizing themselves
+ frame-inhibit-implied-resize t
+
+ ;;;   Clipboard length
+ kill-ring-max 1024
+
+ ;;;   Stretch cursor according to the character under it
+ x-stretch-cursor t
+
+ ;;;   Time to wait before start of stealth fontify
+ jit-lock-stealth-time 1
+
+ ;;;   Sentences are separated by single space after dot(.)
+ sentence-end-double-space nil
+
+ ;;;   Don't compact font cache during GC to optimize redisplay
+ inhibit-compacting-font-caches t
+
+ ;;;   GC triggers per 7 MB increase in memory
+ gc-cons-threshold 58720256
+
+ ;;;   Prevent recursion limits
+ max-lisp-eval-depth 48000
+ max-specpdl-size 10000
+
+ ;;;   No bells
+ ring-bell-function 'ignore
+ visible-bell nil
+
+ ;;;   Themes are safe after all
+ custom-safe-themes t
+
+ ;;;   No startup show off
+ inhibit-startup-screen t
+
+ ;;;   Show line number for any normal width line
+ line-number-display-limit-width 10000000
+
+ ;;;   Some TLS connections might have larger PRIME bits
+ gnutls-min-prime-bits 4096
+
+ ;;;   Better unique names of similar filenames and buffer-names
+ uniquify-buffer-name-style 'forward
+
+ ;;;   We can use TCP connection to connect to remote Emacs instance
+ server-use-tcp t
+
+ ;;;   Server location
+ server-auth-dir (concat cache-d "server/")
+
+ ;;;   Save existing interprogram clipboard text before replacing it
+ save-interprogram-paste-before-kill t
+
+ ;;;   Set REPL programs' prompt as read only
+ comint-prompt-read-only t
+
+ ;;;   Use commands when in in minibuffer
+ enable-recursive-minibuffers t
+
+ ;;;   Scroll output in *compilation* buffer
+ compilation-scroll-output t
+
+ ;;;   Scroll one line at a time no matter what
+ scroll-step            1
+ scroll-conservatively  10000
+ mouse-wheel-scroll-amount '(1 ((shift) . 1))
+
+ ;;;   Remember screen position after scrolling
+ scroll-preserve-screen-position 'always
+
+ ;;;   Initial scratch message is nil
+ initial-scratch-message ""
+
+ ;;;   Use directory local variables in tramp session
+ enable-remote-dir-locals t
+
+ ;;;   Backup configuration
+ tramp-persistency-file-name (concat cache-d "tramp")
+ backup-directory-alist `(("." . ,(concat cache-d "backups")))
+ delete-old-versions -1
+ version-control t
+ vc-make-backup-files t
+ auto-save-file-name-transforms `((".*" ,(concat cache-d "auto-save-list") t))
+ auto-save-list-file-prefix (concat cache-d "auto-save-list/saves-")
+
+ ;;;   ERC configurations
+ erc-hide-list '("PART" "QUIT" "JOIN")
+ erc-server    "107.182.226.199"  ;;; IP for "irc.freenode.net"
+ erc-nick      "compro"
+
+ ;;;   Dired
+ dired-dwim-target t
+
+ ;;;   Ediff
+ ediff-window-setup-function 'ediff-setup-windows-plain ;; Single frame ediff session
+
+ ;;;   Ido mode
+ ido-enable-flex-matching t
+ ido-save-directory-list-file (concat cache-d "ido.last")
+ )
+
+(fset 'yes-or-no-p 'y-or-n-p)
+
+(when (file-readable-p custom-file)
+  (load custom-file))
+
+(when (file-readable-p "~/.git-tokens")
+  (load-file "~/.git-tokens"))
+
+(set-language-environment 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-selection-coding-system 'utf-8)
+(set-locale-environment "en.UTF-8")
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(menu-bar-no-scroll-bar)
+
+(column-number-mode 1)
+(display-time-mode 1)
+
+(delete-selection-mode 1)
+
+(if (not window-system)
+    (xterm-mouse-mode 1)
+  (xterm-mouse-mode 0))
+
+(toggle-frame-maximized)
+(blink-cursor-mode 0)
+
+(when (display-graphic-p)
+  (general-define-key
+   :keymaps 'input-decode-map
+   [?\C-m] [C-m]
+   [?\C-i] [C-i]
+   [?\C-j] [C-j]
+   [?\C-\[] (kbd "<C-[>")))
+
+(general-define-key
+ "C-z"             'undo
+ "C-x C-o"         'ff-find-other-file
+ [C-m]             'delete-other-windows
+ "<C-S-mouse-1>"   'imenu
+ "C-<f4>"          'kill-current-buffer
+ "M-/"             'hippie-expand
+ [mouse-3]         menu-bar-edit-menu
+ "M-^"             'compile)
+
+(global-auto-revert-mode t)
+
+(show-paren-mode t)
+
+(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+
+(add-hook 'prog-mode-hook 'electric-pair-mode)
+
+(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+
+(set-default-font '("Ubuntu Mono" :size 14 :weight normal :width normal))
+
+(require 'ansi-color)
+(defun colorize-compilation-buffer ()
+  "Colorize the compilation buffer with ANSI escape sequences."
+  (toggle-read-only)
+  (ansi-color-apply-on-region (point-min) (point-max))
+  (toggle-read-only))
+(add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
+
+(defun compro/rename-file-buffer ()
+  "Rename current buffer and the file it is linked to."
+  (interactive)
+  (let ((filename (basename (buffer-file-name))))
+    (if (and filename (file-exists-p filename))
+        (let* ((new-name (read-string
+                          (concat "Rename '" filename "' to: ")
+                          filename)))
+          (rename-file filename new-name 1)
+          (set-visited-file-name new-name t t))
+      (message "This buffer is not linked to a file"))))
+(global-set-key (kbd "C-c f r") 'compro/rename-file-buffer)
+
+(leaf simple
+  :bind (("C-a" . compro/beginning-of-line)
+         ("C-o" . compro/open-line-below)
+         ("C-S-p" . list-processes)
+         ("C-S-o" . compro/open-line-above))
+  :config
+  (defun compro/beginning-of-line ()
+    (interactive)
+    (if (bolp)
+        (back-to-indentation)
+      (let ((pos (point))
+            npos)
+        (save-excursion
+          (back-to-indentation)
+          (setq npos (point)))
+        (if (= pos npos)
+            (beginning-of-line)
+          (back-to-indentation)))))
+  (defun compro/open-line-below ()
+    (interactive)
+    (end-of-line)
+    (newline-and-indent))
+  (defun compro/open-line-above ()
+    (interactive)
+    (back-to-indentation)
+    (newline-and-indent)
+    (previous-line 1)
+    (indent-according-to-mode)))
+
+(defun compro/shell-turn-echo-off ()
+  (setq comint-process-echoes t))
+
+(add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
+
+(with-eval-after-load 'comint
+  (general-define-key
+   :kemaps 'comint-mode-map
+   "<remap> <kill-word>" 'compro/comint/kill-word
+   "C-S-l" 'compro/comint/clear-last-output))
+
+(defun compro/shell-kill-buffer-sentinel (process event)
+  (when (and (memq (process-status process) '(exit signal))
+             (buffer-live-p (process-buffer process)))
+    (kill-buffer)))
+
+(defun compro/kill-process-buffer-on-exit ()
+  (set-process-sentinel (get-buffer-process (current-buffer))
+                        #'compro/shell-kill-buffer-sentinel))
+
+(dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
+  (add-hook hook 'compro/kill-process-buffer-on-exit))
+
+(add-hook 'comint-preoutput-filter-functions
+          'compro/comint/preoutput-read-only)
+
+(setq recentf-max-saved-items 512
+      history-length t
+      history-delete-duplicates t
+      recentf-save-file (concat user-emacs-directory ".cache/recentf")
+      savehist-file (concat user-emacs-directory ".cache/savehist")
+      save-place-file (concat user-emacs-directory ".cache/saveplace")
+      savehist-additional-variables '(kill-ring
+                                      extended-command-history
+                                      global-mark-ring
+                                      mark-ring
+                                      regexp-search-ring
+                                      search-ring))
+(save-place-mode 1)
+(savehist-mode 1)
+(recentf-mode 1)
+
+(leaf xwidget
+  :when (fboundp 'xwidget-webkit-browse-url)
+  :bind
+  (xwidget-webkit-mode-map
+   ("<mouse-4>" . xwidget-webkit-scroll-down)
+   ("<mouse-5>" . xwidget-webkit-scroll-up)
+   ("<up>" . xwidget-webkit-scroll-down)
+   ("<down>" . xwidget-webkit-scroll-up)
+   ("M-w" . xwidget-webkit-copy-selection-as-kill)
+   ("C-c" . xwidget-webkit-copy-selection-as-kill))
+  :preface
+  (defun compro/xwidget-webkit/adjust-size ()
+    (when (equal major-mode 'xwidget-webkit-mode)
+      (xwidget-webkit-adjust-size-dispatch)))
+  :hook
+  (window-configuration-change-hook . compro/xwidget-webkit/adjust-size)
   :init
-  (global-hungry-delete-mode t))
-;;;   end
+  ;; by default, xwidget reuses previous xwidget window,
+  ;; thus overriding your current website, unless a prefix argument
+  ;; is supplied
+  ;; This function always opens a new website in a new window
+  (defun xwidget-browse-url-no-reuse (url &optional session)
+    (interactive
+     (progn
+       (require 'browse-url)
+       (browse-url-interactive-arg "xwidget-webkit URL: ")))
+    (xwidget-webkit-browse-url url t)))
 
+(add-hook 'package-menu-mode-hook 'hl-line-mode)
 
-;;;   Hide minor modes from modeline
+(defun compro/set-show-whitespace-mode ()
+  "Show white space in current buffer"
+  (setq show-trailing-whitespace t))
+;; Show whitespaces only in buffers pointing to specific files
+(add-hook 'find-file-hook 'compro/set-show-whitespace-mode)
+;; Remove the trailing whitespaces on save
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
+(leaf hydra :ensure t)
+
+(leaf hungry-delete :leaf-defer nil :ensure t :require t
+  :init (global-hungry-delete-mode t))
+
 (leaf minions :ensure t
-  :bind ([S-down-mouse-3] . minions-minor-modes-menu)
-  :hook (after-init-hook . minions-mode))
-;;;   end
+  :bind ([S-down-mouse-3] . minions-minor-modes-menu))
 
+(leaf transient :ensure t
+  :init
+  (setq transient-history-file (locate-user-emacs-file
+                                (concat cache-d "transient/history.el"))
+        transient-values-file (locate-user-emacs-file
+                               (concat cache-d "transient/values.el"))
+        transient-levels-file (locate-user-emacs-file
+                               (concat cache-d "transient/levels.el"))))
 
-;;;   Show last keybind and the function in modeline
-(leaf keycast :ensure t
-  :bind ("<f9> k" . keycast-mode))
-;;;   end
-
-
-;;;   Git integration
 (leaf magit :ensure t
   :bind (("C-x g" . magit-status)
-         (magit-mode-map
-          ([C-tab] . nil)
-          ([C-backtab] . nil)
-          ([M-tab] . nil))
-         (magit-status-mode-map
-          ("q" . compro/kill-magit-buffers)
-          ([C-tab] . nil)
-          ([C-backtab] . nil)
-          ([M-tab] . nil))
-         (magit-log-mode-map
-          ([C-tab] . nil)
-          ([C-backtab] . nil)
-          ([M-tab] . nil)))
+	 (magit-mode-map
+	  ([C-tab] . nil)
+	  ([C-backtab] . nil)
+	  ([M-tab] . nil))
+	 (magit-status-mode-map
+	  ("q" . compro/kill-magit-buffers)
+	  ([C-tab] . nil)
+	  ([C-backtab] . nil)
+	  ([M-tab] . nil))
+	 (magit-log-mode-map
+	  ([C-tab] . nil)
+	  ([C-backtab] . nil)
+	  ([M-tab] . nil)))
   :preface
-  (leaf forge :after magit :ensure t :require t :leaf-defer nil)
+  (leaf forge :after magit :ensure t :require t)
   :config
   (defun compro/kill-magit-buffers ()
     "Kill magit buffers related to a project."
@@ -107,20 +711,18 @@
     (define-key magit-diff-mode-map [M-tab] nil)
     (define-key magit-file-section-map [M-tab] nil)
     (define-key magit-hunk-section-map [M-tab] nil)))
+
 (leaf git-messenger :ensure t
   :bind (("C-x v p" . git-messenger:popup-message)))
-;;;   end
 
-
-;;;   Expand region for smart region selection
 (leaf expand-region :ensure t :require t :leaf-defer nil
   :commands (er/expand-region
-             er/mark-paragraph
-             er/mark-inside-pairs
-             er/mark-outside-pairs
-             er/mark-inside-quotes
-             er/mark-outside-quotes
-             er/contract-region)
+	     er/mark-paragraph
+	     er/mark-inside-pairs
+	     er/mark-outside-pairs
+	     er/mark-inside-quotes
+	     er/mark-outside-quotes
+	     er/contract-region)
   :bind (("C-=" . hydra-er/body))
   :config
   (defhydra hydra-er (:hint nil)
@@ -129,40 +731,34 @@
 ^──────^──^────^─────────────────
 _C-=_     _C-+_
 _=_       _+_
-        _-_"
+	_-_"
     ("C-=" er/expand-region)
     ("=" er/expand-region)
     ("C-+" er/contract-region)
     ("C--" er/contract-region)
     ("+" er/contract-region)
     ("-" er/contract-region)))
-;;;   end
 
-
-;;;   Project support is very useful
-(leaf projectile :ensure t :require t
+(leaf projectile :leaf-defer nil :ensure t :require t
   :bind (("C-c p" . projectile-command-map))
   :config
+  (setq
+   projectile-cache-file (concat cache-d "projectile")
+   projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld"))
   (projectile-mode 1)
   (setq projectile-completion-system 'ivy))
-(leaf ag :ensure t)
-;;;   end
 
+(leaf ag :ensure t :when (executable-find "ag"))
 
-;;;   Switching windows is a bit hard in Emacs
-(leaf switch-window :ensure t
-  :bind* (("M-TAB" . switch-window)))
-;;;   end
+(leaf switch-window :ensure t :leaf-defer nil :require t
+  :config
+  (global-set-key (kbd (if is-windows "C-x o" "M-TAB")) 'switch-window))
 
-
-;;;   Nice to lookup new keys to learn new stuff
 (leaf which-key :ensure t
   :init
-  (which-key-mode 1))
-;;;   end
+  (setq which-key-idle-delay (if is-windows 0.212 1.0))
+  (which-key-mode))
 
-
-;;;   Multiple cursor for small and fast edits
 (leaf multiple-cursors :ensure t
   :bind
   (("C-S-c" . mc/edit-lines)
@@ -179,471 +775,78 @@ _=_       _+_
     :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
     :config
     (phi-search-mc/setup-keys)))
-;;;   end
 
-
-;;;   Undo tree for better visualization of undo in Emacs
 (leaf undo-tree :ensure t
   :bind
   (:undo-tree-map
    ("C-_" . nil))  ; reserved for move-text-up
   :init
   (global-undo-tree-mode t))
-;;;   end
 
-
-;;;   More verbose Emacs documentation lookup
-(leaf helpful :ensure t :disabled t
-  :bind
-  (("C-h f" . helpful-callable)
-   ("C-h v" . helpful-variable)
-   ("C-h k" . helpful-key)))
-;;;   end
-
-
-;;;   Move text in a buffer
-(leaf move-text :ensure t
-  :bind
-  (("C-_" . move-text-up)
-   ("C--" . move-text-down)))
-;;;   end
-
-
-;;;   This helps edit results in a *grep* buffer
-;;      C-c C-p - Enable editing in *grep* buffer
-;;      C-x C-s - Save changes
-;;    Note: This doesn't save to the file
-(leaf wgrep :ensure t)
-;;;   end
-
-
-;;;   The doom theming
 (leaf doom-themes
   :commands (doom-themes-org-config)
   :config
   (doom-themes-org-config)
   (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
+	doom-themes-enable-italic t)
   (when (>= emacs-major-version 27)
     (with-eval-after-load 'org
       (dolist (face '(org-block
-                      org-block-begin-line
-                      org-block-end-line
-                      org-level-1
-                      org-quote))
-        (set-face-attribute face nil :extend t)))
+		      org-block-begin-line
+		      org-block-end-line
+		      org-level-1
+		      org-quote))
+	(set-face-attribute face nil :extend t)))
     (with-eval-after-load 'ediff
       (dolist (face '(ediff-current-diff-A
-                      ediff-current-diff-Ancestor
-                      ediff-current-diff-B
-                      ediff-current-diff-C
-                      ediff-even-diff-A
-                      ediff-even-diff-Ancestor
-                      ediff-even-diff-B
-                      ediff-even-diff-C
-                      ediff-fine-diff-A
-                      ediff-fine-diff-Ancestor
-                      ediff-fine-diff-B
-                      ediff-fine-diff-C
-                      ediff-odd-diff-A
-                      ediff-odd-diff-Ancestor
-                      ediff-odd-diff-B
-                      ediff-odd-diff-C))
-        (set-face-attribute face nil :extend t)))
+		      ediff-current-diff-Ancestor
+		      ediff-current-diff-B
+		      ediff-current-diff-C
+		      ediff-even-diff-A
+		      ediff-even-diff-Ancestor
+		      ediff-even-diff-B
+		      ediff-even-diff-C
+		      ediff-fine-diff-A
+		      ediff-fine-diff-Ancestor
+		      ediff-fine-diff-B
+		      ediff-fine-diff-C
+		      ediff-odd-diff-A
+		      ediff-odd-diff-Ancestor
+		      ediff-odd-diff-B
+		      ediff-odd-diff-C))
+	(set-face-attribute face nil :extend t)))
     (with-eval-after-load 'hl-line
       (set-face-attribute 'hl-line nil :extend t))
     (with-eval-after-load 'faces
       (dolist (face '(region
-                      secondary-selection))
-        (set-face-attribute face nil :extend t)))
+		      secondary-selection))
+	(set-face-attribute face nil :extend t)))
     (with-eval-after-load 'markdown-mode
       (dolist (face '(markdown-code-face
-                      markdown-pre-face))
-        (set-face-attribute face nil :extend t)))))
+		      markdown-pre-face))
+	(set-face-attribute face nil :extend t)))))
+
 (leaf kaolin-themes :ensure t)
-(leaf chocolate-theme :ensure t)
-(leaf doom-modeline :ensure t
-  :init
-  (setq doom-modeline-buffer-file-name-style 'relative-to-project))
-;;;   end
 
-
-;;;   Emacs 27 tabs tab-line-mode
-(unless (version< emacs-version "27")
-  (leaf tab-line :leaf-defer nil :require t :disabled t
-    :init
-    (global-tab-line-mode)
-    :config
-    (defun tab-line-close-tab (&optional e)
-      (interactive "e")
-      (let* ((posnp (event-start e))
-             (window (posn-window posnp))
-             (buffer (get-pos-property 1 'tab (car (posn-string posnp)))))
-        (with-selected-window window
-          (cond ((cdr (get-buffer-window-list buffer))
-                 (cond ((cdr (tab-line-tabs))
-                        (if (eq buffer (current-buffer))
-                            (bury-buffer)
-                          (set-window-prev-buffers nil (assq-delete-all buffer (window-prev-buffers)))
-                          (set-window-next-buffers nil (delq buffer (window-next-buffers)))))
-                       (t
-                        (delete-window window))))
-                (t
-                 (kill-buffer buffer)
-                 (delete-window window))))
-        (force-mode-line-update)))
-    (setq tab-line-new-tab-choice nil
-          tab-line-close-button-show nil)
-    (when (fboundp 'doom-color)
-      (let ((bg (doom-color 'bg))
-            (fg (doom-color 'fg))
-            (base1 (doom-color 'base1))
-            (box-width 7))
-        (set-face-attribute 'tab-line nil :background base1 :foreground fg)
-        (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
-        (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1))))))
-;;;   end
-
-
-;;;   Telegram in Emacs
-(leaf telega
-  :load-path `,(concat user-emacs-directory ".repos/telega.el")
-  :bind ("C-c t" . telega)
-  :preface
-  (leaf visual-fill-column :ensure t)
-  :config
-  (setq telega-chat-use-markdown-formatting t))
-;;;   end
-
-
-;;;   "All the icons" font
-(leaf all-the-icons :ensure t :require t :leaf-defer nil)
-;;;   end
-
-
-;;;   Sidebar
-(when window-system
-  (use-package treemacs :ensure t
-    :commands (treemacs-follow-mode)
-    :hook ((after-init . aorst/treemacs-init-setup)
-           (treemacs-mode . aorst/treemacs-setup)
-           (treemacs-switch-workspace . aorst/treemacs-expand-all-projects)
-           (treemacs-mode . aorst/treemacs-setup-title))
-    :config
-    (leaf treemacs-magit :ensure t)
-    (global-set-key (kbd "C-t") 'treemacs-select-window)
-    (define-key treemacs-mode-map [mouse-1] 'treemacs-single-click-expand-action)
-    (set-face-attribute 'treemacs-root-face nil
-                        :foreground (face-attribute 'default :foreground)
-                        :height 1.0
-                        :weight 'normal)
-    (treemacs-create-theme "Atom"
-      :config
-      (progn
-        (treemacs-create-icon
-         :icon (format " %s\t"
-                       (all-the-icons-octicon
-                        "repo"
-                        :v-adjust -0.1
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (root))
-        (treemacs-create-icon
-         :icon (format "%s\t%s\t"
-                       (all-the-icons-octicon
-                        "chevron-down"
-                        :height 0.75
-                        :v-adjust 0.1
-                        :face '(:inherit font-lock-doc-face :slant normal))
-                       (all-the-icons-octicon
-                        "file-directory"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (dir-open))
-        (treemacs-create-icon
-         :icon (format "%s\t%s\t"
-                       (all-the-icons-octicon
-                        "chevron-right"
-                        :height 0.75
-                        :v-adjust 0.1
-                        :face '(:inherit font-lock-doc-face :slant normal))
-                       (all-the-icons-octicon
-                        "file-directory"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (dir-closed))
-        (treemacs-create-icon
-         :icon (format "%s\t%s\t"
-                       (all-the-icons-octicon
-                        "chevron-down"
-                        :height 0.75
-                        :v-adjust 0.1
-                        :face '(:inherit font-lock-doc-face :slant normal))
-                       (all-the-icons-octicon
-                        "package"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (tag-open))
-        (treemacs-create-icon
-         :icon (format "%s\t%s\t"
-                       (all-the-icons-octicon
-                        "chevron-right"
-                        :height 0.75
-                        :v-adjust 0.1
-                        :face '(:inherit font-lock-doc-face :slant normal))
-                       (all-the-icons-octicon
-                        "package"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (tag-closed))
-        (treemacs-create-icon
-         :icon (format "%s\t"
-                       (all-the-icons-octicon
-                        "tag"
-                        :height 0.9
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (tag-leaf))
-        (treemacs-create-icon
-         :icon (format "%s\t"
-                       (all-the-icons-octicon
-                        "flame"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (error))
-        (treemacs-create-icon
-         :icon (format "%s\t"
-                       (all-the-icons-octicon
-                        "stop"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (warning))
-        (treemacs-create-icon
-         :icon (format "%s\t"
-                       (all-the-icons-octicon
-                        "info"
-                        :height 0.75
-                        :v-adjust 0.1
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (info))
-        (treemacs-create-icon
-         :icon (format "  %s\t"
-                       (all-the-icons-octicon
-                        "file-media"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("png" "jpg" "jpeg" "gif" "ico" "tif" "tiff" "svg" "bmp"
-                      "psd" "ai" "eps" "indd" "mov" "avi" "mp4" "webm" "mkv"
-                      "wav" "mp3" "ogg" "midi"))
-        (treemacs-create-icon
-         :icon (format "  %s\t"
-                       (all-the-icons-octicon
-                        "file-code"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("yml" "yaml" "sh" "zsh" "fish" "c" "h" "cpp" "cxx" "hpp"
-                      "tpp" "cc" "hh" "hs" "lhs" "cabal" "py" "pyc" "rs" "el"
-                      "elc" "clj" "cljs" "cljc" "ts" "tsx" "vue" "css" "html"
-                      "htm" "dart" "java" "kt" "scala" "sbt" "go" "js" "jsx"
-                      "hy" "json" "jl" "ex" "exs" "eex" "ml" "mli" "pp" "dockerfile"
-                      "vagrantfile" "j2" "jinja2" "tex" "racket" "rkt" "rktl" "rktd"
-                      "scrbl" "scribble" "plt" "makefile" "elm" "xml" "xsl" "rb"
-                      "scss" "lua" "lisp" "scm" "sql" "toml" "nim" "pl" "pm" "perl"
-                      "vimrc" "tridactylrc" "vimperatorrc" "ideavimrc" "vrapperrc"
-                      "cask" "r" "re" "rei" "bashrc" "zshrc" "inputrc" "editorconfig"
-                      "gitconfig"))
-        (treemacs-create-icon
-         :icon (format "  %s\t"
-                       (all-the-icons-octicon
-                        "book"
-                        :v-adjust 0
-                        :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("lrf" "lrx" "cbr" "cbz" "cb7" "cbt" "cba" "chm" "djvu"
-                      "doc" "docx" "pdb" "pdb" "fb2" "xeb" "ceb" "inf" "azw"
-                      "azw3" "kf8" "kfx" "lit" "prc" "mobi" "pkg" "opf" "txt"
-                      "pdb" "ps" "rtf" "pdg" "xml" "tr2" "tr3" "oxps" "xps"))
-        (treemacs-create-icon
-         :icon (format "  %s\t" (all-the-icons-octicon
-                                 "file-text"
-                                 :v-adjust 0
-                                 :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("md" "markdown" "rst" "log" "org" "txt"
-                      "CONTRIBUTE" "LICENSE" "README" "CHANGELOG"))
-        (treemacs-create-icon
-         :icon (format "  %s\t" (all-the-icons-octicon
-                                 "file-binary"
-                                 :v-adjust 0
-                                 :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("exe" "dll" "obj" "so" "o" "out"))
-        (treemacs-create-icon
-         :icon (format "  %s\t" (all-the-icons-octicon
-                                 "file-pdf"
-                                 :v-adjust 0
-                                 :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("pdf"))
-        (treemacs-create-icon
-         :icon (format "  %s\t" (all-the-icons-octicon
-                                 "file-zip"
-                                 :v-adjust 0
-                                 :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions ("zip" "7z" "tar" "gz" "rar" "tgz"))
-        (treemacs-create-icon
-         :icon (format "  %s\t" (all-the-icons-octicon
-                                 "file-text"
-                                 :v-adjust 0
-                                 :face '(:inherit font-lock-doc-face :slant normal)))
-         :extensions (fallback))))
-    (defun aorst/treemacs-expand-all-projects (&optional _)
-      "Expand all projects."
-      (interactive)
-      (save-excursion
-        (treemacs--forget-last-highlight)
-        (dolist (project (treemacs-workspace->projects (treemacs-current-workspace)))
-          (-when-let (pos (treemacs-project->position project))
-            (when (eq 'root-node-closed (treemacs-button-get pos :state))
-              (goto-char pos)
-              (treemacs--expand-root-node pos)))))
-      (treemacs--maybe-recenter 'on-distance))
-    (defun aorst/treemacs-variable-pitch-labels (&rest _)
-      (dolist (face '(treemacs-root-face
-                      treemacs-git-unmodified-face
-                      treemacs-git-modified-face
-                      treemacs-git-renamed-face
-                      treemacs-git-ignored-face
-                      treemacs-git-untracked-face
-                      treemacs-git-added-face
-                      treemacs-git-conflict-face
-                      treemacs-directory-face
-                      treemacs-directory-collapsed-face
-                      treemacs-file-face
-                      treemacs-tags-face))
-        (let ((faces (face-attribute face :inherit nil)))
-          (set-face-attribute
-           face nil :inherit
-           `(variable-pitch ,@(delq 'unspecified (if (listp faces) faces (list faces))))))))
-    (defun aorst/treemacs-init-setup ()
-      "Set treemacs theme, open treemacs, and expand all projects."
-      (treemacs-load-theme "Atom")
-      (setq treemacs-collapse-dirs 0)
-      )
-    (defun aorst/treemacs-setup ()
-      "Set treemacs buffer common settings."
-      (setq tab-width 1
-            mode-line-format nil
-            line-spacing 5)
-      (setq-local scroll-step 1)
-      (setq-local scroll-conservatively 10000)
-      (set-window-fringes nil 0 0 t)
-      (aorst/treemacs-variable-pitch-labels))
-    (defun aorst/treemacs-setup-fringes ()
-      "Set treemacs buffer fringes."
-      (set-window-fringes nil 0 0 t)
-      (aorst/treemacs-variable-pitch-labels))
-    (advice-add #'treemacs-select-window :after #'aorst/treemacs-setup-fringes)
-    (defun aorst/treemacs-ignore (file _)
-      (or (s-ends-with? ".elc" file)
-          (s-ends-with? ".o" file)
-          (s-ends-with? ".a" file)
-          (string= file ".svn")))
-    (add-to-list 'treemacs-ignored-file-predicates #'aorst/treemacs-ignore)
-    (defun aorst/treemacs-setup-title ()
-      (let ((format '((:eval (concat
-                              (make-string
-                               (let ((width (window-width)))
-                                 (- (/ (if (= (% width 2) 0) width (1+ width)) 2) 5))
-                               ?\ )
-                              "Treemacs")))))
-        (if (version<= emacs-version "27")
-            (setq header-line-format format)
-          (setq tab-line-format format)))
-      (let ((bg (face-attribute 'default :background))
-            (fg (face-attribute 'default :foreground))
-            (face (if (version<= emacs-version "27")
-                      'header-line
-                    'tab-line)))
-        (face-remap-add-relative face
-                                 :box (list :line-width 7 :color bg)
-                                 :background bg :foreground fg :height 1.0))))
-  (setq treemacs-width 27
-        treemacs-is-never-other-window t
-        treemacs-space-between-root-nodes nil
-        treemacs-indentation 2)
-  (treemacs-follow-mode t)
-  (treemacs-filewatch-mode t)
-  (treemacs-fringe-indicator-mode nil))
-(leaf lsp-treemacs :ensure t)
-
-(leaf dired-sidebar :ensure t
-  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :commands (dired-sidebar-toggle-sidebar)
-  :init
-  (leaf vscode-icon :ensure t
-    :commands (vscode-icon-for-file))
-  (add-hook 'dired-sidebar-mode-hook
-            (lambda ()
-              (unless (file-remote-p default-directory)
-                (auto-revert-mode))))
-  :config
-  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
-  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
-
-  (setq dired-sidebar-subtree-line-prefix "__")
-  (setq dired-sidebar-theme 'vscode)
-  (setq dired-sidebar-use-term-integration t)
-  (setq dired-sidebar-use-custom-font t))
-;;;   end
-
-
-;;;   Page break char doesn’t look good
 (leaf page-break-lines :ensure t
   :init
   (global-page-break-lines-mode t))
-;;;   end
 
-
-;;;   Completion
-(leaf company :ensure t
-  :hook (after-init-hook . global-company-mode)
+(leaf pipenv :ensure t
   :bind
-  (("S-SPC" . company-complete)
-   (company-active-map
-    ("C-h" . nil)
-    ("ESC ESC" . company-abort)
-    ("<tab>" . company-complete-common-or-cycle)))
-  :preface
-  (leaf company-quickhelp :after company :require t :ensure t
-    :config
-    (setq company-quickhelp-delay 0.311)
-    (company-quickhelp-mode 1))
-  (defun compro/company-mode/backend-with-yas (backend)
-    (if (and (listp backend) (member 'company-yasnippet backend))
-        backend
-      (append (if (consp backend) backend (list backend))
-              '(:with company-yasnippet))))
-  :config
-  (setq company-idle-delay nil
-        company-minimum-prefix-length 1
-        company-show-numbers t
-        company-require-match 'never
-        company-dabbrev-downcase nil
-        company-dabbrev-ignore-case nil
-        company-backends '(company-lsp company-nxml company-cmake
-                                       company-css company-capf
-                                       (company-dabbrev-code company-keywords)
-                                       company-files company-dabbrev)
-        company-jedi-python-bin "python")
-  (setq company-backends (mapcar #'compro/company-mode/backend-with-yas company-backends)))
-;;;   end
+  (("<f9> p v a" . pipenv-activate)
+   ("<f9> p v d" . pipenv-deactivate)
+   ("<f9> p v g" . pipenv-graph)
+   ("<f9> p v e" . pipenv-envs)))
 
-
-;;;   Language Server Protocol
 (leaf lsp-mode :ensure t
   :hook (c-mode-common-hook . compro/init-lsp)
   :preface
   (add-hook 'python-mode-hook
-            (lambda ()
-              (pipenv-activate)
-              (sleep-for 1)
-              (lsp)))
+	    (lambda ()
+	      (pipenv-activate)
+	      (sleep-for 1)
+	      (lsp)))
   :init
   (require 'lsp-clients)
   (defun compro/init-lsp ()
@@ -652,184 +855,84 @@ is useful."
     (when (and (fboundp 'projectile-project-p) (projectile-project-p))
       (lsp)))
   )
-(leaf company-lsp :ensure t
-  :commands company-lsp)
-(leaf lsp-ui :ensure t
-  :hook (lsp-mode-hook . lsp-ui-mode)
-  :config
-  (setq lsp-ui-doc-enable t
-        lsp-enable-completion-at-point t
-        lsp-ui-doc-header nil
-        lsp-ui-doc-include-signature t
-        lsp-ui-sideline-enable nil))
-;; M$ Python Language Server
-(leaf lsp-python-ms :ensure t :after lsp-mode :require t)
-;; C and C++
-(leaf ccls :ensure t :after lsp-mode :require t)
-;;;   end
 
-
-(leaf py-autopep8 :ensure t)
-(leaf pyvenv :ensure t)
-(leaf pipenv :ensure t
-  :bind
-  (("<f9> p v a" . pipenv-activate)
-   ("<f9> p v d" . pipenv-deactivate)
-   ("<f9> p v g" . pipenv-graph)
-   ("<f9> p v e" . pipenv-envs)))
-
-(leaf pony-mode :ensure t
-  :bind
-  (("<f9> p d a f" . pony-fabric)
-   ("<f9> p d a d" . pony-fabric-deploy)
-   ("<f9> p d f s" . pony-goto-settings)
-   ("<f9> p d f c" . pony-setting)
-   ("<f9> p d f t" . pony-goto-template)
-   ("<f9> p d f r" . pony-resolve)
-   ("<f9> p d i d" . pony-db-shell)
-   ("<f9> p d i s" . pony-shell)
-   ("<f9> p d m " . pony-manage)
-   ("<f9> p d r d" . pony-stopserver)
-   ("<f9> p d r o" . pony-browser)
-   ("<f9> p d r r" . pony-restart-server)
-   ("<f9> p d r u" . pony-runserver)
-   ("<f9> p d r t" . pony-temp-server)
-   ("<f9> p d s c" . pony-south-convert)
-   ("<f9> p d s h" . pony-south-schemamigration)
-   ("<f9> p d s i" . pony-south-initial)
-   ("<f9> p d s m" . pony-south-migrate)
-   ("<f9> p d s s" . pony-syncdb)
-   ("<f9> p d t d" . pony-test-down)
-   ("<f9> p d t e" . pony-test-goto-err)
-   ("<f9> p d t o" . pony-test-open)
-   ("<f9> p d t t" . pony-test)
-   ("<f9> p d t u" . pony-test-up)))
-;;;   end
-
-
-;;;   Complete almost everything in Emacs using ivy
-(leaf ivy :ensure t
-  :hook (after-init-hook . ivy-mode)
+(leaf ivy :ensure t :require t :leaf-defer nil
+  :preface
+  (leaf counsel :ensure t :require t :after ivy
+    :bind
+    (("M-x" . counsel-M-x)
+     ("C-c s r" . counsel-rg)
+     ("C-c s a" . counsel-ag)
+     ("C-c s g" . counsel-grep)
+     ("C-c r" . counsel-recentf)
+     ("C-c y" . counsel-yank-pop)
+     ("C-c u" . counsel-unicode-char)
+     ("C-c R" . ivy-resume)
+     ("C-h b" . counsel-descbinds)
+     ("C-h w" . counsel-descbinds)))
+  (leaf ivy-rich :ensure t :require t :after ivy
+    :config (ivy-rich-mode 1))
+  (leaf ivy-posframe :ensure t :require t :after ivy
+    :config
+    (setq ivy-posframe-display-functions-alist
+	  '((t . ivy-posframe-display-at-frame-center)))
+    (ivy-posframe-mode 1))
   :init
   (setq
    ivy-use-virtual-buffers t
    ivy-count-format "(%d/%d) "
    ivy-height 15
    ivy-more-chars-alist '((t . 1))))
-(leaf ivy-rich :ensure t :require t :after ivy
-  :config
-  (ivy-rich-mode 1))
-(leaf ivy-posframe :ensure t :require t :after ivy
-  :config
-  (setq ivy-posframe-display-functions-alist '((t . ivy-posframe-display-at-frame-center)))
-  ;; TODO: Disable when using EXWM
-  ;; UPDATE: It currently works on EXWM
-  (ivy-posframe-mode 1))
-(leaf prescient :ensure t :require t
-  :config
-  (prescient-persist-mode 1))
-(leaf ivy-prescient :ensure t
-  :after ivy
-  :config
-  (ivy-prescient-mode t)
-  (push 'counsel-recentf ivy-prescient-sort-commands))
-(leaf company-prescient :ensure t
-  :after company
-  :config
-  (company-prescient-mode t))
-(leaf swiper :ensure t)
-(leaf counsel :ensure t
-  :bind
-  (("M-x" . counsel-M-x)
-   ("C-c s r" . counsel-rg)
-   ("C-c s a" . counsel-ag)
-   ("C-c s g" . counsel-grep)
-   ("C-c r" . counsel-recentf)
-   ("C-c y" . counsel-yank-pop)
-   ("C-c u" . counsel-unicode-char)
-   ("C-c R" . ivy-resume)
-   ("C-h b" . counsel-descbinds)
-   ("C-h w" . counsel-descbinds)))
-;;;   end
 
-
-;;;   Scala - TODO: Look for metals
-;;; (leaf ensime :ensure t)
-;;;   end
-
-
-;;;   Finest mode for multiple HTML based modes
-(leaf web-mode :ensure t
-  :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
-;;;   end
-
-
-;;;   Emmet is wonderful
-(leaf emmet-mode :ensure t
-  :hook web-mode-hook)
-;;;   end
-
-
-;;;   Hot reloading
-(leaf impatient-mode :ensure t
-  :bind (("<C-i>" . hydra-imp/body))
+(leaf yasnippet :ensure t :leaf-defer nil :require t
+  :bind ("C-/" . yas-expand)
   :preface
-  (leaf http :ensure t)
+  (leaf yasnippet-snippets :ensure t :after yasnippet :require t)
   :config
-  (defhydra hydra-imp (:hint nil)
-    "
-^Impatient Mode    ^Httpd
-^──────────────────^──────────────────^
-_<C-i>_, _i_: Toggle  _s_: Start
-                  _S_: Stop"
-    ("<C-i>" impatient-mode :color pink)
-    ("i" impatient-mode :color pink)
-    ("s" httpd-start :color pink)
-    ("S" httpd-stop :color pink)))
-;;;   end
+  (yas-global-mode 1))
 
+(leaf beginend :ensure t :leaf-defer nil :require t
+  :config (beginend-global-mode))
 
-;;;   Highlight indentation in Emacs
-(leaf indent-guide :ensure t :disabled t
-  :hook (prog-mode-hook . indent-guide-mode)
+(leaf default-text-scale :ensure t
+  :config (default-text-scale-mode 1))
+
+(leaf notmuch :ensure t
+  :bind ((notmuch-search-mode-map
+	  ("d" . compro/notmuch/tag-as-deleted)
+	  ("<delchar>" . compro/notmuch/tag-as-deleted)
+	  ("u" . compro/notmuch/remove-deleted-tag)
+	  ("D" . compro/notmuch/remove-deleted-tag)
+	  ("f" . compro/notmuch/tag-as-flagged)
+	  ("F" . compro/notmuch/remove-flagged-tag)))
+  :hook (message-mode-hook . notmuch-company-setup)
   :init
-  (setq indent-guide-char "."
-        indent-guide-delay 0.4))
-;;;   end
+  (fset 'compro/notmuch/tag-as-deleted
+	(kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+  (fset 'compro/notmuch/remove-deleted-tag
+	(kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+  (fset 'compro/notmuch/tag-as-flagged
+	(kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
+  (fset 'compro/notmuch/remove-flagged-tag
+	(kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
 
+(leaf iedit :ensure t :require t :leaf-defer nil
+  :bind ("C-;" . iedit-mode))
 
-;;;   Evil mode
-(setq evil-want-keybinding nil)
-(leaf evil :ensure t)
-(leaf evil-collection :ensure t)
-;;;   end
+(leaf shackle :ensure t :require t
+  :config
+  (setq shackle-default-rule '(:select t))
+  (setq shackle-rules
+	'((help-mode :size 0.33 :select t :align bottom)))
+  (shackle-mode 1))
 
-
-;;;   Elf mode
-(leaf elf-mode :ensure t)
-;;;   end
-
-
-;;;   Cmake mode
-(leaf cmake-mode :ensure t)
-;;;   end
-
-
-;;;   TODO: Manage system packages
-(leaf system-packages :ensure t)
-;;;   end
-
-
-;;;   Rust
-(leaf rustic :ensure t
-  :init
-  (setq rustic-rls-pkg 'lsp-mode))
-;;;   end
-
-
-;;;   Org mode
 (leaf org :ensure t
   :preface
+  (leaf org-babel-eval-in-repl :ensure t
+    :after ob
+    :bind
+    (org-mode-map
+     ("C-c C-<return>" . ober-eval-block-in-repl)))
   (leaf org-plus-contrib :ensure t)
   (leaf ox-hugo :require t :ensure t :after ox :disabled t
     :config
@@ -854,6 +957,11 @@ _<C-i>_, _i_: Toggle  _s_: Start
   (setq org-return-follows-link t
         org-agenda-diary-file "~/.org/diary.org"
         org-babel-load-languages '((emacs-lisp . t) (python . t)))
+  (defun my-org-autodone (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)   ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+  (add-hook 'org-after-todo-statistics-hook 'my-org-autodone)
   (require 'org-tempo)
   (define-minor-mode unpackaged/org-export-html-with-useful-ids-mode
     "Attempt to export Org as HTML with useful link IDs.
@@ -967,11 +1075,18 @@ made unique when necessary."
                 ?\C-a ?\C-x ? ?\C-s ?: ?E ?N ?D ?: return
                 ?\C-b ?\C-b ?\C-b ?\C-b ?\C-b
                 134217848 ?k ?i ?l ?l ?- ?r ?e ?c ?t ?a ?n ?g ?l ?e return] 0 "%d"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp :tangle yes"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp :tangle init.el"))
 
-  (setq org-startup-indented t
-        org-hide-emphasis-markers t
-        org-pretty-entities t
+  (setq org-pretty-entities t
+        org-bullets-bullet-list '(" ") ;; no bullets, needs org-bullets package
+        org-ellipsis " "              ;; folding symbol
+        org-hide-emphasis-markers t    ;; show actually italicized text instead of /italicized text/
+        org-agenda-block-separator ""
+        org-fontify-whole-heading-line t
+        org-fontify-done-headline t
+        org-fontify-quote-and-verse-blocks t
+        org-default-notes-file "/home/compro/Dropbox/programs/notes/notes.org"
+        org-todo-keywords '((sequence "TODO(t)" "inPROGRESS(i)" "|" "DONE(d)" "CANCELED(c)"))
 
         org-capture-templates
         '(("t" "Todo" entry (file+headline "~/org/todo.org" "Tasks")
@@ -983,463 +1098,29 @@ made unique when necessary."
         '(("DONE" . (:inherit org-done :strike-through t))
           ("TODO" . (:inherit org-warning :inverse-video t))
           ("CANCELED" . (:inherit org-verbatim
-                         :box-around-text t
-                         :strike-through t))
+                                  :box-around-text t
+                                  :strike-through t))
           ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
 
-;;;   end
+(leaf web-mode :ensure t
+  :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
 
+(leaf elf-mode :ensure t)
 
-;;;   PlantUML
+(leaf cmake-mode :ensure t)
+
 (leaf plantuml-mode :ensure t
+  :when (locate-file "plantuml.jar" '("~/Downloads"))
   :init
   (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
-;;;   end
 
-
-;;;   Snippet completion
-(leaf yasnippet :ensure t
-  :hook (prog-mode-hook . yas-minor-mode))
-(leaf yasnippet-snippets :ensure t)
-;;;   end
-
-
-;;;   Syntax checking
-(leaf flycheck :ensure t)
-;;;   end
-
-(defmacro p (form)
-  "Output pretty `macroexpand-1'ed form of given FORM."
-  `(progn
-     (pp (macroexpand-1 ',form))
-     nil))
-
-
-;;;   Typescript support
 (leaf typescript-mode :ensure t)
-;;;   end
 
-
-;;;   Better M-< and M->
-(leaf beginend :ensure t
-  :config
-  (beginend-global-mode))
-;;;   end
-
-
-;;;   Manage services from Emacs
-(leaf prodigy :ensure t
-  :bind ("C-c C-p" . prodigy)
-  :config
-  (prodigy-define-service
-    :name "Personal Server"
-    :command "pipenv"
-    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
-    :cwd "~/Downloads/gitlab.com/Compro-Prasad/personal_server/"
-    :tags '(django python)
-    :stop-signal 'sigint
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "School Backend"
-    :command "pipenv"
-    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
-    :cwd "~/Downloads/github.com/Compro-Prasad/Bhatauli_School/backend/"
-    :tags '(school django python)
-    :stop-signal 'sigint
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "NIT Durgapur backend"
-    :command "pipenv"
-    :args '("run" "python" "manage.py" "runserver" "0.0.0.0:8000")
-    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/backend"
-    :tags '(college django python)
-    :stop-signal 'sigint
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "NIT Durgapur frontend"
-    :command "npm"
-    :args '("run" "dev")
-    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp_website/frontend"
-    :tags '(college node js vue)
-    :stop-signal 'sigint
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "NIT Durgapur new frontend"
-    :command "yarn"
-    :args '("serve")
-    :cwd "~/Downloads/github.com/lugnitdgp/nitdgp-website-new"
-    :tags '(college node js vue)
-    :stop-signal 'sigint
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "Start Mariadb"
-    :sudo t
-    :command "systemctl"
-    :args '("start" "mariadb.service")
-    :tags '(system db)
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "Stop Mariadb"
-    :sudo t
-    :command "systemctl"
-    :args '("stop" "mariadb.service")
-    :tags '(system db)
-    :kill-process-buffer-on-stop t)
-  (prodigy-define-service
-    :name "Webtorrent Desktop"
-    :command "npm"
-    :args '("start")
-    :cwd "~/Downloads/github.com/webtorrent/webtorrent-desktop/"
-    :tags '(torrent desktop app node js electron video))
-  (prodigy-define-service
-    :name "IGI 1"
-    :command "wine"
-    :args '("igi.exe")
-    :cwd "~/games/Project_IGI_1/"
-    :tags '(game fps story igi))
-  (prodigy-define-service
-    :name "IGI 2"
-    :command "wine"
-    :args '("igi2.exe")
-    :cwd "~/games/IGI 2 - Covert Strike/pc/"
-    :tags '(game fps story igi)))
-;;;   end
-
-
-;;;   Increase and decrease font size in Emacs (C-M-= and C-M--)
-(leaf default-text-scale :ensure t
-  :config (default-text-scale-mode 1))
-;;;   end
-
-
-;;;   Better buffer jumping (C-x C-b)
-(leaf frog-jump-buffer :ensure t
-  :after projectile
-  :bind ("C-x C-b" . frog-jump-buffer))
-;;;   end
-
-
-;;;   EXWM - Emacs Window Manager
-(leaf exwm :ensure t :require t :leaf-defer nil
-  :disabled t
-  :init
-  (require 'exwm)
-  (require 'exwm-config)
-  (require 'exwm-systemtray)
-  (setq exwm-input-global-keys `(,(kbd "s-&") .
-                                 (lambda (command)
-                                   (interactive (list (read-shell-command "$ ")))
-                                   (start-process-shell-command command nil command))))
-  (exwm-systemtray-enable)
-  (exwm-config-default)
-  (ido-mode 0)
-  (setenv "DESKTOP_SESSION" "exwm")
-  (setenv "XDG_CURRENT_DESKTOP" "exwm")
-  (setenv "XDG_SESSION_DESKTOP" "exwm"))
-;;;   end
-
-
-;;;   Mail search using notmuch
-(leaf notmuch :ensure t
-  :bind ((notmuch-search-mode-map
-          ("d" . compro/notmuch/tag-as-deleted)
-          ("<delchar>" . compro/notmuch/tag-as-deleted)
-          ("u" . compro/notmuch/remove-deleted-tag)
-          ("D" . compro/notmuch/remove-deleted-tag)
-          ("f" . compro/notmuch/tag-as-flagged)
-          ("F" . compro/notmuch/remove-flagged-tag)))
-  :hook (message-mode-hook . notmuch-company-setup)
-  :init
-  (fset 'compro/notmuch/tag-as-deleted
-        (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
-  (fset 'compro/notmuch/remove-deleted-tag
-        (kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
-  (fset 'compro/notmuch/tag-as-flagged
-        (kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
-  (fset 'compro/notmuch/remove-flagged-tag
-        (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
-;;;   end
-
-
-;;;   Different background colors for special buffers like file tree
-(leaf solaire-mode :ensure t
-  :hook
-  (((ediff-prepare-buffer-hook
-     treemacs-mode-hook
-     magit-mode-hook
-     terminal-mode-hook
-     shell-mode-hook
-     eshell-mode-hook) . solaire-mode)
-   (minibuffer-setup-hook . solaire-mode-in-minibuffer)))
-;;;   end
-
-
-;;;   Child frame eldoc support
-(leaf eldoc-box :ensure t :require t
-  :config
-  (setq eldoc-box-only-multi-line t)
-  (eldoc-box-hover-at-point-mode 1))
-;;;   end
-
-
-;;;   Navbar(like Bootstrap Navbar)
-(leaf navbar :require t :leaf-defer t :disabled t
-  :load-path `,(concat user-emacs-directory ".repos/navbar.el")
-  :config
-  (defun get-exwm-buffers ()
-    (let ((str ""))
-      (mapcar
-       (lambda (buffer)
-         (let* ((buf-name (propertize (concat (buffer-name buffer) " x")
-                                      'mouse-face 'highlight))
-                (cross-start (length (buffer-name buffer)))
-                (cross-end (length buf-name))
-                (select-map (make-sparse-keymap))
-                (close-map (make-sparse-keymap)))
-           (define-key close-map [mouse-1]
-             `(lambda (event)
-                (interactive "e")
-                (kill-buffer ,buffer)))
-           (define-key select-map [mouse-1]
-             `(lambda (event)
-                (interactive "e")
-                (call-interactively 'other-window)
-                (sit-for 0.1)
-                (exwm-workspace-switch-to-buffer ,buffer)))
-           (add-text-properties
-            0 cross-start
-            (list
-             'help-echo (concat "Switch to " (buffer-name buffer))
-             'keymap select-map)
-            buf-name)
-           (add-text-properties
-            (1+ cross-start) cross-end
-            (list
-             'help-echo (concat "Kill " (buffer-name buffer))
-             'keymap close-map
-             'face '((t (:foreground "#0ff")))
-             'mouse-face '((t (:background "#f00"))))
-            buf-name)
-           (setq str (concat str buf-name " | "))))
-       (seq-filter
-        (lambda (buffer)
-          (with-current-buffer buffer
-            (eq major-mode 'exwm-mode)))
-        (buffer-list)))
-      str))
-  (setq navbar-item-list '(get-exwm-buffers))
-  (setq navbar-update-timer
-        (run-with-timer 1.1 1.4 'navbar-sync))
-  (navbar-mode)
-  )
-;;;   end
-
-
-;;;   snails - A simple and modern completion framework
-(leaf snails :leaf-defer nil :require t
-  :load-path "~/.emacs.d/.repos/snails")
-
-
-;;;   Tabs in Emacs
-(leaf centaur-tabs :leaf-defer nil :require t :disabled t
-  :load-path `,(concat user-emacs-directory ".repos/centaur-tabs")
-  :bind (("<C-M-S-iso-lefttab>" . centaur-tabs-forward-group)
-         ("<C-M-tab>" . centaur-tabs-backward-group)
-         ("C-c b" . centaur-tabs-counsel-switch-group))
-  :preface
-  (leaf powerline :ensure t)
-  (defun compro/centaur-tabs-hide-tab (x)
-    "Do no to show buffer X in tabs."
-    (let ((name (format "%s" x)))
-      (and
-       (not
-        (or
-         ;; Whitelist - Will not be hidden
-         (string-equal "*Messages*" name)
-         (string-equal "*scratch*" name)
-         (string-equal "*Help*" name)
-         (string-prefix-p "*eww" name)
-         (string-prefix-p "*terminal" name)))
-       (or
-        ;; Current window is not dedicated window.
-        (window-dedicated-p (selected-window))
-
-        ;; Blacklist - Will be hidden
-
-        ;; Is not magit buffer.
-        (and (string-prefix-p "magit" name)
-             (not (file-name-extension name)))
-        ))))
-  (defun compro/centaur-tabs-buffer-groups ()
-    (let ((project-root (projectile-project-p))
-          (project-name (projectile-project-name))
-          (buf (buffer-name)))
-      (cond
-       ((or (string-prefix-p "*sent mail" buf)
-            (string-prefix-p "*notmuch" buf)
-            (string-equal "*unsent mail*" buf))
-        '("Mail"))
-       ((or (eq major-mode 'telega-chat-mode)
-            (eq major-mode 'telega-root-mode))
-        '("Telegram"))
-       ((eq major-mode 'helpful-mode)
-        '("Helpful"))
-       ((or (eq major-mode 'eshell-mode)
-            (eq major-mode 'term-mode))
-        '("Terminals"))
-       ((or (buffer-file-name)
-            (eq major-mode 'dired-mode))
-        (if (null project-root)
-            '("Files")
-          (list (concat "Project: " project-name) "Files")))
-       ((string-prefix-p "*" buf)
-        '("Internal"))
-       (t '("Unregistered")))))
-  :custom-face
-  ((centaur-tabs-close-mouse-face . '((default (:foreground "orange red")))))
-  :config
-  (setq centaur-tabs-mouse-pointer 'arrow
-        centaur-tabs-style "slant"  ;; slant, box, bar, wave, chamfer
-        centaur-tabs-height 25
-        centaur-tabs-set-icons t
-        centaur-tabs-set-bar t
-        centaur-tabs-cycle-scope 'tabs
-        centaur-tabs-set-modified-marker t
-        centaur-tabs-hide-tab-function 'compro/centaur-tabs-hide-tab
-        centaur-tabs-buffer-groups-function 'compro/centaur-tabs-buffer-groups)
-  (centaur-tabs-mode t)
-  (centaur-tabs-headline-match)
-  :bind
-  (([C-tab] . centaur-tabs-forward)
-   ([C-S-tab] . centaur-tabs-backward)
-   ([C-S-iso-lefttab] . centaur-tabs-backward)))
-;;;   end
-
-
-;;;   Dired customizations
-(leaf dired-x
-  :bind ("C-x <C-j>" . dired-jump))
-(leaf dired
-  :hook (dired-mode-hook . dired-hide-details-mode)
-  :bind ((dired-mode-map
-          ("q"      . kill-current-buffer)
-          ("RET"    . compro/dired-open-dir)
-          ("^"      . compro/dired-up-dir)
-          ("DEL"    . compro/dired-up-dir)
-          ("<left>" . compro/dired-up-dir)))
-  :preface
-
-  (defun compro/dired-up-dir ()
-    (interactive)
-    (find-alternate-file ".."))
-
-  (defun compro/dired-open-dir ()
-    (interactive)
-    (set-buffer-modified-p nil)
-    (let ((file-or-dir (dired-get-file-for-visit)))
-      (if (f-dir-p file-or-dir)
-          (find-alternate-file file-or-dir)
-        (find-file file-or-dir))))
-
-  (defun compro/dired/mp3-to-ogg ()
-    "Used in dired to convert mp3 files to ogg"
-    (interactive)
-    (let* ((files (dired-get-marked-files)))
-      (dolist (file files)
-        (let* ((basename (file-name-nondirectory file))
-               (file-base (file-name-base file))
-               (dirname (file-name-directory file))
-               (extension (file-name-extension file))
-               (ogg-file (concat dirname file-base ".ogg"))
-               (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
-          (if (string= "mp3" (downcase extension))
-              (progn
-                (shell-command command nil nil)
-                (message command)
-                (if (file-exists-p ogg-file)
-                    (delete-file file))))))))
-
-  :config
-  (setq dired-dwim-target t))
-;;;   end
-
-
-;;;   elfeed - Reading articles(news feed) in Emacs
-(leaf elfeed :ensure t
-  :bind ("C-c w" . elfeed)
-  :config
-  (setq elfeed-feeds
-        '("http://nullprogram.com/feed/"
-          "http://planet.emacsen.org/atom.xml"
-          "http://emacshorrors.com/feed.atom")))
-;;;   end
-
-
-;;;   writeroom-mode - Center align a buffer and remove any distractions
-(leaf writeroom-mode :ensure t
-  :bind ("M-SPC" . writeroom-mode))
-;;;   end
-
-
-;;;   Assign specific positions for specific buffers
-(leaf shackle :ensure t :require t
-  :config
-  (setq shackle-default-rule '(:select t))
-  (setq shackle-rules
-        '((help-mode :size 0.33 :select t :align bottom)))
-  (shackle-mode 1))
-;;;   end
-
-
-;;;   hercules.el - A which-key based hydra
-(leaf hercules :require t :leaf-defer nil :ensure t)
-;;;   end
-
-
-;;;   libvterm integration - Requires Emacs module support
-(leaf vterm
-  :load-path `,(concat user-emacs-directory ".repos/emacs-libvterm/")
-  :bind (("C-`" . vterm)
-         ("<C-M-return>" . open-or-switch-vterm))
-  :hook (vterm-exit-functions . (lambda (buf) (when buf (kill-buffer buf))))
-  :init
-  (defun open-or-switch-vterm (&optional arg)
-    "Open or switch between existing vterms."
-    (interactive "p")
-    (let* ((vterms (-sort
-                    (lambda (buf1 buf2)
-                      (string< (buffer-name buf1) (buffer-name buf2)))
-                    (-filter
-                     (lambda (buf)
-                       (with-current-buffer buf (eq major-mode 'vterm-mode)))
-                     (buffer-list))))
-           (no-vterms (= (length vterms) 0)))
-      (if no-vterms
-          (vterm)
-        (switch-to-buffer (nth 0 vterms)))))
-  )
-;;;   end
-
-
-;;;   prettier.js for formating js related files
-(leaf prettier-js :ensure t
-  :hook ((js-mode-hook js2-mode-hook typescript-mode-hook web-mode-hook) .
-         prettier-js-mode))
-;;;   end
-
-
-;;;   Highlight symbol at point
-(leaf highlight-symbol :ensure t :leaf-defer nil :require t
-  :bind (("C-S-s" . highlight-symbol-next)
-         ("C-S-r" . highlight-symbol-prev))
-  :hook (prog-mode-hook . highlight-symbol-mode))
-;;;   end
-
-
-;;;   Dashboard
-(leaf dashboard :ensure t :require t :leaf-defer nil
-  :init
-  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-  :config
-  (dashboard-setup-startup-hook))
-;;;   end
+(defun after-init-jobs ()
+  "Configurations run after Emacs starts."
+  (set-face-attribute 'mode-line nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (minions-mode 1)
+  (ivy-mode 1)
+  (remove-hook 'after-init-hook 'after-init-jobs))
+(add-hook 'after-init-hook 'after-init-jobs)
