@@ -33,7 +33,7 @@
 * Enable debugging
   #+begin_src emacs-lisp :tangle init.el
     (setq debug-on-error  t
-	  init-file-debug t)
+          init-file-debug t)
   #+end_src
 * Aliases
   Emacs indentifier names are long. Lets shorten the common ones that we will be
@@ -198,26 +198,26 @@
 * Check Operating System
   #+begin_src emacs-lisp :tangle init.el
     (setq is-windows
-	  (seq-filter
-	   (lambda (x) (string= system-type x))
-	   '("ms-dos" "windows-nt" "cygwin")))
+          (seq-filter
+           (lambda (x) (string= system-type x))
+           '("ms-dos" "windows-nt" "cygwin")))
     (setq is-unix
-	  (seq-filter
-	   (lambda (x) (string= system-type x))
-	   '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
+          (seq-filter
+           (lambda (x) (string= system-type x))
+           '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
     (setq is-gnu
-	  (seq-filter
-	   (lambda (x) (string= system-type x))
-	   '("gnu" "gnu/linux" "gnu/kfreebsd")))
+          (seq-filter
+           (lambda (x) (string= system-type x))
+           '("gnu" "gnu/linux" "gnu/kfreebsd")))
     (setq is-linux
-	  (or
-	   (string= system-type "gnu")
-	   (string= system-type "gnu/linux")))
+          (or
+           (string= system-type "gnu")
+           (string= system-type "gnu/linux")))
     (setq is-mac (string= system-type "darwin"))
     (setq is-bsd
-	  (or
-	   (string= system-type "gnu/kfreebsd")
-	   (string= system-type "darwin")))
+          (or
+           (string= system-type "gnu/kfreebsd")
+           (string= system-type "darwin")))
   #+end_src
 * Check if its my laptop
   #+begin_src emacs-lisp :tangle init.el
@@ -230,9 +230,9 @@
     (defun tangle-README.org-to-init.el ()
       "Tangle README.org to init.el"
       (let ((readme (ft (concat emacs-d "README.org")))
-	    (current-file (ft (buffer-file-name))))
-	(when (string= readme current-file)
-	  (call-interactively 'org-babel-tangle))))
+            (current-file (ft (buffer-file-name))))
+        (when (string= readme current-file)
+          (call-interactively 'org-babel-tangle))))
 
     (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
   #+end_src
@@ -282,15 +282,15 @@
        :init (global-tab-line-mode)
        :config
        (setq tab-line-new-tab-choice nil
-	     tab-line-close-button-show nil)
+             tab-line-close-button-show nil)
        (when (fboundp 'doom-color)
-	 (let ((bg (doom-color 'bg))
-	       (fg (doom-color 'fg))
-	       (base1 (doom-color 'base1))
-	       (box-width 7))
-	   (set-face-attribute 'tab-line nil :background base1 :foreground fg)
-	   (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
-	   (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
+         (let ((bg (doom-color 'bg))
+               (fg (doom-color 'fg))
+               (base1 (doom-color 'base1))
+               (box-width 7))
+           (set-face-attribute 'tab-line nil :background base1 :foreground fg)
+           (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
+           (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
    #+end_src
 ** Dired - File manager
    Dired is nice but doesn't have good keybindings.
@@ -821,36 +821,36 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf magit :ensure t
        :bind (("C-x g" . magit-status)
-	      (magit-mode-map
-	       ([C-tab] . nil)
-	       ([C-backtab] . nil)
-	       ([M-tab] . nil))
-	      (magit-status-mode-map
-	       ("q" . compro/kill-magit-buffers)
-	       ([C-tab] . nil)
-	       ([C-backtab] . nil)
-	       ([M-tab] . nil))
-	      (magit-log-mode-map
-	       ([C-tab] . nil)
-	       ([C-backtab] . nil)
-	       ([M-tab] . nil)))
+              (magit-mode-map
+               ([C-tab] . nil)
+               ([C-backtab] . nil)
+               ([M-tab] . nil))
+              (magit-status-mode-map
+               ("q" . compro/kill-magit-buffers)
+               ([C-tab] . nil)
+               ([C-backtab] . nil)
+               ([M-tab] . nil))
+              (magit-log-mode-map
+               ([C-tab] . nil)
+               ([C-backtab] . nil)
+               ([M-tab] . nil)))
        :preface
        (leaf forge :after magit :ensure t :require t)
        :config
        (defun compro/kill-magit-buffers ()
-	 "Kill magit buffers related to a project."
-	 (interactive)
-	 (magit-mode-bury-buffer 16))
+         "Kill magit buffers related to a project."
+         (interactive)
+         (magit-mode-bury-buffer 16))
        (with-eval-after-load 'magit-diff
-	 (define-key magit-diff-mode-map [C-tab] nil)
-	 (define-key magit-file-section-map [C-tab] nil)
-	 (define-key magit-hunk-section-map [C-tab] nil)
-	 (define-key magit-diff-mode-map [C-backtab] nil)
-	 (define-key magit-file-section-map [C-backtab] nil)
-	 (define-key magit-hunk-section-map [C-backtab] nil)
-	 (define-key magit-diff-mode-map [M-tab] nil)
-	 (define-key magit-file-section-map [M-tab] nil)
-	 (define-key magit-hunk-section-map [M-tab] nil)))
+         (define-key magit-diff-mode-map [C-tab] nil)
+         (define-key magit-file-section-map [C-tab] nil)
+         (define-key magit-hunk-section-map [C-tab] nil)
+         (define-key magit-diff-mode-map [C-backtab] nil)
+         (define-key magit-file-section-map [C-backtab] nil)
+         (define-key magit-hunk-section-map [C-backtab] nil)
+         (define-key magit-diff-mode-map [M-tab] nil)
+         (define-key magit-file-section-map [M-tab] nil)
+         (define-key magit-hunk-section-map [M-tab] nil)))
    #+end_src
    Get commit message for why a line was changed using *git-messenger*.
    #+begin_src emacs-lisp :tangle init.el
@@ -863,27 +863,27 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf expand-region :ensure t :require t :leaf-defer nil
        :commands (er/expand-region
-		  er/mark-paragraph
-		  er/mark-inside-pairs
-		  er/mark-outside-pairs
-		  er/mark-inside-quotes
-		  er/mark-outside-quotes
-		  er/contract-region)
+                  er/mark-paragraph
+                  er/mark-inside-pairs
+                  er/mark-outside-pairs
+                  er/mark-inside-quotes
+                  er/mark-outside-quotes
+                  er/contract-region)
        :bind (("C-=" . hydra-er/body))
        :config
        (defhydra hydra-er (:hint nil)
-	 "
+         "
      ^Expand^  ^Reduce^
      ^──────^──^────^─────────────────
      _C-=_     _C-+_
      _=_       _+_
-	     _-_"
-	 ("C-=" er/expand-region)
-	 ("=" er/expand-region)
-	 ("C-+" er/contract-region)
-	 ("C--" er/contract-region)
-	 ("+" er/contract-region)
-	 ("-" er/contract-region)))
+             _-_"
+         ("C-=" er/expand-region)
+         ("=" er/expand-region)
+         ("C-+" er/contract-region)
+         ("C--" er/contract-region)
+         ("+" er/contract-region)
+         ("-" er/contract-region)))
    #+end_src
 ** TODO Project integration
    Now Emacs comes with native project support since 25.1. Investigate and set
@@ -895,8 +895,8 @@
        :bind (("C-c p" . projectile-command-map))
        :config
        (setq
-	projectile-cache-file (concat cache-d "projectile")
-	projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld"))
+        projectile-cache-file (concat cache-d "projectile")
+        projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld"))
        (projectile-mode 1)
        (setq projectile-completion-system 'ivy))
    #+end_src
@@ -929,19 +929,19 @@
      (leaf multiple-cursors :ensure t
        :bind
        (("C-S-c" . mc/edit-lines)
-	("M-S-<up>" . mc/mark-previous-like-this)
-	("M-<up>" . mc/skip-to-previous-like-this)
-	("M-S-<down>" . mc/mark-next-like-this)
-	("M-<down>" . mc/skip-to-next-like-this)
-	("C-c C-<" . mc/mark-all-like-this)
-	("M-S-<mouse-1>" . mc/add-cursor-on-click)
-	("M-S-<mouse-2>" . mc/add-cursor-on-click)
-	("M-S-<mouse-3>" . mc/add-cursor-on-click))
+        ("M-S-<up>" . mc/mark-previous-like-this)
+        ("M-<up>" . mc/skip-to-previous-like-this)
+        ("M-S-<down>" . mc/mark-next-like-this)
+        ("M-<down>" . mc/skip-to-next-like-this)
+        ("C-c C-<" . mc/mark-all-like-this)
+        ("M-S-<mouse-1>" . mc/add-cursor-on-click)
+        ("M-S-<mouse-2>" . mc/add-cursor-on-click)
+        ("M-S-<mouse-3>" . mc/add-cursor-on-click))
        :init
        (leaf phi-search-mc :ensure t
-	 :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
-	 :config
-	 (phi-search-mc/setup-keys)))
+         :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
+         :config
+         (phi-search-mc/setup-keys)))
    #+end_src
 ** Undo tree
    Emacs has great undo system but it doesn't provide a good UI to access it
@@ -951,7 +951,7 @@
      (leaf undo-tree :ensure t
        :bind
        (:undo-tree-map
-	("C-_" . nil))  ; reserved for move-text-up
+        ("C-_" . nil))  ; reserved for move-text-up
        :init
        (global-undo-tree-mode t))
    #+end_src
@@ -959,47 +959,47 @@
 *** Doom Themes
     #+begin_src emacs-lisp :tangle init.el
       (leaf doom-themes
-	:commands (doom-themes-org-config)
-	:config
-	(doom-themes-org-config)
-	(setq doom-themes-enable-bold t
-	      doom-themes-enable-italic t)
-	(when (>= emacs-major-version 27)
-	  (with-eval-after-load 'org
-	    (dolist (face '(org-block
-			    org-block-begin-line
-			    org-block-end-line
-			    org-level-1
-			    org-quote))
-	      (set-face-attribute face nil :extend t)))
-	  (with-eval-after-load 'ediff
-	    (dolist (face '(ediff-current-diff-A
-			    ediff-current-diff-Ancestor
-			    ediff-current-diff-B
-			    ediff-current-diff-C
-			    ediff-even-diff-A
-			    ediff-even-diff-Ancestor
-			    ediff-even-diff-B
-			    ediff-even-diff-C
-			    ediff-fine-diff-A
-			    ediff-fine-diff-Ancestor
-			    ediff-fine-diff-B
-			    ediff-fine-diff-C
-			    ediff-odd-diff-A
-			    ediff-odd-diff-Ancestor
-			    ediff-odd-diff-B
-			    ediff-odd-diff-C))
-	      (set-face-attribute face nil :extend t)))
-	  (with-eval-after-load 'hl-line
-	    (set-face-attribute 'hl-line nil :extend t))
-	  (with-eval-after-load 'faces
-	    (dolist (face '(region
-			    secondary-selection))
-	      (set-face-attribute face nil :extend t)))
-	  (with-eval-after-load 'markdown-mode
-	    (dolist (face '(markdown-code-face
-			    markdown-pre-face))
-	      (set-face-attribute face nil :extend t)))))
+        :commands (doom-themes-org-config)
+        :config
+        (doom-themes-org-config)
+        (setq doom-themes-enable-bold t
+              doom-themes-enable-italic t)
+        (when (>= emacs-major-version 27)
+          (with-eval-after-load 'org
+            (dolist (face '(org-block
+                            org-block-begin-line
+                            org-block-end-line
+                            org-level-1
+                            org-quote))
+              (set-face-attribute face nil :extend t)))
+          (with-eval-after-load 'ediff
+            (dolist (face '(ediff-current-diff-A
+                            ediff-current-diff-Ancestor
+                            ediff-current-diff-B
+                            ediff-current-diff-C
+                            ediff-even-diff-A
+                            ediff-even-diff-Ancestor
+                            ediff-even-diff-B
+                            ediff-even-diff-C
+                            ediff-fine-diff-A
+                            ediff-fine-diff-Ancestor
+                            ediff-fine-diff-B
+                            ediff-fine-diff-C
+                            ediff-odd-diff-A
+                            ediff-odd-diff-Ancestor
+                            ediff-odd-diff-B
+                            ediff-odd-diff-C))
+              (set-face-attribute face nil :extend t)))
+          (with-eval-after-load 'hl-line
+            (set-face-attribute 'hl-line nil :extend t))
+          (with-eval-after-load 'faces
+            (dolist (face '(region
+                            secondary-selection))
+              (set-face-attribute face nil :extend t)))
+          (with-eval-after-load 'markdown-mode
+            (dolist (face '(markdown-code-face
+                            markdown-pre-face))
+              (set-face-attribute face nil :extend t)))))
     #+end_src
 *** Kaolin Themes
     #+begin_src emacs-lisp :tangle init.el
@@ -1019,9 +1019,9 @@
      (leaf pipenv :ensure t
        :bind
        (("<f9> p v a" . pipenv-activate)
-	("<f9> p v d" . pipenv-deactivate)
-	("<f9> p v g" . pipenv-graph)
-	("<f9> p v e" . pipenv-envs)))
+        ("<f9> p v d" . pipenv-deactivate)
+        ("<f9> p v g" . pipenv-graph)
+        ("<f9> p v e" . pipenv-envs)))
    #+end_src
 ** Language Server Protocol
    [[https://langserver.org][LSP]] is a way to provide IDE like experience in any text editor that
@@ -1032,17 +1032,17 @@
        :hook (c-mode-common-hook . compro/init-lsp)
        :preface
        (add-hook 'python-mode-hook
-		 (lambda ()
-		   (pipenv-activate)
-		   (sleep-for 1)
-		   (lsp)))
+                 (lambda ()
+                   (pipenv-activate)
+                   (sleep-for 1)
+                   (lsp)))
        :init
        (require 'lsp-clients)
        (defun compro/init-lsp ()
-	 "Start lsp server only when it is a valid project where lsp
+         "Start lsp server only when it is a valid project where lsp
      is useful."
-	 (when (and (fboundp 'projectile-project-p) (projectile-project-p))
-	   (lsp)))
+         (when (and (fboundp 'projectile-project-p) (projectile-project-p))
+           (lsp)))
        )
    #+end_src
 ** Autocompletion for Emacs
@@ -1052,30 +1052,30 @@
      (leaf ivy :ensure t :require t :leaf-defer nil
        :preface
        (leaf counsel :ensure t :require t :after ivy
-	 :bind
-	 (("M-x" . counsel-M-x)
-	  ("C-c s r" . counsel-rg)
-	  ("C-c s a" . counsel-ag)
-	  ("C-c s g" . counsel-grep)
-	  ("C-c r" . counsel-recentf)
-	  ("C-c y" . counsel-yank-pop)
-	  ("C-c u" . counsel-unicode-char)
-	  ("C-c R" . ivy-resume)
-	  ("C-h b" . counsel-descbinds)
-	  ("C-h w" . counsel-descbinds)))
+         :bind
+         (("M-x" . counsel-M-x)
+          ("C-c s r" . counsel-rg)
+          ("C-c s a" . counsel-ag)
+          ("C-c s g" . counsel-grep)
+          ("C-c r" . counsel-recentf)
+          ("C-c y" . counsel-yank-pop)
+          ("C-c u" . counsel-unicode-char)
+          ("C-c R" . ivy-resume)
+          ("C-h b" . counsel-descbinds)
+          ("C-h w" . counsel-descbinds)))
        (leaf ivy-rich :ensure t :require t :after ivy
-	 :config (ivy-rich-mode 1))
+         :config (ivy-rich-mode 1))
        (leaf ivy-posframe :ensure t :require t :after ivy
-	 :config
-	 (setq ivy-posframe-display-functions-alist
-	       '((t . ivy-posframe-display-at-frame-center)))
-	 (ivy-posframe-mode 1))
+         :config
+         (setq ivy-posframe-display-functions-alist
+               '((t . ivy-posframe-display-at-frame-center)))
+         (ivy-posframe-mode 1))
        :init
        (setq
-	ivy-use-virtual-buffers t
-	ivy-count-format "(%d/%d) "
-	ivy-height 15
-	ivy-more-chars-alist '((t . 1))))
+        ivy-use-virtual-buffers t
+        ivy-count-format "(%d/%d) "
+        ivy-height 15
+        ivy-more-chars-alist '((t . 1))))
    #+end_src
 ** Snippet completion
    Yasnippet is a snippet completion framework for Emacs.
@@ -1101,22 +1101,22 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf notmuch :ensure t
        :bind ((notmuch-search-mode-map
-	       ("d" . compro/notmuch/tag-as-deleted)
-	       ("<delchar>" . compro/notmuch/tag-as-deleted)
-	       ("u" . compro/notmuch/remove-deleted-tag)
-	       ("D" . compro/notmuch/remove-deleted-tag)
-	       ("f" . compro/notmuch/tag-as-flagged)
-	       ("F" . compro/notmuch/remove-flagged-tag)))
+               ("d" . compro/notmuch/tag-as-deleted)
+               ("<delchar>" . compro/notmuch/tag-as-deleted)
+               ("u" . compro/notmuch/remove-deleted-tag)
+               ("D" . compro/notmuch/remove-deleted-tag)
+               ("f" . compro/notmuch/tag-as-flagged)
+               ("F" . compro/notmuch/remove-flagged-tag)))
        :hook (message-mode-hook . notmuch-company-setup)
        :init
        (fset 'compro/notmuch/tag-as-deleted
-	     (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+             (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
        (fset 'compro/notmuch/remove-deleted-tag
-	     (kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+             (kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
        (fset 'compro/notmuch/tag-as-flagged
-	     (kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
+             (kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
        (fset 'compro/notmuch/remove-flagged-tag
-	     (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
+             (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
    #+end_src
 
 ** iedit
@@ -1135,7 +1135,7 @@
        :config
        (setq shackle-default-rule '(:select t))
        (setq shackle-rules
-	     '((help-mode :size 0.33 :select t :align bottom)))
+             '((help-mode :size 0.33 :select t :align bottom)))
        (shackle-mode 1))
    #+end_src
 ** Org mode

@@ -197,7 +197,7 @@ The return value is nil if no font was found, truthy otherwise."
 (defun tangle-README.org-to-init.el ()
   "Tangle README.org to init.el"
   (let ((readme (ft (concat emacs-d "README.org")))
-	(current-file (ft (buffer-file-name))))
+        (current-file (ft (buffer-file-name))))
     (when (string= readme current-file)
       (call-interactively 'org-babel-tangle))))
 
@@ -227,12 +227,12 @@ The return value is nil if no font was found, truthy otherwise."
   :init (global-tab-line-mode)
   :config
   (setq tab-line-new-tab-choice nil
-	tab-line-close-button-show nil)
+        tab-line-close-button-show nil)
   (when (fboundp 'doom-color)
     (let ((bg (doom-color 'bg))
-	  (fg (doom-color 'fg))
-	  (base1 (doom-color 'base1))
-	  (box-width 7))
+          (fg (doom-color 'fg))
+          (base1 (doom-color 'base1))
+          (box-width 7))
       (set-face-attribute 'tab-line nil :background base1 :foreground fg)
       (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
       (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
@@ -681,19 +681,19 @@ The return value is nil if no font was found, truthy otherwise."
 
 (leaf magit :ensure t
   :bind (("C-x g" . magit-status)
-	 (magit-mode-map
-	  ([C-tab] . nil)
-	  ([C-backtab] . nil)
-	  ([M-tab] . nil))
-	 (magit-status-mode-map
-	  ("q" . compro/kill-magit-buffers)
-	  ([C-tab] . nil)
-	  ([C-backtab] . nil)
-	  ([M-tab] . nil))
-	 (magit-log-mode-map
-	  ([C-tab] . nil)
-	  ([C-backtab] . nil)
-	  ([M-tab] . nil)))
+         (magit-mode-map
+          ([C-tab] . nil)
+          ([C-backtab] . nil)
+          ([M-tab] . nil))
+         (magit-status-mode-map
+          ("q" . compro/kill-magit-buffers)
+          ([C-tab] . nil)
+          ([C-backtab] . nil)
+          ([M-tab] . nil))
+         (magit-log-mode-map
+          ([C-tab] . nil)
+          ([C-backtab] . nil)
+          ([M-tab] . nil)))
   :preface
   (leaf forge :after magit :ensure t :require t)
   :config
@@ -717,12 +717,12 @@ The return value is nil if no font was found, truthy otherwise."
 
 (leaf expand-region :ensure t :require t :leaf-defer nil
   :commands (er/expand-region
-	     er/mark-paragraph
-	     er/mark-inside-pairs
-	     er/mark-outside-pairs
-	     er/mark-inside-quotes
-	     er/mark-outside-quotes
-	     er/contract-region)
+             er/mark-paragraph
+             er/mark-inside-pairs
+             er/mark-outside-pairs
+             er/mark-inside-quotes
+             er/mark-outside-quotes
+             er/contract-region)
   :bind (("C-=" . hydra-er/body))
   :config
   (defhydra hydra-er (:hint nil)
@@ -731,7 +731,7 @@ The return value is nil if no font was found, truthy otherwise."
 ^──────^──^────^─────────────────
 _C-=_     _C-+_
 _=_       _+_
-	_-_"
+        _-_"
     ("C-=" er/expand-region)
     ("=" er/expand-region)
     ("C-+" er/contract-region)
@@ -788,43 +788,43 @@ _=_       _+_
   :config
   (doom-themes-org-config)
   (setq doom-themes-enable-bold t
-	doom-themes-enable-italic t)
+        doom-themes-enable-italic t)
   (when (>= emacs-major-version 27)
     (with-eval-after-load 'org
       (dolist (face '(org-block
-		      org-block-begin-line
-		      org-block-end-line
-		      org-level-1
-		      org-quote))
-	(set-face-attribute face nil :extend t)))
+                      org-block-begin-line
+                      org-block-end-line
+                      org-level-1
+                      org-quote))
+        (set-face-attribute face nil :extend t)))
     (with-eval-after-load 'ediff
       (dolist (face '(ediff-current-diff-A
-		      ediff-current-diff-Ancestor
-		      ediff-current-diff-B
-		      ediff-current-diff-C
-		      ediff-even-diff-A
-		      ediff-even-diff-Ancestor
-		      ediff-even-diff-B
-		      ediff-even-diff-C
-		      ediff-fine-diff-A
-		      ediff-fine-diff-Ancestor
-		      ediff-fine-diff-B
-		      ediff-fine-diff-C
-		      ediff-odd-diff-A
-		      ediff-odd-diff-Ancestor
-		      ediff-odd-diff-B
-		      ediff-odd-diff-C))
-	(set-face-attribute face nil :extend t)))
+                      ediff-current-diff-Ancestor
+                      ediff-current-diff-B
+                      ediff-current-diff-C
+                      ediff-even-diff-A
+                      ediff-even-diff-Ancestor
+                      ediff-even-diff-B
+                      ediff-even-diff-C
+                      ediff-fine-diff-A
+                      ediff-fine-diff-Ancestor
+                      ediff-fine-diff-B
+                      ediff-fine-diff-C
+                      ediff-odd-diff-A
+                      ediff-odd-diff-Ancestor
+                      ediff-odd-diff-B
+                      ediff-odd-diff-C))
+        (set-face-attribute face nil :extend t)))
     (with-eval-after-load 'hl-line
       (set-face-attribute 'hl-line nil :extend t))
     (with-eval-after-load 'faces
       (dolist (face '(region
-		      secondary-selection))
-	(set-face-attribute face nil :extend t)))
+                      secondary-selection))
+        (set-face-attribute face nil :extend t)))
     (with-eval-after-load 'markdown-mode
       (dolist (face '(markdown-code-face
-		      markdown-pre-face))
-	(set-face-attribute face nil :extend t)))))
+                      markdown-pre-face))
+        (set-face-attribute face nil :extend t)))))
 
 (leaf kaolin-themes :ensure t)
 
@@ -843,10 +843,10 @@ _=_       _+_
   :hook (c-mode-common-hook . compro/init-lsp)
   :preface
   (add-hook 'python-mode-hook
-	    (lambda ()
-	      (pipenv-activate)
-	      (sleep-for 1)
-	      (lsp)))
+            (lambda ()
+              (pipenv-activate)
+              (sleep-for 1)
+              (lsp)))
   :init
   (require 'lsp-clients)
   (defun compro/init-lsp ()
@@ -875,7 +875,7 @@ is useful."
   (leaf ivy-posframe :ensure t :require t :after ivy
     :config
     (setq ivy-posframe-display-functions-alist
-	  '((t . ivy-posframe-display-at-frame-center)))
+          '((t . ivy-posframe-display-at-frame-center)))
     (ivy-posframe-mode 1))
   :init
   (setq
@@ -899,22 +899,22 @@ is useful."
 
 (leaf notmuch :ensure t
   :bind ((notmuch-search-mode-map
-	  ("d" . compro/notmuch/tag-as-deleted)
-	  ("<delchar>" . compro/notmuch/tag-as-deleted)
-	  ("u" . compro/notmuch/remove-deleted-tag)
-	  ("D" . compro/notmuch/remove-deleted-tag)
-	  ("f" . compro/notmuch/tag-as-flagged)
-	  ("F" . compro/notmuch/remove-flagged-tag)))
+          ("d" . compro/notmuch/tag-as-deleted)
+          ("<delchar>" . compro/notmuch/tag-as-deleted)
+          ("u" . compro/notmuch/remove-deleted-tag)
+          ("D" . compro/notmuch/remove-deleted-tag)
+          ("f" . compro/notmuch/tag-as-flagged)
+          ("F" . compro/notmuch/remove-flagged-tag)))
   :hook (message-mode-hook . notmuch-company-setup)
   :init
   (fset 'compro/notmuch/tag-as-deleted
-	(kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+        (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
   (fset 'compro/notmuch/remove-deleted-tag
-	(kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
+        (kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
   (fset 'compro/notmuch/tag-as-flagged
-	(kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
+        (kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
   (fset 'compro/notmuch/remove-flagged-tag
-	(kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
+        (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
 
 (leaf iedit :ensure t :require t :leaf-defer nil
   :bind ("C-;" . iedit-mode))
@@ -923,7 +923,7 @@ is useful."
   :config
   (setq shackle-default-rule '(:select t))
   (setq shackle-rules
-	'((help-mode :size 0.33 :select t :align bottom)))
+        '((help-mode :size 0.33 :select t :align bottom)))
   (shackle-mode 1))
 
 (leaf org :ensure t
