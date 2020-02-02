@@ -853,6 +853,8 @@ _=_       _+_
               (sleep-for 1)
               (lsp)))
   :init
+  (setq lsp-session-file (locate-user-emacs-file
+                          (ft (concat cache-d ".lsp-session-v1"))))
   (require 'lsp-clients)
   (defun compro/init-lsp ()
     "Start lsp server only when it is a valid project where lsp
