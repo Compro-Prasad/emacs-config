@@ -502,9 +502,12 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(menu-bar-mode 0)
+(if (null compro/laptop-p)
+    (cua-mode 1)
+  (menu-bar-mode 0)
+  (menu-bar-no-scroll-bar)
+  (blink-cursor-mode 0))
 (tool-bar-mode 0)
-(menu-bar-no-scroll-bar)
 
 (column-number-mode 1)
 (display-time-mode 1)
@@ -516,7 +519,6 @@ The return value is nil if no font was found, truthy otherwise."
   (xterm-mouse-mode 0))
 
 (toggle-frame-maximized)
-(blink-cursor-mode 0)
 
 (when (display-graphic-p)
   (general-define-key
