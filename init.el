@@ -1132,5 +1132,7 @@ made unique when necessary."
   (set-face-attribute 'mode-line-inactive nil :box nil)
   (minions-mode 1)
   (ivy-mode 1)
+  (setq debug-on-error  nil
+        init-file-debug nil)
   (remove-hook 'after-init-hook 'after-init-jobs))
 (add-hook 'after-init-hook 'after-init-jobs)
