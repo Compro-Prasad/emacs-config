@@ -168,6 +168,22 @@ The return value is nil if no font was found, truthy otherwise."
 (defun compro/comint/preoutput-read-only (text)
   (propertize text 'read-only t))
 
+(defun compro/shell-turn-echo-off ()
+  (setq comint-process-echoes t))
+(add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
+
+(defun compro/shell-kill-buffer-sentinel (process event)
+  (when (and (memq (process-status process) '(exit signal))
+             (buffer-live-p (process-buffer process)))
+    (kill-buffer)))
+
+(defun compro/kill-process-buffer-on-exit ()
+  (set-process-sentinel (get-buffer-process (current-buffer))
+                        #'compro/shell-kill-buffer-sentinel))
+
+(dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
+  (add-hook hook 'compro/kill-process-buffer-on-exit))
+
 (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/")))
 
 (setq is-windows
@@ -582,38 +598,19 @@ The return value is nil if no font was found, truthy otherwise."
     (previous-line 1)
     (indent-according-to-mode)))
 
-(defun compro/shell-turn-echo-off ()
-  (setq comint-process-echoes t))
-
-(add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
-
 (with-eval-after-load 'comint
   (general-define-key
    :kemaps 'comint-mode-map
    "<remap> <kill-word>" 'compro/comint/kill-word
    "C-S-l" 'compro/comint/clear-last-output))
 
-(defun compro/shell-kill-buffer-sentinel (process event)
-  (when (and (memq (process-status process) '(exit signal))
-             (buffer-live-p (process-buffer process)))
-    (kill-buffer)))
-
-(defun compro/kill-process-buffer-on-exit ()
-  (set-process-sentinel (get-buffer-process (current-buffer))
-                        #'compro/shell-kill-buffer-sentinel))
-
-(dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
-  (add-hook hook 'compro/kill-process-buffer-on-exit))
-
 (add-hook 'comint-preoutput-filter-functions
           'compro/comint/preoutput-read-only)
 
-(setq recentf-max-saved-items 512
-      history-length t
+(setq history-length t
       history-delete-duplicates t
-      recentf-save-file (concat user-emacs-directory ".cache/recentf")
-      savehist-file (concat user-emacs-directory ".cache/savehist")
-      save-place-file (concat user-emacs-directory ".cache/saveplace")
+      savehist-file (concat cache-d "savehist")
+      save-place-file (concat cache-d "saveplace")
       savehist-additional-variables '(kill-ring
                                       extended-command-history
                                       global-mark-ring
@@ -622,6 +619,12 @@ The return value is nil if no font was found, truthy otherwise."
                                       search-ring))
 (save-place-mode 1)
 (savehist-mode 1)
+
+(require 'recentf)
+(setq recentf-max-saved-items 512
+      recentf-save-file (concat cache-d "recentf"))
+(add-to-list 'recentf-exclude
+             (concat (regexp-quote (ft (format cache-d))) ".*"))
 (recentf-mode 1)
 
 (leaf xwidget
@@ -776,10 +779,12 @@ _=_       _+_
     :config
     (phi-search-mc/setup-keys)))
 
-(leaf undo-tree :ensure t
+(leaf undo-tree :ensure t :leaf-defer nil :require t
   :bind
-  (:undo-tree-map
-   ("C-_" . nil))  ; reserved for move-text-up
+  ((:undo-tree-map
+    ("C-_" . nil))
+   (:global-map
+    ("C-_" . nil)))
   :init
   (global-undo-tree-mode t))
 
@@ -926,7 +931,7 @@ is useful."
         '((help-mode :size 0.33 :select t :align bottom)))
   (shackle-mode 1))
 
-(leaf org :ensure t
+(leaf org :ensure org-plus-contrib
   :preface
   (leaf org-babel-eval-in-repl :ensure t
     :after ob

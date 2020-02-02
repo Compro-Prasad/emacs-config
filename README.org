@@ -191,6 +191,26 @@
      (defun compro/comint/preoutput-read-only (text)
        (propertize text 'read-only t))
    #+end_src
+** Turn off re-echo of shell commands
+   #+begin_src emacs-lisp :tangle init.el
+     (defun compro/shell-turn-echo-off ()
+       (setq comint-process-echoes t))
+     (add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
+   #+end_src
+** Kill process related buffers on exit
+   #+begin_src emacs-lisp :tangle init.el
+     (defun compro/shell-kill-buffer-sentinel (process event)
+       (when (and (memq (process-status process) '(exit signal))
+                  (buffer-live-p (process-buffer process)))
+         (kill-buffer)))
+
+     (defun compro/kill-process-buffer-on-exit ()
+       (set-process-sentinel (get-buffer-process (current-buffer))
+                             #'compro/shell-kill-buffer-sentinel))
+
+     (dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
+       (add-hook hook 'compro/kill-process-buffer-on-exit))
+   #+end_src
 * Cache directory
   #+begin_src emacs-lisp :tangle init.el
     (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/")))
@@ -686,13 +706,6 @@
          (previous-line 1)
          (indent-according-to-mode)))
    #+end_src
-** Turn off re-echo of shell commands
-   #+begin_src emacs-lisp :tangle init.el
-     (defun compro/shell-turn-echo-off ()
-       (setq comint-process-echoes t))
-
-     (add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
-   #+end_src
 ** comint keybindings
    #+begin_src emacs-lisp :tangle init.el
      (with-eval-after-load 'comint
@@ -701,20 +714,6 @@
         "<remap> <kill-word>" 'compro/comint/kill-word
         "C-S-l" 'compro/comint/clear-last-output))
    #+end_src
-** Kill process related buffers on exit
-   #+begin_src emacs-lisp :tangle init.el
-     (defun compro/shell-kill-buffer-sentinel (process event)
-       (when (and (memq (process-status process) '(exit signal))
-                  (buffer-live-p (process-buffer process)))
-         (kill-buffer)))
-
-     (defun compro/kill-process-buffer-on-exit ()
-       (set-process-sentinel (get-buffer-process (current-buffer))
-                             #'compro/shell-kill-buffer-sentinel))
-
-     (dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
-       (add-hook hook 'compro/kill-process-buffer-on-exit))
-   #+end_src
 ** comint make output text read-only
    #+begin_src emacs-lisp :tangle init.el
      (add-hook 'comint-preoutput-filter-functions
@@ -722,12 +721,10 @@
    #+end_src
 ** Save history for future Emacs sessions
    #+begin_src emacs-lisp :tangle init.el
-     (setq recentf-max-saved-items 512
-           history-length t
+     (setq history-length t
            history-delete-duplicates t
-           recentf-save-file (concat user-emacs-directory ".cache/recentf")
-           savehist-file (concat user-emacs-directory ".cache/savehist")
-           save-place-file (concat user-emacs-directory ".cache/saveplace")
+           savehist-file (concat cache-d "savehist")
+           save-place-file (concat cache-d "saveplace")
            savehist-additional-variables '(kill-ring
                                            extended-command-history
                                            global-mark-ring
@@ -736,8 +733,16 @@
                                            search-ring))
      (save-place-mode 1)
      (savehist-mode 1)
-     (recentf-mode 1)
    #+end_src
+*** Recent files
+    #+begin_src emacs-lisp :tangle init.el
+      (require 'recentf)
+      (setq recentf-max-saved-items 512
+            recentf-save-file (concat cache-d "recentf"))
+      (add-to-list 'recentf-exclude
+                   (concat (regexp-quote (ft (format cache-d))) ".*"))
+      (recentf-mode 1)
+    #+end_src
 ** xwidget webkit
    Browsing web in Emacs.
    #+begin_src emacs-lisp :tangle init.el
@@ -948,10 +953,12 @@
    effectively. *undo-tree* helps visualize the undos in a buffer and easily
    revert to different states.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf undo-tree :ensure t
+     (leaf undo-tree :ensure t :leaf-defer nil :require t
        :bind
-       (:undo-tree-map
-        ("C-_" . nil))  ; reserved for move-text-up
+       ((:undo-tree-map
+         ("C-_" . nil))
+        (:global-map
+         ("C-_" . nil)))
        :init
        (global-undo-tree-mode t))
    #+end_src
@@ -1142,7 +1149,7 @@
    [[https://orgmode.org][Org mode]] is a note taking system which has other uses too. This
    configuration is written in org mode.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf org :ensure t
+     (leaf org :ensure org-plus-contrib
        :preface
        (leaf org-babel-eval-in-repl :ensure t
          :after ob
