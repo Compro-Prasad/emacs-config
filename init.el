@@ -933,6 +933,9 @@ is useful."
         '((help-mode :size 0.33 :select t :align bottom)))
   (shackle-mode 1))
 
+(leaf telega :ensure t :when is-linux
+  :bind ("C-t" . telega))
+
 (leaf org :ensure org-plus-contrib
   :preface
   (leaf org-babel-eval-in-repl :ensure t
