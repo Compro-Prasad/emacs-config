@@ -1103,6 +1103,13 @@
      (leaf beginend :ensure t :leaf-defer nil :require t
        :config (beginend-global-mode))
    #+end_src
+** Move text up and down easily
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf move-text :ensure t :leaf-defer nil :require t
+       :bind
+       (("C-_" . move-text-up)
+        ("C--" . move-text-down)))
+   #+end_src
 ** Zoom in and zoom out text
    #+begin_src emacs-lisp :tangle init.el
      (leaf default-text-scale :ensure t
