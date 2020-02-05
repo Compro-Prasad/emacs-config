@@ -240,6 +240,8 @@ The return value is nil if no font was found, truthy otherwise."
 
 (leaf tab-line :leaf-defer nil :require t
   :when (string-greaterp emacs-version "27")
+  :bind (([C-tab] . tab-line-switch-to-next-tab)
+         ([C-backtab] . tab-line-switch-to-prev-tab))
   :init (global-tab-line-mode)
   :config
   (when (fboundp 'doom-color)

@@ -299,6 +299,8 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf tab-line :leaf-defer nil :require t
        :when (string-greaterp emacs-version "27")
+       :bind (([C-tab] . tab-line-switch-to-next-tab)
+              ([C-backtab] . tab-line-switch-to-prev-tab))
        :init (global-tab-line-mode)
        :config
        (when (fboundp 'doom-color)
