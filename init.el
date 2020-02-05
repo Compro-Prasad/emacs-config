@@ -1096,7 +1096,7 @@ made unique when necessary."
 
   (setq org-pretty-entities t
         org-bullets-bullet-list '(" ") ;; no bullets, needs org-bullets package
-        org-ellipsis " "              ;; folding symbol
+        org-ellipsis (if is-windows "..." " ")
         org-hide-emphasis-markers t    ;; show actually italicized text instead of /italicized text/
         org-agenda-block-separator ""
         org-fontify-whole-heading-line t
