@@ -242,8 +242,6 @@ The return value is nil if no font was found, truthy otherwise."
   :when (string-greaterp emacs-version "27")
   :init (global-tab-line-mode)
   :config
-  (setq tab-line-new-tab-choice nil
-        tab-line-close-button-show nil)
   (when (fboundp 'doom-color)
     (let ((bg (doom-color 'bg))
           (fg (doom-color 'fg))
