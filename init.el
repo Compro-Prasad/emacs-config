@@ -938,6 +938,8 @@ is useful."
 (leaf iedit :ensure t :require t :leaf-defer nil
   :bind ("C-;" . iedit-mode))
 
+(leaf wgrep :ensure t :after grep :require t)
+
 (leaf shackle :ensure t :require t
   :config
   (setq shackle-default-rule '(:select t))

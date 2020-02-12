@@ -1155,6 +1155,12 @@
        :bind ("C-;" . iedit-mode))
    #+end_src
 
+** wgrep
+   Edit grep buffers.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf wgrep :ensure t :after grep :require t)
+   #+end_src
+
 ** Place windows at specific positions using Shackle
    #+begin_src emacs-lisp :tangle init.el
      (leaf shackle :ensure t :require t
