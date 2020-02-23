@@ -782,6 +782,12 @@
    #+begin_src emacs-lisp :tangle init.el
      (add-hook 'package-menu-mode-hook 'hl-line-mode)
    #+end_src
+** Winner mode for undo
+   Undo and redo window configurations.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf winner :require t :leaf-defer nil
+       :config (winner-mode 1))
+   #+end_src
 ** Handling trailing whitespace
    Delete trailing whitespaces and show them in the buffer.
    #+begin_src emacs-lisp :tangle init.el

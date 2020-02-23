@@ -661,6 +661,9 @@ The return value is nil if no font was found, truthy otherwise."
 
 (add-hook 'package-menu-mode-hook 'hl-line-mode)
 
+(leaf winner :require t :leaf-defer nil
+  :config (winner-mode 1))
+
 (defun compro/set-show-whitespace-mode ()
   "Show white space in current buffer"
   (setq show-trailing-whitespace t))
