@@ -957,6 +957,10 @@ is useful."
         '((help-mode :size 0.33 :select t :align bottom)))
   (shackle-mode 1))
 
+(leaf clang-format+ :ensure t
+  :init
+  (setq clang-format+-context 'buffer))
+
 (leaf telega :ensure t :when is-linux
   :bind ("C-t" . telega))
 

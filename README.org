@@ -1182,6 +1182,13 @@
              '((help-mode :size 0.33 :select t :align bottom)))
        (shackle-mode 1))
    #+end_src
+** Clang format
+   Format C++ buffers on save.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf clang-format+ :ensure t
+       :init
+       (setq clang-format+-context 'buffer))
+   #+end_src
 ** Telegram
    #+begin_src emacs-lisp :tangle init.el
      (leaf telega :ensure t :when is-linux
