@@ -446,9 +446,6 @@ The return value is nil if no font was found, truthy otherwise."
  ;;;   Use commands when in in minibuffer
  enable-recursive-minibuffers t
 
- ;;;   Scroll output in *compilation* buffer
- compilation-scroll-output t
-
  ;;;   Scroll one line at a time no matter what
  scroll-step            1
  scroll-conservatively  10000
