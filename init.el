@@ -405,8 +405,8 @@ The return value is nil if no font was found, truthy otherwise."
  ;;;   Don't compact font cache during GC to optimize redisplay
  inhibit-compacting-font-caches t
 
- ;;;   GC triggers per 7 MB increase in memory
- gc-cons-threshold 58720256
+ ;;;   GC triggers per 90 MB increase in memory
+ gc-cons-threshold 94371840
 
  ;;;   Prevent recursion limits
  max-lisp-eval-depth 48000
