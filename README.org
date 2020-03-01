@@ -509,6 +509,9 @@
       ;;;   Set REPL programs' prompt as read only
       comint-prompt-read-only t
 
+      ;;;   Read more output from a process (2mb)
+      read-process-output-max 2097152
+
       ;;;   Use commands when in in minibuffer
       enable-recursive-minibuffers t
 
