@@ -450,12 +450,7 @@ The return value is nil if no font was found, truthy otherwise."
  enable-recursive-minibuffers t
 
  ;;;   Scroll one line at a time no matter what
- scroll-step            1
  scroll-conservatively  10000
- mouse-wheel-scroll-amount '(1 ((shift) . 1))
-
- ;;;   Remember screen position after scrolling
- scroll-preserve-screen-position 'always
 
  ;;;   Initial scratch message is nil
  initial-scratch-message ""
