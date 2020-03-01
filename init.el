@@ -851,6 +851,13 @@ _=_       _+_
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
+(leaf company :ensure t :leaf-defer nil :require t
+  :hook (after-init . global-company-mode)
+  :config
+  (setq company-show-numbers 'left
+        company-idle-delay 0.165
+        company-minimum-prefix-length 1))
+
 (leaf lsp-mode :ensure t
   :hook (c-mode-common-hook . compro/init-lsp)
   :preface

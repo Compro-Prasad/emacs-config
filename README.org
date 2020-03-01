@@ -1040,6 +1040,15 @@
         ("<f9> p v g" . pipenv-graph)
         ("<f9> p v e" . pipenv-envs)))
    #+end_src
+** Inbuffer Completion using company-mode
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf company :ensure t :leaf-defer nil :require t
+       :hook (after-init . global-company-mode)
+       :config
+       (setq company-show-numbers 'left
+             company-idle-delay 0.165
+             company-minimum-prefix-length 1))
+   #+end_src
 ** Language Server Protocol
    [[https://langserver.org][LSP]] is a way to provide IDE like experience in any text editor that
    supports the protocol. Emacs has LSP support through *lsp-mode*.
