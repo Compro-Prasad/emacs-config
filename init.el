@@ -833,7 +833,8 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(leaf kaolin-themes :ensure t)
+(leaf kaolin-themes :ensure t :require t :leaf-defer nil
+  :config (load-theme 'kaolin-aurora t))
 
 (leaf page-break-lines :ensure t
   :init

@@ -1015,7 +1015,8 @@
     #+end_src
 *** Kaolin Themes
     #+begin_src emacs-lisp :tangle init.el
-      (leaf kaolin-themes :ensure t)
+      (leaf kaolin-themes :ensure t :require t :leaf-defer nil
+        :config (load-theme 'kaolin-aurora t))
     #+end_src
 ** Page break lines
    Convert "^L" characters to single lines for better readability.
