@@ -971,6 +971,8 @@ is useful."
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
+  (leaf org-bullets :ensure t :require t :after org
+    :config (org-bullets-mode 1))
   (leaf org-re-reveal :ensure t :require t :after ox)
   (add-hook 'org-mode-hook
             '(lambda ()
