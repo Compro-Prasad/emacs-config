@@ -732,6 +732,7 @@ The return value is nil if no font was found, truthy otherwise."
              er/contract-region)
   :bind (("C-=" . hydra-er/body))
   :config
+  (require 'hydra)
   (defhydra hydra-er (:hint nil)
     "
 ^Expand^  ^Reduce^
