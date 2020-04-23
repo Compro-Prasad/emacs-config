@@ -217,6 +217,7 @@
   #+end_src
 * Check Operating System
   #+begin_src emacs-lisp :tangle init.el
+    (require 'seq)
     (setq is-windows
           (seq-filter
            (lambda (x) (string= system-type x))
@@ -640,7 +641,8 @@
    #+end_src
 ** Show 80 character mark
    #+begin_src emacs-lisp :tangle init.el
-     (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+     (when (>= emacs-major-version 27)
+       (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode))
    #+end_src
 ** Set default font
    #+begin_src emacs-lisp :tangle init.el

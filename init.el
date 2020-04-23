@@ -186,6 +186,7 @@ The return value is nil if no font was found, truthy otherwise."
 
 (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/")))
 
+(require 'seq)
 (setq is-windows
       (seq-filter
        (lambda (x) (string= system-type x))
@@ -543,7 +544,8 @@ The return value is nil if no font was found, truthy otherwise."
 
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 
-(add-hook 'prog-mode-hook 'display-fill-column-indicator-mode)
+(when (>= emacs-major-version 27)
+  (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode))
 
 (set-default-font '("Ubuntu Mono" :size 14 :weight normal :width normal))
 
