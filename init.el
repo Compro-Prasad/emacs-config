@@ -1166,14 +1166,6 @@ made unique when necessary."
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
-  (set-face-attribute
-   'tab-line nil
-   :height 0.9
-   :foreground (face-foreground 'default)
-   :background (face-background 'default))
-  (set-face-attribute 'tab-line-highlight nil :inverse-video t)
-  (set-face-attribute 'tab-line-tab-current nil
-                      :background (face-background 'default))
   (set-face-attribute 'tab-line-tab nil :box nil)
   (minions-mode 1)
   (ivy-mode 1)
