@@ -1166,7 +1166,8 @@ made unique when necessary."
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
   (set-face-attribute 'mode-line-inactive nil :box nil)
-  (set-face-attribute 'tab-line-tab nil :box nil)
+  (when (> emacs-major-version 27)
+    (set-face-attribute 'tab-line-tab nil :box nil))
   (minions-mode 1)
   (ivy-mode 1)
   (setq debug-on-error  nil
