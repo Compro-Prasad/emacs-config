@@ -895,11 +895,6 @@ is useful."
      ("C-h w" . counsel-descbinds)))
   (leaf ivy-rich :ensure t :require t :after ivy
     :config (ivy-rich-mode 1))
-  (leaf ivy-posframe :ensure t :require t :after ivy
-    :config
-    (setq ivy-posframe-display-functions-alist
-          '((t . ivy-posframe-display-at-frame-center)))
-    (ivy-posframe-mode 1))
   :init
   (setq
    ivy-use-virtual-buffers t
