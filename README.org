@@ -282,7 +282,8 @@
                          (concat "Delete and re-download " dir-name "? ")))))
                 (when each-choice
                   (delete-directory dir-name t)
-                  (package-reinstall (intern pkg-name)))))
+                  (ignore-errors
+                    (package-reinstall (intern pkg-name))))))
             pkgs))))
    #+end_src
 * Check Operating System

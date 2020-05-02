@@ -249,7 +249,8 @@ The return value is nil if no font was found, truthy otherwise."
                     (concat "Delete and re-download " dir-name "? ")))))
            (when each-choice
              (delete-directory dir-name t)
-             (package-reinstall (intern pkg-name)))))
+             (ignore-errors
+               (package-reinstall (intern pkg-name))))))
        pkgs))))
 
 (require 'seq)
