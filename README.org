@@ -286,6 +286,24 @@
                     (package-reinstall (intern pkg-name))))))
             pkgs))))
    #+end_src
+** Re-download advice after package is installed
+   #+begin_src emacs-lisp :tangle init.el
+     (defun re-download (pkg arg)
+       "Advice for package-install."
+       (let* ((pkg-name (symbol-name pkg))
+              (dir (car
+                    (car
+                     (s-split "/" (car
+                                   (sort
+                                    (seq-filter
+                                     (apply-partially #'s-prefix-p pkg-name)
+                                     (compro/get-empty-pkgs))
+                                    #'string-greaterp)))))))
+         (when dir
+           (delete-directory dir)
+           (ignore-errors (package-reinstall pkg)))))
+     (advice-add 'package-install :after 're-download)
+   #+end_src
 * Check Operating System
   #+begin_src emacs-lisp :tangle init.el
     (require 'seq)
