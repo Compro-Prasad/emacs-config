@@ -31,6 +31,9 @@
 (defalias 'ft 'file-truename)
 (defvaralias 'emacs-d 'user-emacs-directory)
 
+(setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
+      package-user-dir (concat cache-d "elpa/"))
+
 (defun mplist-remove (plist prop)
   "Return a copy of a modified PLIST without PROP and its values.
 
@@ -184,7 +187,6 @@ The return value is nil if no font was found, truthy otherwise."
 (dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
   (add-hook hook 'compro/kill-process-buffer-on-exit))
 
-(setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/")))
 
 (require 'seq)
 (setq is-windows
@@ -220,7 +222,6 @@ The return value is nil if no font was found, truthy otherwise."
 
 (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
 
-(setq package-user-dir (concat cache-d "elpa/"))
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                     (not (gnutls-available-p))))

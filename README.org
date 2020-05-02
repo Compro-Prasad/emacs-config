@@ -43,6 +43,11 @@
     (defalias 'ft 'file-truename)
     (defvaralias 'emacs-d 'user-emacs-directory)
   #+end_src
+* Cache directory
+  #+begin_src emacs-lisp :tangle init.el
+    (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
+          package-user-dir (concat cache-d "elpa/"))
+  #+end_src
 * Helper functions
 ** mplist-remove
    #+begin_src emacs-lisp :tangle init.el
@@ -211,10 +216,6 @@
      (dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
        (add-hook hook 'compro/kill-process-buffer-on-exit))
    #+end_src
-* Cache directory
-  #+begin_src emacs-lisp :tangle init.el
-    (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/")))
-  #+end_src
 * Check Operating System
   #+begin_src emacs-lisp :tangle init.el
     (require 'seq)
@@ -261,7 +262,6 @@
   Setup MELPA and Org Mode repositories.
 
   #+begin_src emacs-lisp :tangle init.el
-    (setq package-user-dir (concat cache-d "elpa/"))
     (require 'package)
     (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
                         (not (gnutls-available-p))))
