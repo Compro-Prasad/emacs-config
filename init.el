@@ -187,6 +187,70 @@ The return value is nil if no font was found, truthy otherwise."
 (dolist (hook '(ielm-mode-hook term-exec-hook comint-exec-hook))
   (add-hook hook 'compro/kill-process-buffer-on-exit))
 
+(defun compro/get-empty-pkgs ()
+  "Get 0 bytes .el packages."
+  (let ((default-directory package-user-dir))
+    (seq-reduce
+     (lambda (value-list file)
+       (if (= (file-attribute-size (file-attributes file)) 0)
+           (cons file value-list)
+         value-list))
+     (seq-filter
+      (apply-partially #'s-suffix-p ".el")
+      (seq-reduce
+       (lambda (value-list file)
+         (if (and
+              (not (s-prefix-p "." file))
+              (file-accessible-directory-p file))
+             (append
+              (seq-map
+               (apply-partially #'concat file "/")
+               (directory-files file))
+              value-list)
+           value-list))
+       (directory-files "")
+       '()))
+     '())))
+
+(defun compro/redownload-empty-pkgs ()
+  "Redownload empty packages."
+  (interactive)
+  (let* ((pkgs (compro/get-empty-pkgs))
+         (default-directory package-user-dir)
+         (choice-list (list
+                       (cons (intern "Delete and re-download all") 1)
+                       (cons (intern "Manually select for re-downloading") 2)
+                       (cons (intern "Fix everything manually") 3)))
+         (choice (if pkgs
+                     (alist-get
+                      (intern
+                       (completing-read
+                        (concat
+                         "Some files were not properly downloaded namely "
+                         (s-join ", " pkgs)
+                         ". What action do you want to take?  ")
+                        choice-list))
+                      choice-list)
+                   3)))
+    (if (= choice 3)
+        (when (null pkgs)
+          (message "No empty packages were found"))
+      (package-refresh-contents)
+      (seq-each
+       (lambda (file)
+         (let* ((values (s-split "/" file))
+                (dir-name (car values))
+                (pkg-values (s-split "-" dir-name))
+                (pkg-name (s-join "-" (butlast pkg-values 1)))
+                (each-choice
+                 (if (= choice 1)
+                     t
+                   (yes-or-no-p
+                    (concat "Delete and re-download " dir-name "? ")))))
+           (when each-choice
+             (delete-directory dir-name t)
+             (package-reinstall (intern pkg-name)))))
+       pkgs))))
 
 (require 'seq)
 (setq is-windows
@@ -1168,5 +1232,6 @@ made unique when necessary."
   (ivy-mode 1)
   (setq debug-on-error  nil
         init-file-debug nil)
-  (remove-hook 'after-init-hook 'after-init-jobs))
+  (remove-hook 'after-init-hook 'after-init-jobs)
+  (compro/redownload-empty-pkgs))
 (add-hook 'after-init-hook 'after-init-jobs)
