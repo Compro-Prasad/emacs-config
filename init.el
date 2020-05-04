@@ -253,17 +253,18 @@ The return value is nil if no font was found, truthy otherwise."
                (package-reinstall (intern pkg-name))))))
        pkgs))))
 
-(defun re-download (pkg arg)
+(defun re-download (pkg &optional arg)
   "Advice for package-install."
-  (let* ((pkg-name (symbol-name pkg))
-         (dir (car
-               (car
-                (s-split "/" (car
-                              (sort
-                               (seq-filter
-                                (apply-partially #'s-prefix-p pkg-name)
-                                (compro/get-empty-pkgs))
-                               #'string-greaterp)))))))
+  (let* ((pkg-name (symbol-name (if (package-desc-p pkg)
+                                    (package-desc-name pkg)
+                                  pkg)))
+         (file-name (car
+                     (sort
+                      (seq-filter
+                       (apply-partially #'s-prefix-p pkg-name)
+                       (compro/get-empty-pkgs))
+                      #'string-greaterp)))
+         (dir (when file-name (car (car (s-split "/" file-name))))))
     (when dir
       (delete-directory dir)
       (ignore-errors (package-reinstall pkg)))))
