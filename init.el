@@ -1240,6 +1240,14 @@ made unique when necessary."
 
 (leaf typescript-mode :ensure t)
 
+(leaf treemacs :ensure t
+  :bind (("C-t" . treemacs)
+         ("M-0" . treemacs-select-window)
+         (treemacs-mode-map
+          ([mouse-1] . treemacs-single-click-expand-action)))
+  :config
+  (treemacs-resize-icons 17))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

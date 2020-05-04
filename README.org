@@ -1495,6 +1495,16 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf typescript-mode :ensure t)
    #+end_src
+** Treemacs - Sidebar folder view
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf treemacs :ensure t
+       :bind (("C-t" . treemacs)
+              ("M-0" . treemacs-select-window)
+              (treemacs-mode-map
+               ([mouse-1] . treemacs-single-click-expand-action)))
+       :config
+       (treemacs-resize-icons 17))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
