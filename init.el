@@ -264,7 +264,7 @@ The return value is nil if no font was found, truthy otherwise."
                        (apply-partially #'s-prefix-p pkg-name)
                        (compro/get-empty-pkgs))
                       #'string-greaterp)))
-         (dir (when file-name (car (car (s-split "/" file-name))))))
+         (dir (when file-name (car (s-split "/" file-name)))))
     (when dir
       (delete-directory dir)
       (ignore-errors (package-reinstall pkg)))))
