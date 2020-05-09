@@ -378,10 +378,11 @@
   #+begin_src emacs-lisp :tangle init.el
     (leaf general :leaf-defer nil :ensure t :require t)
   #+end_src
-* Install =f=
+* Install =f= and =s=
   *f* is a package that makes it easier to interact with the filesytem.
   #+begin_src emacs-lisp :tangle init.el
     (leaf f :leaf-defer nil :ensure t :require t)
+    (leaf s :leaf-defer nil :ensure t :require t)
   #+end_src
 * Native Emacs configurations
 ** Tab line

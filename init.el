@@ -321,6 +321,7 @@ The return value is nil if no font was found, truthy otherwise."
 (leaf general :leaf-defer nil :ensure t :require t)
 
 (leaf f :leaf-defer nil :ensure t :require t)
+(leaf s :leaf-defer nil :ensure t :require t)
 
 (leaf tab-line :leaf-defer nil :require t
   :when (string-greaterp emacs-version "27")
