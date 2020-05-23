@@ -405,6 +405,12 @@
            (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
            (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
    #+end_src
+** Narrow reindent
+   Dedent after narrowing.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf narrow-reindent
+       :hook (find-file-hook . narrow-reindent-mode))
+   #+end_src
 ** Dired - File manager
    Dired is nice but doesn't have good keybindings.
    #+begin_src emacs-lisp :tangle init.el

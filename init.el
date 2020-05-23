@@ -340,6 +340,9 @@ The return value is nil if no font was found, truthy otherwise."
       (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
       (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
 
+(leaf narrow-reindent
+  :hook (find-file-hook . narrow-reindent-mode))
+
 (leaf dired
   :hook (dired-mode-hook . dired-hide-details-mode)
   :bind ((dired-mode-map
