@@ -340,6 +340,10 @@ The return value is nil if no font was found, truthy otherwise."
       (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
       (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
 
+(leaf diary-lib
+  :config
+  (setq diary-file "~/diary"))
+
 (leaf narrow-reindent
   :hook (find-file-hook . narrow-reindent-mode))
 
@@ -966,6 +970,10 @@ is useful."
       (lsp)))
   )
 
+;; (leaf mini-frame :ensure t :require t :leaf-defer nil)
+
+(leaf floobits :ensure t :leaf-defer nil :require t)
+
 (leaf ivy :ensure t :require t :leaf-defer nil
   :preface
   (leaf counsel :ensure t :require t :after ivy
@@ -1249,6 +1257,7 @@ made unique when necessary."
          ("M-0" . treemacs-select-window)
          (treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action)))
+  :hook (projectile-after-switch-project-hook . treemacs-display-current-project-exclusively)
   :config
   (treemacs-resize-icons 17))
 

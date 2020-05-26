@@ -405,6 +405,12 @@
            (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
            (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
    #+end_src
+** Diary
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf diary-lib
+       :config
+       (setq diary-file "~/diary"))
+   #+end_src
 ** Narrow reindent
    Dedent after narrowing.
    #+begin_src emacs-lisp :tangle init.el
@@ -1171,6 +1177,17 @@
            (lsp)))
        )
    #+end_src
+** Show minibuffer at the top - Mini frame
+   #+begin_src emacs-lisp :tangle init.el
+     ;; (leaf mini-frame :ensure t :require t :leaf-defer nil)
+   #+end_src
+** Floobits - Like screensharing
+   Its a third party application that works like screen sharing but is API based
+   and sends text instead of whole screen. As of now, Emacs, Neovim, IntelliJ,
+   Sublime Text and Atom are supported.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf floobits :ensure t :leaf-defer nil :require t)
+   #+end_src
 ** Autocompletion for Emacs
    =ivy= provides an interface for interacting with Emacs by providing
    a dropdown for completions.
@@ -1509,6 +1526,7 @@
               ("M-0" . treemacs-select-window)
               (treemacs-mode-map
                ([mouse-1] . treemacs-single-click-expand-action)))
+       :hook (projectile-after-switch-project-hook . treemacs-display-current-project-exclusively)
        :config
        (treemacs-resize-icons 17))
    #+end_src
