@@ -414,7 +414,7 @@
 ** Narrow reindent
    Dedent after narrowing.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf narrow-reindent
+     (leaf narrow-reindent :ensure t :leaf-defer nil :require t
        :hook (find-file-hook . narrow-reindent-mode))
    #+end_src
 ** Dired - File manager

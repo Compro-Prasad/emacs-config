@@ -344,7 +344,7 @@ The return value is nil if no font was found, truthy otherwise."
   :config
   (setq diary-file "~/diary"))
 
-(leaf narrow-reindent
+(leaf narrow-reindent :ensure t :leaf-defer nil :require t
   :hook (find-file-hook . narrow-reindent-mode))
 
 (leaf dired
