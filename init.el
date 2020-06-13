@@ -843,9 +843,9 @@ _=_       _+_
   :config
   (setq
    projectile-cache-file (concat cache-d "projectile")
-   projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld"))
-  (projectile-mode 1)
-  (setq projectile-completion-system 'ivy))
+   projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld")
+   projectile-completion-system 'default)
+  (projectile-mode 1))
 
 (leaf ag :ensure t :when (executable-find "ag"))
 
@@ -979,28 +979,16 @@ is useful."
 
 (leaf floobits :ensure t :leaf-defer nil :require t)
 
-(leaf ivy :ensure t :require t :leaf-defer nil
-  :preface
-  (leaf counsel :ensure t :require t :after ivy
-    :bind
-    (("M-x" . counsel-M-x)
-     ("C-c s r" . counsel-rg)
-     ("C-c s a" . counsel-ag)
-     ("C-c s g" . counsel-grep)
-     ("C-c r" . counsel-recentf)
-     ("C-c y" . counsel-yank-pop)
-     ("C-c u" . counsel-unicode-char)
-     ("C-c R" . ivy-resume)
-     ("C-h b" . counsel-descbinds)
-     ("C-h w" . counsel-descbinds)))
-  (leaf ivy-rich :ensure t :require t :after ivy
-    :config (ivy-rich-mode 1))
-  :init
-  (setq
-   ivy-use-virtual-buffers t
-   ivy-count-format "(%d/%d) "
-   ivy-height 15
-   ivy-more-chars-alist '((t . 1))))
+(leaf selectrum :ensure t :leaf-defer nil :require t
+  :config
+  (leaf selectrum-prescient :ensure t :leaf-defer nil :require t
+    :config
+    (selectrum-prescient-mode +1)
+    (prescient-persist-mode +1))
+  (selectrum-mode +1))
+
+(leaf ctrlf :ensure t :leaf-defer nil :require t
+  :config (ctrlf-mode 1))
 
 (leaf yasnippet :ensure t :leaf-defer nil :require t
   :bind ("C-/" . yas-expand)
@@ -1279,7 +1267,6 @@ made unique when necessary."
   (when (> emacs-major-version 27)
     (set-face-attribute 'tab-line-tab nil :box nil))
   (minions-mode 1)
-  (ivy-mode 1)
   (setq debug-on-error  nil
         init-file-debug nil)
   (remove-hook 'after-init-hook 'after-init-jobs)

@@ -1011,9 +1011,9 @@
        :config
        (setq
         projectile-cache-file (concat cache-d "projectile")
-        projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld"))
-       (projectile-mode 1)
-       (setq projectile-completion-system 'ivy))
+        projectile-known-projects-file (concat cache-d "projectile-bookmarks.eld")
+        projectile-completion-system 'default)
+       (projectile-mode 1))
    #+end_src
 ** Silver Searcher
    [[https://github.com/ggreer/the_silver_searcher#installing][the_silver_searcher]] is an alternative to =grep= which is faster.
@@ -1198,31 +1198,26 @@
      (leaf floobits :ensure t :leaf-defer nil :require t)
    #+end_src
 ** Autocompletion for Emacs
-   =ivy= provides an interface for interacting with Emacs by providing
-   a dropdown for completions.
+   =selectrum= provides a simple interface for completions in Emacs.
+
+   Previously I used =ivy= but I didn't like its sorting mechanism. Sure, there is
+   =ivy-prescient= which changes the sorting mechanism but its developed by the
+   same author who developed =selectrum= who also claims that =ivy= is complicated
+   by design.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf ivy :ensure t :require t :leaf-defer nil
-       :preface
-       (leaf counsel :ensure t :require t :after ivy
-         :bind
-         (("M-x" . counsel-M-x)
-          ("C-c s r" . counsel-rg)
-          ("C-c s a" . counsel-ag)
-          ("C-c s g" . counsel-grep)
-          ("C-c r" . counsel-recentf)
-          ("C-c y" . counsel-yank-pop)
-          ("C-c u" . counsel-unicode-char)
-          ("C-c R" . ivy-resume)
-          ("C-h b" . counsel-descbinds)
-          ("C-h w" . counsel-descbinds)))
-       (leaf ivy-rich :ensure t :require t :after ivy
-         :config (ivy-rich-mode 1))
-       :init
-       (setq
-        ivy-use-virtual-buffers t
-        ivy-count-format "(%d/%d) "
-        ivy-height 15
-        ivy-more-chars-alist '((t . 1))))
+     (leaf selectrum :ensure t :leaf-defer nil :require t
+       :config
+       (leaf selectrum-prescient :ensure t :leaf-defer nil :require t
+         :config
+         (selectrum-prescient-mode +1)
+         (prescient-persist-mode +1))
+       (selectrum-mode +1))
+   #+end_src
+** Isearch alternative
+   =ctrlf= is just a simple improvement over isearch.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf ctrlf :ensure t :leaf-defer nil :require t
+       :config (ctrlf-mode 1))
    #+end_src
 ** Snippet completion
    Yasnippet is a snippet completion framework for Emacs.
@@ -1556,7 +1551,6 @@
       (when (> emacs-major-version 27)
         (set-face-attribute 'tab-line-tab nil :box nil))
       (minions-mode 1)
-      (ivy-mode 1)
       (setq debug-on-error  nil
             init-file-debug nil)
       (remove-hook 'after-init-hook 'after-init-jobs)
