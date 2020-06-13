@@ -1490,6 +1490,14 @@
                                        :strike-through t))
                ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
    #+end_src
+** Rust
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf rust-mode :ensure t
+       :hook (rust-mode . lsp))
+
+     (leaf cargo :ensure t
+       :hook (rust-mode . cargo-minor-mode))
+   #+end_src
 ** Web mode
    *web-mode* is a package that provides integration for web related
    major modes together in the same mode.

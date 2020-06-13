@@ -1238,6 +1238,12 @@ made unique when necessary."
                                   :strike-through t))
           ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
 
+(leaf rust-mode :ensure t
+  :hook (rust-mode . lsp))
+
+(leaf cargo :ensure t
+  :hook (rust-mode . cargo-minor-mode))
+
 (leaf web-mode :ensure t
   :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
 
