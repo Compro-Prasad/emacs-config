@@ -622,6 +622,7 @@ The return value is nil if no font was found, truthy otherwise."
  "C-x C-o"         'ff-find-other-file
  [C-m]             'delete-other-windows
  "<C-S-mouse-1>"   'imenu
+ "C-c r"           'imenu
  "C-<f4>"          'kill-current-buffer
  "M-/"             'hippie-expand
  [mouse-3]         menu-bar-edit-menu
