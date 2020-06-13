@@ -927,8 +927,13 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(leaf kaolin-themes :ensure t :require t :leaf-defer nil
-  :config (load-theme 'kaolin-aurora t))
+(leaf kaolin-themes :ensure t)
+
+(leaf modus-operandi-theme :ensure t :require t :leaf-defer nil
+  :config (load-theme 'modus-operandi t))
+
+(leaf doom-modeline :ensure t :require t :leaf-defer nil
+  :config (doom-modeline-mode 1))
 
 (leaf page-break-lines :ensure t
   :init
