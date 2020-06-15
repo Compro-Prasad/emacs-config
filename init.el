@@ -852,7 +852,7 @@ _=_       _+_
 
 (leaf switch-window :ensure t :leaf-defer nil :require t
   :config
-  (global-set-key (kbd (if is-windows "C-x o" "M-TAB")) 'switch-window))
+  (global-set-key (kbd "C-x o") 'switch-window))
 
 (leaf which-key :ensure t
   :init

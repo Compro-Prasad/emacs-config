@@ -1028,7 +1028,7 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf switch-window :ensure t :leaf-defer nil :require t
        :config
-       (global-set-key (kbd (if is-windows "C-x o" "M-TAB")) 'switch-window))
+       (global-set-key (kbd "C-x o") 'switch-window))
    #+end_src
 ** Which key
    Look for the next keybinding you can press.
