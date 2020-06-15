@@ -361,7 +361,8 @@ The return value is nil if no font was found, truthy otherwise."
           ("<left>" . compro/dired-up-dir)))
   :preface
   (leaf dired-x
-    :bind ("C-x <C-j>" . dired-jump))
+    :bind (("C-x <C-j>" . dired-jump)
+           ("C-x C-j" . dired-jump)))
   (leaf dired-collapse :ensure t
     :after dired
     :hook (dired-mode-hook . dired-collapse-mode))
