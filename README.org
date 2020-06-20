@@ -1508,7 +1508,14 @@
    *web-mode* is a package that provides integration for web related
    major modes together in the same mode.
    #+begin_src emacs-lisp :tangle init.el
+     (leaf mhtml-mode
+       :when (>= emacs-major-version 26)
+       :mode ("\\.vue\\'" "\\.html\\'" "\\.html\\'" "\\.jsx")
+       :config
+       (setq mhtml-tag-relative-indent nil))
+
      (leaf web-mode :ensure t
+       :when (< emacs-major-version 26)
        :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
    #+end_src
 ** Elf mode

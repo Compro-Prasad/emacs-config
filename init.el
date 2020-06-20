@@ -1239,7 +1239,14 @@ made unique when necessary."
 (leaf cargo :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
+(leaf mhtml-mode
+  :when (>= emacs-major-version 26)
+  :mode ("\\.vue\\'" "\\.html\\'" "\\.html\\'" "\\.jsx")
+  :config
+  (setq mhtml-tag-relative-indent nil))
+
 (leaf web-mode :ensure t
+  :when (< emacs-major-version 26)
   :mode ("\\.vue\\'" "\\.html\\'" "\\.htm\\'"))
 
 (leaf elf-mode :ensure t)
