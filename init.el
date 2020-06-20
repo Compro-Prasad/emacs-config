@@ -615,7 +615,7 @@ The return value is nil if no font was found, truthy otherwise."
    :keymaps 'input-decode-map
    [?\C-m] [C-m]
    [?\C-i] [C-i]
-   [?\C-j] [C-j]
+   ;; [?\C-j] [C-j]
    [?\C-\[] (kbd "<C-[>")))
 
 (general-define-key

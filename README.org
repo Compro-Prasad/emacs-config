@@ -710,7 +710,7 @@
         :keymaps 'input-decode-map
         [?\C-m] [C-m]
         [?\C-i] [C-i]
-        [?\C-j] [C-j]
+        ;; [?\C-j] [C-j]
         [?\C-\[] (kbd "<C-[>")))
    #+end_src
 ** Some common keybindings
