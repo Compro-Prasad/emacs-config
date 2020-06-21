@@ -1242,6 +1242,7 @@ made unique when necessary."
 (leaf mhtml-mode
   :when (>= emacs-major-version 26)
   :mode ("\\.vue\\'" "\\.html\\'" "\\.html\\'" "\\.jsx")
+  :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
   :config
   (setq mhtml-tag-relative-indent nil))
 
