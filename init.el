@@ -1271,6 +1271,8 @@ made unique when necessary."
   :config
   (treemacs-resize-icons 17))
 
+(add-hook 'python-mode-hook (lambda () (setq fill-column 85)))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

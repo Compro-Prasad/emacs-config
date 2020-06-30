@@ -1553,6 +1553,10 @@
        :config
        (treemacs-resize-icons 17))
    #+end_src
+** Python
+   #+begin_src emacs-lisp :tangle init.el
+     (add-hook 'python-mode-hook (lambda () (setq fill-column 85)))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
