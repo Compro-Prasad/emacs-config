@@ -324,7 +324,7 @@ The return value is nil if no font was found, truthy otherwise."
 (leaf s :leaf-defer nil :ensure t :require t)
 
 (leaf tab-line :leaf-defer nil :require t
-  :when (string-greaterp emacs-version "27")
+  :when (> emacs-major-version 27)
   :bind (([C-tab] . tab-line-switch-to-next-tab)
          ([C-backtab] . tab-line-switch-to-prev-tab)
          ([C-S-tab] . tab-line-switch-to-prev-tab)
