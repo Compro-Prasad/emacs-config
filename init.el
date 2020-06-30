@@ -841,7 +841,8 @@ _=_       _+_
     ("-" er/contract-region)))
 
 (leaf projectile :leaf-defer nil :ensure t :require t
-  :bind (("C-c p" . projectile-command-map))
+  :when (< emacs-major-version 28)  ;; Use project.el for > 28
+  :bind (("C-x p" . projectile-command-map))
   :config
   (setq
    projectile-cache-file (concat cache-d "projectile")
