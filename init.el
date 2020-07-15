@@ -1051,6 +1051,7 @@ is useful."
 
 (leaf org :ensure org-plus-contrib
   :preface
+  (leaf ob-async :ensure t :require t :after ob)
   (leaf org-babel-eval-in-repl :ensure t
     :after ob
     :bind
@@ -1079,9 +1080,13 @@ is useful."
     ("M-n" . outline-next-visible-heading)
     ("M-p" . outline-previous-visible-heading)))
   :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell . t)
+     (python . t)
+     (emacs-lisp . t)))
   (setq org-return-follows-link t
-        org-agenda-diary-file "~/.org/diary.org"
-        org-babel-load-languages '((emacs-lisp . t) (python . t)))
+        org-agenda-diary-file "~/.org/diary.org")
   ;; Replace - with dot in lists
   (font-lock-add-keywords
    'org-mode
