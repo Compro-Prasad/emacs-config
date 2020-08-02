@@ -332,7 +332,7 @@
   #+end_src
 * Check if its my laptop
   #+begin_src emacs-lisp :tangle init.el
-  (setq compro/laptop-p (equal system-name "c-p-dell"))
+  (setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
   #+end_src
 * Tangle =README.org= to =init.el=
   Automatically tangle code blocks from =README.org= to =init.el=.

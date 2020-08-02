@@ -293,7 +293,7 @@ The return value is nil if no font was found, truthy otherwise."
        (string= system-type "gnu/kfreebsd")
        (string= system-type "darwin")))
 
-(setq compro/laptop-p (equal system-name "c-p-dell"))
+(setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
 
 (defun tangle-README.org-to-init.el ()
   "Tangle README.org to init.el"
