@@ -1130,11 +1130,6 @@
       (leaf modus-operandi-theme :ensure t :require t :leaf-defer nil
         :config (load-theme 'modus-operandi t))
     #+end_src
-*** Doom modeline
-    #+begin_src emacs-lisp :tangle init.el
-      (leaf doom-modeline :ensure t :require t :leaf-defer nil
-        :config (doom-modeline-mode 1))
-    #+end_src
 ** Page break lines
    Convert "^L" characters to single lines for better readability.
    #+begin_src emacs-lisp :tangle init.el

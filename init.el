@@ -935,9 +935,6 @@ _=_       _+_
 (leaf modus-operandi-theme :ensure t :require t :leaf-defer nil
   :config (load-theme 'modus-operandi t))
 
-(leaf doom-modeline :ensure t :require t :leaf-defer nil
-  :config (doom-modeline-mode 1))
-
 (leaf page-break-lines :ensure t
   :init
   (global-page-break-lines-mode t))
