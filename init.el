@@ -1275,6 +1275,20 @@ made unique when necessary."
 
 (add-hook 'python-mode-hook (lambda () (setq fill-column 85)))
 
+(leaf vterm :ensure t :when is-linux
+  :init
+  (defun vterm-directory-sync ()
+    "Synchronize current working directory."
+    (interactive)
+    (when vterm--process
+      (let* ((pid (process-id vterm--process))
+             (dir (file-truename (format "/proc/%d/cwd/" pid))))
+        (setq default-directory dir))))
+  :config
+  (setq vterm-kill-buffer-on-exit t
+        vterm-buffer-name-string "*vterm-%s*"
+        vterm-always-compile-module t))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
