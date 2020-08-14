@@ -1043,8 +1043,7 @@ is useful."
   :init
   (setq clang-format+-context 'buffer))
 
-(leaf telega :ensure t :when is-linux
-  :bind ("C-t" . telega))
+(leaf telega :ensure t :when is-linux)
 
 (leaf org :ensure org-plus-contrib
   :preface

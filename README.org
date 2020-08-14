@@ -1300,8 +1300,7 @@
    #+end_src
 ** Telegram
    #+begin_src emacs-lisp :tangle init.el
-     (leaf telega :ensure t :when is-linux
-       :bind ("C-t" . telega))
+     (leaf telega :ensure t :when is-linux)
    #+end_src
 ** Org mode
    [[https://orgmode.org][Org mode]] is a note taking system which has other uses too. This
