@@ -1264,9 +1264,7 @@ made unique when necessary."
 (leaf typescript-mode :ensure t)
 
 (leaf treemacs :ensure t
-  :bind (("C-t" . treemacs)
-         ("M-0" . treemacs-select-window)
-         (treemacs-mode-map
+  :bind ((treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action)))
   :hook (projectile-after-switch-project-hook . treemacs-display-current-project-exclusively)
   :config
