@@ -388,22 +388,62 @@
 ** Tab line
    Tab line is a feature in Emacs to show tabs.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf tab-line :leaf-defer nil :require t
+     (leaf tab-bar :leaf-defer nil :require t
        :when (> emacs-major-version 27)
-       :bind (([C-tab] . tab-line-switch-to-next-tab)
-              ([C-backtab] . tab-line-switch-to-prev-tab)
-              ([C-S-tab] . tab-line-switch-to-prev-tab)
-              ([C-iso-lefttab] . tab-line-switch-to-prev-tab))
-       :init (global-tab-line-mode)
+       :bind (("C-t" . tab-bar-new-tab-event)
+              ([C-f4] . tab-bar-close-tab)
+              ("C-S-t" . tab-bar-undo-close-tab)
+              ([C-tab] . tab-next)
+              ([C-backtab] . tab-previous)
+              ([C-S-tab] . tab-previous)
+              ([C-iso-lefttab] . tab-previous))
+       :init
+       (tab-bar-mode)
+
+       (defun switch-to-untitled-buffer ()
+         (interactive)
+         (let ((buf (format "untitled-%d" (random 100000))))
+           (generate-new-buffer buf)
+           (switch-to-buffer buf)
+           (setq buffer-offer-save 'always)))
+
+       (defvar tab-bar-new-commands
+         '((?p "Project" project-switch-project)
+           (?n "New buffer" switch-to-untitled-buffer)
+           (?f "List Files" find-file)
+           (?b "List Buffers" switch-to-buffer)
+           (?r "Run command" execute-extended-command)
+           (?q "Do nothing" ignore)))
+       (defun tab-bar-new--keymap-prompt ()
+         "Return a prompt for the project swithing dispatch menu."
+         (mapconcat
+          (pcase-lambda (`(,key ,label))
+            (format "[%s] %s"
+                    (propertize (key-description `(,key)) 'face 'bold)
+                    label))
+          tab-bar-new-commands
+          "  "))
+       (defun tab-bar-new-tab-event ()
+         (interactive)
+         (when-let ((choice (assq (read-event (tab-bar-new--keymap-prompt))
+                                  tab-bar-new-commands))
+                    (inhibit-quit t))
+           (tab-bar-new-tab)
+           (when (not (char-equal (nth 0 choice) ?q))
+             (switch-to-buffer "waiting...")
+             (insert "Churning data or waiting for IO")
+             (with-local-quit (call-interactively (nth 2 choice)))
+             (kill-buffer "waiting..."))))
+
        :config
        (when (fboundp 'doom-color)
          (let ((bg (doom-color 'bg))
                (fg (doom-color 'fg))
                (base1 (doom-color 'base1))
                (box-width 7))
-           (set-face-attribute 'tab-line nil :background base1 :foreground fg)
-           (set-face-attribute 'tab-line-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
-           (set-face-attribute 'tab-line-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
+           (set-face-attribute 'tab-bar nil :background base1 :foreground fg)
+           (set-face-attribute 'tab-bar-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
+           (set-face-attribute 'tab-bar-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
    #+end_src
 ** Diary
    #+begin_src emacs-lisp :tangle init.el
@@ -721,7 +761,6 @@
       [C-m]             'delete-other-windows
       "<C-S-mouse-1>"   'imenu
       "C-c r"           'imenu
-      "C-<f4>"          'kill-current-buffer
       "M-/"             'hippie-expand
       [mouse-3]         menu-bar-edit-menu
       "M-^"             'compile)
@@ -1577,7 +1616,7 @@
       (set-face-attribute 'mode-line nil :box nil)
       (set-face-attribute 'mode-line-inactive nil :box nil)
       (when (> emacs-major-version 27)
-        (set-face-attribute 'tab-line-tab nil :box nil))
+        (set-face-attribute 'tab-bar-tab nil :box nil))
       (minions-mode 1)
       (setq debug-on-error  nil
             init-file-debug nil)
