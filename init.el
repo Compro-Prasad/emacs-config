@@ -368,7 +368,8 @@ The return value is nil if no font was found, truthy otherwise."
         (switch-to-buffer "waiting...")
         (insert "Churning data or waiting for IO")
         (with-local-quit (call-interactively (nth 2 choice)))
-        (kill-buffer "waiting..."))))
+        (kill-buffer "waiting..."))
+      (message "New tab created with `%s' option" (nth 1 choice))))
 
   :config
   (when (fboundp 'doom-color)
