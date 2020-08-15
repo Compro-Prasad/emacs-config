@@ -397,6 +397,9 @@
               ([C-backtab] . tab-previous)
               ([C-S-tab] . tab-previous)
               ([C-iso-lefttab] . tab-previous))
+       :preface
+       ;; (leaf tab-line :leaf-defer nil :require t
+       ;;   :init (global-tab-line-mode t))
        :init
        (tab-bar-mode)
 
@@ -437,14 +440,195 @@
            (message "New tab created with `%s' option" (nth 1 choice))))
 
        :config
-       (when (fboundp 'doom-color)
-         (let ((bg (doom-color 'bg))
-               (fg (doom-color 'fg))
-               (base1 (doom-color 'base1))
-               (box-width 7))
-           (set-face-attribute 'tab-bar nil :background base1 :foreground fg)
-           (set-face-attribute 'tab-bar-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
-           (set-face-attribute 'tab-bar-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
+       (defun tab-line-close-tab (&optional e)
+         "Close the selected tab.
+
+     If tab is presented in another window, close the tab by using
+     `bury-buffer` function.  If tab is unique to all existing
+     windows, kill the buffer with `kill-buffer` function.  Lastly, if
+     no tabs left in the window, it is deleted with `delete-window`
+     function."
+         (interactive "e")
+         (let* ((posnp (event-start e))
+                (window (posn-window posnp))
+                (buffer (get-pos-property 1 'tab (car (posn-string posnp)))))
+           (with-selected-window window
+             (let ((tab-list (tab-line-tabs-window-buffers))
+                   (buffer-list (flatten-list
+                                 (seq-reduce (lambda (list window)
+                                               (select-window window t)
+                                               (cons (tab-line-tabs-window-buffers) list))
+                                             (window-list) nil))))
+               (select-window window)
+               (if (> (seq-count (lambda (b) (eq b buffer)) buffer-list) 1)
+                   (progn
+                     (if (eq buffer (current-buffer))
+                         (bury-buffer)
+                       (set-window-prev-buffers window (assq-delete-all buffer (window-prev-buffers)))
+                       (set-window-next-buffers window (delq buffer (window-next-buffers))))
+                     (unless (cdr tab-list)
+                       (ignore-errors (delete-window window))))
+                 (and (kill-buffer buffer)
+                      (unless (cdr tab-list)
+                        (ignore-errors (delete-window window)))))))))
+
+
+       (defcustom tab-line-tab-min-width 10
+         "Minimum width of a tab in characters."
+         :type 'integer
+         :group 'tab-line)
+
+
+       (defcustom tab-line-tab-max-width 30
+         "Maximum width of a tab in characters."
+         :type 'integer
+         :group 'tab-line)
+
+       (defcustom tab-line-ellipsis-string "…"
+         "String for indicating truncated names"
+         :type 'string
+         :group 'tab-line)
+
+       (defun aorst/tab-line--tab-width (window-width tab-amount)
+         "Calculate width of single tab dividing WINDOW-WIDTH by TAB-AMOUNT."
+         (let* ((close-button-size
+                 (if tab-line-close-button-show
+                     (length (substring-no-properties tab-line-close-button)) 0))
+                (tab-width (/ window-width tab-amount)))
+           (- (cond ((< window-width 0)
+                     tab-line-tab-min-width)
+                    ((>= tab-width tab-line-tab-max-width)
+                     tab-line-tab-max-width)
+                    ((< tab-width tab-line-tab-min-width)
+                     tab-line-tab-min-width)
+                    (t tab-width))
+              close-button-size)))
+
+       (defun aorst/tab-line--max-width (window)
+         "Calculate free width of the WINDOW.
+
+     Free width means amount of space we can use to display tabs
+     without truncation."
+         (- (window-width window)
+            (length (substring-no-properties tab-line-left-button))
+            (length (substring-no-properties tab-line-right-button))
+            (if tab-line-new-button-show
+                (length (substring-no-properties tab-line-new-button))
+              0)))
+
+       (defun aorst/tab-line--make-pad (tab-width name-width)
+         "Generate padding string based on TAB-WIDTH and NAME-WIDTH."
+         (let* ((width (- tab-width name-width))
+                (padding (/ (if (oddp width) (+ width 1) width) 2)))
+           (make-string padding ?\s)))
+
+       (defun aorst/tab-line-name-buffer (buffer &rest _buffers)
+         "Create name for tab with padding and truncation.
+
+     If buffer name is shorter than `tab-line-tab-max-width' it gets
+     centered with spaces, otherwise it is truncated, to preserve
+     equal width for all tabs.  This function also tries to fit as
+     many tabs in window as possible, so if there are no room for tabs
+     with maximum width, it calculates new width for each tab and
+     truncates text if needed.  Minimal width can be set with
+     `tab-line-tab-min-width' variable."
+         (with-current-buffer buffer
+           (let* ((amount (length (tab-line-tabs-window-buffers)))
+                  (width (aorst/tab-line--tab-width
+                          (aorst/tab-line--max-width (get-buffer-window buffer))
+                          amount))
+                  (buffer (string-trim (buffer-name)))
+                  (name-width (length buffer))
+                  (right-pad (if tab-line-close-button-show "" " "))
+                  (truncate-width (- width
+                                     (length tab-line-ellipsis-string)
+                                     (length right-pad))))
+             (propertize
+              (if (>= name-width truncate-width)
+                  (concat  " " (truncate-string-to-width buffer truncate-width) tab-line-ellipsis-string right-pad)
+                (let* ((padding (aorst/tab-line--make-pad width name-width))
+                       (tab-text (concat padding buffer))
+                       (text-width (length tab-text)))
+                  (concat tab-text (make-string (- width text-width) ?\s))))
+              'help-echo (when-let ((name (buffer-file-name)))
+                           (concat (abbreviate-file-name name)
+                                   (when (buffer-modified-p)
+                                     (if (char-displayable-p ?💾) " 💾" " [modified]"))))))))
+
+       (setq tab-line-close-button-show t
+             tab-line-new-button-show nil
+             tab-line-separator ""
+             tab-line-tab-name-function #'aorst/tab-line-name-buffer
+             tab-line-right-button (propertize (if (char-displayable-p ?▶) " ▶ " " > ")
+                                               'keymap tab-line-right-map
+                                               'mouse-face 'tab-line-highlight
+                                               'help-echo "Click to scroll right")
+             tab-line-left-button (propertize (if (char-displayable-p ?◀) " ◀ " " < ")
+                                              'keymap tab-line-left-map
+                                              'mouse-face 'tab-line-highlight
+                                              'help-echo "Click to scroll left")
+             tab-line-close-button (propertize (if (char-displayable-p ?×) " × " " x ")
+                                               'keymap tab-line-tab-close-map
+                                               'mouse-face 'tab-line-close-highlight
+                                               'help-echo "Click to close tab")
+             tab-line-exclude-modes '(ediff-mode
+                                      process-menu-mode
+                                      term-mode
+                                      vterm-mode))
+
+       (defun aorst/tabline-setup-faces ()
+         (let ((bg (if (and (facep 'solaire-default-face)
+                            (not (eq (face-attribute 'solaire-default-face :background)
+                                     'unspecified)))
+                       (face-attribute 'solaire-default-face :background)
+                     (face-attribute 'default :background)))
+               (fg (face-attribute 'default :foreground))
+               (dark-fg (face-attribute 'shadow :foreground))
+               (base (if (and (facep 'solaire-default-face)
+                              (not (eq (face-attribute 'solaire-default-face :background)
+                                       'unspecified)))
+                         (face-attribute 'default :background)
+                       (face-attribute 'mode-line :background)))
+               (box-width (/ (line-pixel-height) 2)))
+           (set-face-attribute 'tab-line nil
+                               :background base
+                               :foreground dark-fg
+                               :height 1.0
+                               :inherit nil
+                               :box (when (> box-width 0) (list :line-width -1 :color base)))
+           (set-face-attribute 'tab-line-tab nil
+                               :foreground dark-fg
+                               :background bg
+                               :weight 'normal
+                               :inherit nil
+                               :box (when (> box-width 0) (list :line-width box-width :color bg)))
+           (set-face-attribute 'tab-line-tab-inactive nil
+                               :foreground dark-fg
+                               :background base
+                               :weight 'normal
+                               :inherit nil
+                               :box (when (> box-width 0) (list :line-width box-width :color base)))
+           (set-face-attribute 'tab-line-tab-current nil
+                               :foreground fg
+                               :background bg
+                               :weight 'normal
+                               :inherit nil
+                               :box (when (> box-width 0) (list :line-width box-width :color bg)))))
+
+       (aorst/tabline-setup-faces)
+       ;; (add-hook 'aorst--load-theme-hook #'aorst/tabline-setup-faces)
+       ;; (add-hook 'aorst--disable-theme-hook #'aorst/tabline-setup-faces)
+       ;; (add-hook 'aorst--solaire-swap-bg-hook #'aorst/tabline-setup-faces)
+
+       (defun aorst/tab-line-drop-caches ()
+         "Drops `tab-line' cache in every window."
+         (dolist (window (window-list))
+           (set-window-parameter window 'tab-line-cache nil)))
+
+       (add-hook 'window-configuration-change-hook #'aorst/tab-line-drop-caches)
+
+       (define-advice tab-line-select-tab (:after (&optional e) aorst:tab-line-select-tab)
+         (select-window (posn-window (event-start e)))))
    #+end_src
 ** Diary
    #+begin_src emacs-lisp :tangle init.el
