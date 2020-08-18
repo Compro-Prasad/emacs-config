@@ -1583,5 +1583,10 @@ made unique when necessary."
   (setq debug-on-error  nil
         init-file-debug nil)
   (remove-hook 'after-init-hook 'after-init-jobs)
-  (compro/redownload-empty-pkgs))
+  (compro/redownload-empty-pkgs)
+
+  ;; Remove text property from text in kill-ring
+  (defun unpropertize-kill-ring ()
+    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+  (add-hook 'kill-emacs-hook 'unpropertize-kill-ring))
 (add-hook 'after-init-hook 'after-init-jobs)
