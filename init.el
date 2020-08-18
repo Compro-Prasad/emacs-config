@@ -996,8 +996,10 @@ _=_       _+_
 (leaf lsp-mode :ensure t
   :hook (c-mode-common-hook . compro/init-lsp)
   :preface
+  (leaf lsp-pyright :ensure t)
   (add-hook 'python-mode-hook
             (lambda ()
+              (require 'lsp-pyright)
               (pipenv-activate)
               (sleep-for 1)
               (lsp)))
