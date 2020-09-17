@@ -1630,7 +1630,13 @@
           (python . t)
           (emacs-lisp . t)))
        (setq org-return-follows-link t
-             org-agenda-diary-file "~/.org/diary.org")
+             org-agenda-diary-file "~/.org/diary.org"
+             org-src-window-setup 'current-window
+             org-startup-with-inline-images t
+             org-image-actual-width 400
+             org-hierarchical-todo-statistics nil
+             org-checkbox-hierarchical-statistics nil
+             org-src-preserve-indentation nil)
        ;; Replace - with dot in lists
        (font-lock-add-keywords
         'org-mode
