@@ -608,6 +608,7 @@ The return value is nil if no font was found, truthy otherwise."
 
  ;;;   Dired
  dired-dwim-target t
+ dired-listing-switches "-lAhp --group-directories-first"
 
  ;;;   Ediff
  ediff-window-setup-function 'ediff-setup-windows-plain ;; Single frame ediff session
