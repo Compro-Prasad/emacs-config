@@ -309,7 +309,8 @@ The return value is nil if no font was found, truthy otherwise."
                     (not (gnutls-available-p))))
        (proto (if no-ssl "http" "https")))
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t))
+  (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
+  (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/"))))
 (package-initialize)
 
 (unless (package-installed-p 'leaf)
@@ -1001,6 +1002,8 @@ _=_       _+_
   (add-hook 'python-mode-hook
             (lambda ()
               (require 'lsp-pyright)
+              (require 'tree-sitter-langs)
+              (tree-sitter-hl-mode)
               (pipenv-activate)
               (sleep-for 1)
               (lsp)))
@@ -1578,6 +1581,14 @@ made unique when necessary."
   (setq vterm-kill-buffer-on-exit t
         vterm-buffer-name-string "*vterm-%s*"
         vterm-always-compile-module t))
+
+(leaf tree-sitter :ensure t :require t :leaf-defer nil
+  :preface
+  (leaf tree-sitter-langs :ensure t :require t :leaf-defer nil)
+  :config
+  (require 'tree-sitter-hl)
+  (require 'tree-sitter-debug)
+  (require 'tree-sitter-query))
 
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
