@@ -677,6 +677,8 @@ The return value is nil if no font was found, truthy otherwise."
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
+(add-hook 'prog-mode-hook 'which-function-mode)
+
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 
 (when (>= emacs-major-version 27)

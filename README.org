@@ -780,6 +780,10 @@
    #+begin_src emacs-lisp :tangle init.el
      (add-hook 'prog-mode-hook 'display-line-numbers-mode)
    #+end_src
+** Which function mode
+   #+begin_src emacs-lisp :tangle init.el
+     (add-hook 'prog-mode-hook 'which-function-mode)
+   #+end_src
 ** Enable pair completion
    A pair can be "", '', <>, {}, (), [], etc.
    #+begin_src emacs-lisp :tangle init.el
