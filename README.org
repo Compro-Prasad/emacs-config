@@ -1921,6 +1921,11 @@
        (require 'tree-sitter-debug)
        (require 'tree-sitter-query))
    #+end_src
+** Eshell syntax highlighting
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf eshell-syntax-highlighting :ensure t :after esh-mode
+       :config (eshell-syntax-highlighting-global-mode +1))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()

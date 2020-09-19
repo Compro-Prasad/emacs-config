@@ -1629,6 +1629,9 @@ made unique when necessary."
   (require 'tree-sitter-debug)
   (require 'tree-sitter-query))
 
+(leaf eshell-syntax-highlighting :ensure t :after esh-mode
+  :config (eshell-syntax-highlighting-global-mode +1))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
