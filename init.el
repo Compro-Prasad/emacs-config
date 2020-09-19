@@ -816,6 +816,33 @@ The return value is nil if no font was found, truthy otherwise."
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
 (add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
 
+(c-add-style "mylinux"
+             '("linux"
+               (tab-width . 4)
+               (c-basic-offset . 4)
+               (indent-tabs-mode . t)
+               (fill-column . 80)
+               (c-hanging-semi&comma-criteria . my/c-semi&comma)
+               (c-cleanup-list empty-defun-braces ;; {}
+                               brace-else-brace   ;; } else {
+                               brace-elseif-brace ;; } else if {
+                               ;;defun-close-semi   ;; };
+                               )
+               (c-hanging-braces-alist (brace-list-open)
+                                       (brace-entry-open)
+                                       (substatement-open after)
+                                       (block-close . c-snug-do-while)
+                                       (arglist-cont-nonempty)
+                                       (class-open . (after))
+                                       (class-close . (before)))
+               (c-offsets-alist (inline-open . 0)
+                                (comment-intro . 0))))
+
+(setq-default c-default-style
+              '((java-mode . "java")
+                (awk-mode . "awk")
+                (other . "mylinux")))
+
 (leaf hydra :ensure t)
 
 (leaf hungry-delete :leaf-defer nil :ensure t :require t
