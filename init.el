@@ -806,6 +806,16 @@ The return value is nil if no font was found, truthy otherwise."
 ;; Remove the trailing whitespaces on save
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(defun my/minibuffer-setup-hook ()
+  (setq gc-cons-threshold most-positive-fixnum))
+
+(defun my/minibuffer-exit-hook ()
+  (setq gc-cons-threshold 800000)
+  (garbage-collect))
+
+(add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
+(add-hook 'minibuffer-exit-hook #'my/minibuffer-exit-hook)
+
 (leaf hydra :ensure t)
 
 (leaf hungry-delete :leaf-defer nil :ensure t :require t
