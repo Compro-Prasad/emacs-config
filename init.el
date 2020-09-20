@@ -843,6 +843,8 @@ The return value is nil if no font was found, truthy otherwise."
                 (awk-mode . "awk")
                 (other . "mylinux")))
 
+(leaf restclient :ensure t)
+
 (leaf hydra :ensure t)
 
 (leaf hungry-delete :leaf-defer nil :ensure t :require t

@@ -988,6 +988,10 @@
                      (other . "mylinux")))
    #+end_src
 * Third party packages and configurations
+** Restclient Mode
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf restclient :ensure t)
+   #+end_src
 ** Hydra
    Keybindings that stick around.
    #+begin_src emacs-lisp :tangle init.el
