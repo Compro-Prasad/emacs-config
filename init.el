@@ -1622,7 +1622,13 @@ made unique when necessary."
   :config
   (treemacs-resize-icons 17))
 
-(add-hook 'python-mode-hook (lambda () (setq fill-column 85)))
+(add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
+(leaf python
+  :config
+  (when (locate-file "ipython" exec-path)
+    (setq python-shell-interpreter "ipython"
+          python-shell-interpreter-args "-i --simple-prompt"))
+  (setq python-indent-guess-indent-offset-verbose nil))
 
 (leaf vterm :ensure t :when is-linux
   :init

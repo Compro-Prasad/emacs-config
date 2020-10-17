@@ -1912,7 +1912,13 @@
    #+end_src
 ** Python
    #+begin_src emacs-lisp :tangle init.el
-     (add-hook 'python-mode-hook (lambda () (setq fill-column 85)))
+     (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
+     (leaf python
+       :config
+       (when (locate-file "ipython" exec-path)
+         (setq python-shell-interpreter "ipython"
+               python-shell-interpreter-args "-i --simple-prompt"))
+       (setq python-indent-guess-indent-offset-verbose nil))
    #+end_src
 ** Vterm - A better terminal emulator
    #+begin_src emacs-lisp :tangle init.el
