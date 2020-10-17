@@ -1951,6 +1951,12 @@
      (leaf eshell-syntax-highlighting :ensure t :after esh-mode
        :config (eshell-syntax-highlighting-global-mode +1))
    #+end_src
+** embrace.el - Like evil-surround
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf embrace :ensure t
+       :bind
+       ("C-," . embrace-commander))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()

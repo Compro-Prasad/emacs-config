@@ -1655,6 +1655,10 @@ made unique when necessary."
 (leaf eshell-syntax-highlighting :ensure t :after esh-mode
   :config (eshell-syntax-highlighting-global-mode +1))
 
+(leaf embrace :ensure t
+  :bind
+  ("C-," . embrace-commander))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
