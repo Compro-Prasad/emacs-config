@@ -1578,12 +1578,27 @@ made unique when necessary."
 (leaf cargo :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
+(leaf company-web :ensure t :after mhtml-mode)
+
+(leaf ac-html-csswatcher :ensure t :after mhtml-mode)
+
 (leaf mhtml-mode
   :when (>= emacs-major-version 26)
   :mode ("\\.vue\\'" "\\.html\\'" "\\.html\\'" "\\.jsx")
   :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
   :config
-  (setq mhtml-tag-relative-indent nil))
+  (setq mhtml-tag-relative-indent nil)
+  (require 'company)                                   ; load company mode
+  (require 'company-web-html)                          ; load company mode html backend
+  ;; and/or
+  (require 'company-web-jade)                          ; load company mode jade backend
+  (require 'company-web-slim)                          ; load company mode slim backend
+  (require 'ac-html-csswatcher)
+  (company-web-csswatcher-setup)
+  (define-key mhtml-mode-map (kbd "C-'") 'company-web-html)
+  (add-hook 'mhtml-mode-hook (lambda ()
+                             (set (make-local-variable 'company-backends) '(company-web-html company-files))
+                             (company-mode t))))
 
 (leaf web-mode :ensure t
   :when (< emacs-major-version 26)
