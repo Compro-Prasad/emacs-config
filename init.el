@@ -1070,10 +1070,10 @@ is useful."
          ("C-x C-r" . recentf-open-files+)
          ("C-x b" . selectrum-switch-buffer+))
   :config
-  ;; (leaf selectrum-prescient :ensure t :leaf-defer nil :require t
-  ;;   :config
-  ;;   (selectrum-prescient-mode +1)
-  ;;   (prescient-persist-mode +1))
+  (leaf selectrum-prescient :ensure t :leaf-defer nil :require t
+    :config
+    (selectrum-prescient-mode +1)
+    (prescient-persist-mode +1))
   (leaf orderless :ensure t :leaf-defer nil :require t
     :config
     (setq selectrum-refine-candidates-function #'orderless-filter
