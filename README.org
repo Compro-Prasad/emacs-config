@@ -48,6 +48,76 @@
     (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
           package-user-dir (concat cache-d "elpa/"))
   #+end_src
+* Check Operating System
+  #+begin_src emacs-lisp :tangle init.el
+    (require 'seq)
+    (setq is-windows
+          (seq-filter
+           (lambda (x) (string= system-type x))
+           '("ms-dos" "windows-nt" "cygwin")))
+    (setq is-unix
+          (seq-filter
+           (lambda (x) (string= system-type x))
+           '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
+    (setq is-gnu
+          (seq-filter
+           (lambda (x) (string= system-type x))
+           '("gnu" "gnu/linux" "gnu/kfreebsd")))
+    (setq is-linux
+          (or
+           (string= system-type "gnu")
+           (string= system-type "gnu/linux")))
+    (setq is-mac (string= system-type "darwin"))
+    (setq is-bsd
+          (or
+           (string= system-type "gnu/kfreebsd")
+           (string= system-type "darwin")))
+  #+end_src
+* Tangle =README.org= to =init.el=
+  Automatically tangle code blocks from =README.org= to =init.el=.
+
+  #+begin_src emacs-lisp :tangle init.el
+    (defun tangle-README.org-to-init.el ()
+      "Tangle README.org to init.el"
+      (let ((readme (ft (concat emacs-d "README.org")))
+            (current-file (ft (buffer-file-name))))
+        (when (string= readme current-file)
+          (call-interactively 'org-babel-tangle))))
+
+    (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
+  #+end_src
+* Setup package repositories
+  Setup MELPA and Org Mode repositories.
+
+  #+begin_src emacs-lisp :tangle init.el
+    (require 'package)
+    (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                        (not (gnutls-available-p))))
+           (proto (if no-ssl "http" "https")))
+      (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+      (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
+      (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/"))))
+    (package-initialize)
+  #+end_src
+* Install =leaf=
+  *Leaf* is an alternative to *use-package* which is supposed to be brought into
+  Emacs. This is the reason I want to use it.
+
+  #+begin_src emacs-lisp :tangle init.el
+    (unless (package-installed-p 'leaf)
+      (package-refresh-contents)
+      (package-install 'leaf))
+  #+end_src
+* Setup =leaf=
+  #+begin_src emacs-lisp :tangle init.el
+    (leaf leaf)
+  #+end_src
+* Install =f= and =s=
+  *f* is a package that makes it easier to interact with the filesytem.
+  #+begin_src emacs-lisp :tangle init.el
+    (leaf f :leaf-defer nil :ensure t :require t)
+    (leaf s :leaf-defer nil :ensure t :require t)
+  #+end_src
 * Helper functions
 ** mplist-remove
    #+begin_src emacs-lisp :tangle init.el
@@ -305,85 +375,15 @@
            (ignore-errors (package-reinstall pkg)))))
      (advice-add 'package-install :after 're-download)
    #+end_src
-* Check Operating System
-  #+begin_src emacs-lisp :tangle init.el
-    (require 'seq)
-    (setq is-windows
-          (seq-filter
-           (lambda (x) (string= system-type x))
-           '("ms-dos" "windows-nt" "cygwin")))
-    (setq is-unix
-          (seq-filter
-           (lambda (x) (string= system-type x))
-           '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
-    (setq is-gnu
-          (seq-filter
-           (lambda (x) (string= system-type x))
-           '("gnu" "gnu/linux" "gnu/kfreebsd")))
-    (setq is-linux
-          (or
-           (string= system-type "gnu")
-           (string= system-type "gnu/linux")))
-    (setq is-mac (string= system-type "darwin"))
-    (setq is-bsd
-          (or
-           (string= system-type "gnu/kfreebsd")
-           (string= system-type "darwin")))
-  #+end_src
 * Check if its my laptop
   #+begin_src emacs-lisp :tangle init.el
   (setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
-  #+end_src
-* Tangle =README.org= to =init.el=
-  Automatically tangle code blocks from =README.org= to =init.el=.
-
-  #+begin_src emacs-lisp :tangle init.el
-    (defun tangle-README.org-to-init.el ()
-      "Tangle README.org to init.el"
-      (let ((readme (ft (concat emacs-d "README.org")))
-            (current-file (ft (buffer-file-name))))
-        (when (string= readme current-file)
-          (call-interactively 'org-babel-tangle))))
-
-    (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
-  #+end_src
-* Setup package repositories
-  Setup MELPA and Org Mode repositories.
-
-  #+begin_src emacs-lisp :tangle init.el
-    (require 'package)
-    (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                        (not (gnutls-available-p))))
-           (proto (if no-ssl "http" "https")))
-      (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-      (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
-      (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/"))))
-    (package-initialize)
-  #+end_src
-* Install =leaf=
-  *Leaf* is an alternative to *use-package* which is supposed to be brought into
-  Emacs. This is the reason I want to use it.
-
-  #+begin_src emacs-lisp :tangle init.el
-    (unless (package-installed-p 'leaf)
-      (package-refresh-contents)
-      (package-install 'leaf))
-  #+end_src
-* Setup =leaf=
-  #+begin_src emacs-lisp :tangle init.el
-    (leaf leaf)
   #+end_src
 * Install =general=
   *General* is used for setting keybindings in a simpler way as compared to
   *bind-key*.
   #+begin_src emacs-lisp :tangle init.el
     (leaf general :leaf-defer nil :ensure t :require t)
-  #+end_src
-* Install =f= and =s=
-  *f* is a package that makes it easier to interact with the filesytem.
-  #+begin_src emacs-lisp :tangle init.el
-    (leaf f :leaf-defer nil :ensure t :require t)
-    (leaf s :leaf-defer nil :ensure t :require t)
   #+end_src
 * Native Emacs configurations
 ** Tab line

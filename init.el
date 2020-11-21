@@ -34,6 +34,57 @@
 (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
       package-user-dir (concat cache-d "elpa/"))
 
+(require 'seq)
+(setq is-windows
+      (seq-filter
+       (lambda (x) (string= system-type x))
+       '("ms-dos" "windows-nt" "cygwin")))
+(setq is-unix
+      (seq-filter
+       (lambda (x) (string= system-type x))
+       '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
+(setq is-gnu
+      (seq-filter
+       (lambda (x) (string= system-type x))
+       '("gnu" "gnu/linux" "gnu/kfreebsd")))
+(setq is-linux
+      (or
+       (string= system-type "gnu")
+       (string= system-type "gnu/linux")))
+(setq is-mac (string= system-type "darwin"))
+(setq is-bsd
+      (or
+       (string= system-type "gnu/kfreebsd")
+       (string= system-type "darwin")))
+
+(defun tangle-README.org-to-init.el ()
+  "Tangle README.org to init.el"
+  (let ((readme (ft (concat emacs-d "README.org")))
+        (current-file (ft (buffer-file-name))))
+    (when (string= readme current-file)
+      (call-interactively 'org-babel-tangle))))
+
+(add-hook 'after-save-hook 'tangle-README.org-to-init.el)
+
+(require 'package)
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
+  (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/")))
+  )
+(package-initialize)
+
+(unless (package-installed-p 'leaf)
+  (package-refresh-contents)
+  (package-install 'leaf))
+
+(leaf leaf)
+
+(leaf f :leaf-defer nil :ensure t :require t)
+(leaf s :leaf-defer nil :ensure t :require t)
+
 (defun mplist-remove (plist prop)
   "Return a copy of a modified PLIST without PROP and its values.
 
@@ -270,59 +321,9 @@ The return value is nil if no font was found, truthy otherwise."
       (ignore-errors (package-reinstall pkg)))))
 (advice-add 'package-install :after 're-download)
 
-(require 'seq)
-(setq is-windows
-      (seq-filter
-       (lambda (x) (string= system-type x))
-       '("ms-dos" "windows-nt" "cygwin")))
-(setq is-unix
-      (seq-filter
-       (lambda (x) (string= system-type x))
-       '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
-(setq is-gnu
-      (seq-filter
-       (lambda (x) (string= system-type x))
-       '("gnu" "gnu/linux" "gnu/kfreebsd")))
-(setq is-linux
-      (or
-       (string= system-type "gnu")
-       (string= system-type "gnu/linux")))
-(setq is-mac (string= system-type "darwin"))
-(setq is-bsd
-      (or
-       (string= system-type "gnu/kfreebsd")
-       (string= system-type "darwin")))
-
 (setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
 
-(defun tangle-README.org-to-init.el ()
-  "Tangle README.org to init.el"
-  (let ((readme (ft (concat emacs-d "README.org")))
-        (current-file (ft (buffer-file-name))))
-    (when (string= readme current-file)
-      (call-interactively 'org-babel-tangle))))
-
-(add-hook 'after-save-hook 'tangle-README.org-to-init.el)
-
-(require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
-  (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/"))))
-(package-initialize)
-
-(unless (package-installed-p 'leaf)
-  (package-refresh-contents)
-  (package-install 'leaf))
-
-(leaf leaf)
-
 (leaf general :leaf-defer nil :ensure t :require t)
-
-(leaf f :leaf-defer nil :ensure t :require t)
-(leaf s :leaf-defer nil :ensure t :require t)
 
 (leaf tab-bar :leaf-defer nil :require t
   :when (> emacs-major-version 27)
