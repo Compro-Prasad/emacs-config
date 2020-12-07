@@ -64,6 +64,13 @@
     (when (string= readme current-file)
       (call-interactively 'org-babel-tangle))))
 
+(defun early-init ()
+  "Return `early-init.el' if greater than Emacs 27.
+Else it will return `init.el'. Useful for tangling source code."
+  (if (< emacs-major-version 27)
+      "init.el"
+    "early-init.el"))
+
 (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
 
 (require 'package)
@@ -72,8 +79,7 @@
        (proto (if no-ssl "http" "https")))
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
   (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
-  (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/")))
-  )
+  (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/"))))
 (package-initialize)
 
 (unless (package-installed-p 'leaf)
@@ -636,11 +642,9 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(if (null compro/laptop-p)
-    (cua-mode 1)
-  (menu-bar-mode 0)
-  (menu-bar-no-scroll-bar)
-  (blink-cursor-mode 0))
+(menu-bar-mode 0)
+(menu-bar-no-scroll-bar)
+(blink-cursor-mode 0)
 (tool-bar-mode 0)
 
 (column-number-mode 1)
@@ -651,8 +655,6 @@ The return value is nil if no font was found, truthy otherwise."
 (if (not window-system)
     (xterm-mouse-mode 1)
   (xterm-mouse-mode 0))
-
-(toggle-frame-maximized)
 
 (when (display-graphic-p)
   (general-define-key
@@ -685,7 +687,7 @@ The return value is nil if no font was found, truthy otherwise."
 (when (>= emacs-major-version 27)
   (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode))
 
-(set-default-font '("Ubuntu Mono" :size 14 :weight normal :width normal))
+(set-default-font '("Fira Code" :size 12 :weight normal :width normal))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
@@ -1040,12 +1042,10 @@ _=_       _+_
 (leaf lsp-mode :ensure t
   :hook (c-mode-common-hook . compro/init-lsp)
   :preface
-  (leaf lsp-pyright :ensure t)
+  ;; (leaf lsp-pyright :ensure t)
   (add-hook 'python-mode-hook
             (lambda ()
-              (require 'lsp-pyright)
-              (require 'tree-sitter-langs)
-              (tree-sitter-hl-mode)
+              (require 'lsp)
               (pipenv-activate)
               (sleep-for 1)
               (lsp)))
@@ -1061,8 +1061,6 @@ is useful."
     (when (and (fboundp 'projectile-project-p) (projectile-project-p))
       (lsp)))
   )
-
-;; (leaf mini-frame :ensure t :require t :leaf-defer nil)
 
 (leaf floobits :ensure t :leaf-defer nil :require t)
 
@@ -1660,14 +1658,21 @@ made unique when necessary."
   :bind
   ("C-," . embrace-commander))
 
-(leaf quelpa :ensure t :leaf-defer nil :require t)
-
-(quelpa
- '(ligature
-   :fetcher url
-   :url "https://raw.githubusercontent.com/mickeynp/ligature.el/master/ligature.el"))
+(unless (package-installed-p 'quelpa)
+  (with-temp-buffer
+    (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+    (eval-buffer)
+    (quelpa-self-upgrade)))
 
 (leaf ligature :ensure nil :require t :leaf-defer nil
+  :disabled (< emacs-major-version 27)
+  :preface
+  (require 'quelpa)
+  (when (not (quelpa--package-installed-p 'ligature))
+    (quelpa
+     '(ligature
+       :fetcher url
+       :url "https://raw.githubusercontent.com/mickeynp/ligature.el/master/ligature.el")))
   :config
   ;; Enable the "www" ligature in every possible major mode
   (ligature-set-ligatures 't '("www"))
@@ -1691,7 +1696,7 @@ made unique when necessary."
      "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
      "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
      "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-     "\\" "://"))
+     "\\\\" "://"))
   ;; Enables ligature checks globally in all buffers. You can also do it
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))

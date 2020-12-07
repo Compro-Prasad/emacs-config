@@ -1,6 +1,33 @@
 #+TITLE: Emacs configuration
 * Copyright notice
+  #+begin_src emacs-lisp :tangle (early-init)
+    ;;; early-init.el ---                                -*- lexical-binding: t; -*-
 
+    ;; Copyright (C) 2018-2020  Abhishek(Compro) Prasad
+
+    ;; Author: Abhishek(Compro) Prasad
+    ;; Keywords: emacs, configuration, elisp, early init
+
+    ;; This program is free software; you can redistribute it and/or modify
+    ;; it under the terms of the GNU General Public License as published by
+    ;; the Free Software Foundation, either version 3 of the License, or
+    ;; (at your option) any later version.
+
+    ;; This program is distributed in the hope that it will be useful,
+    ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+    ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    ;; GNU General Public License for more details.
+
+    ;; You should have received a copy of the GNU General Public License
+    ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+    ;;; Commentary:
+
+    ;; Comment
+
+    
+    ;;; Code:
+  #+end_src
   #+begin_src emacs-lisp :tangle init.el
     ;;; init.el ---                                      -*- lexical-binding: t; -*-
 
@@ -83,6 +110,13 @@
             (current-file (ft (buffer-file-name))))
         (when (string= readme current-file)
           (call-interactively 'org-babel-tangle))))
+
+    (defun early-init ()
+      "Return `early-init.el' if greater than Emacs 27.
+    Else it will return `init.el'. Useful for tangling source code."
+      (if (< emacs-major-version 27)
+          "init.el"
+        "early-init.el"))
 
     (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
   #+end_src
@@ -725,14 +759,11 @@
    - Show time and column number in modeline
    - Delete selected text when typing
    - Enable mouse in terminal
-   - Maximize the frame
    - Disable cursor blinking
    #+begin_src emacs-lisp :tangle init.el
-     (if (null compro/laptop-p)
-         (cua-mode 1)
-       (menu-bar-mode 0)
-       (menu-bar-no-scroll-bar)
-       (blink-cursor-mode 0))
+     (menu-bar-mode 0)
+     (menu-bar-no-scroll-bar)
+     (blink-cursor-mode 0)
      (tool-bar-mode 0)
 
      (column-number-mode 1)
@@ -743,8 +774,16 @@
      (if (not window-system)
          (xterm-mouse-mode 1)
        (xterm-mouse-mode 0))
+   #+end_src
+** Maximize the frame
+   Presently I use Emacs on i3 and in the terminal, so maximizing isn't an
+   issue. Uncomment if needed. Not tested.
+   #+begin_src emacs-lisp :tangle (early-init)
+     ;; start the initial frame maximized
+     ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
-     (toggle-frame-maximized)
+     ;; start every frame maximized
+     ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
    #+end_src
 ** Disable overlapping keybindings
    #+begin_src emacs-lisp :tangle init.el
@@ -796,7 +835,7 @@
    #+end_src
 ** Set default font
    #+begin_src emacs-lisp :tangle init.el
-     (set-default-font '("Ubuntu Mono" :size 14 :weight normal :width normal))
+     (set-default-font '("Fira Code" :size 12 :weight normal :width normal))
    #+end_src
 ** Colorize compilation buffer
    #+begin_src emacs-lisp :tangle init.el
@@ -1256,12 +1295,10 @@
      (leaf lsp-mode :ensure t
        :hook (c-mode-common-hook . compro/init-lsp)
        :preface
-       (leaf lsp-pyright :ensure t)
+       ;; (leaf lsp-pyright :ensure t)
        (add-hook 'python-mode-hook
                  (lambda ()
-                   (require 'lsp-pyright)
-                   (require 'tree-sitter-langs)
-                   (tree-sitter-hl-mode)
+                   (require 'lsp)
                    (pipenv-activate)
                    (sleep-for 1)
                    (lsp)))
@@ -1277,10 +1314,6 @@
          (when (and (fboundp 'projectile-project-p) (projectile-project-p))
            (lsp)))
        )
-   #+end_src
-** Show minibuffer at the top - Mini frame
-   #+begin_src emacs-lisp :tangle init.el
-     ;; (leaf mini-frame :ensure t :require t :leaf-defer nil)
    #+end_src
 ** Floobits - Like screensharing
    Its a third party application that works like screen sharing but is API based
@@ -1959,16 +1992,23 @@
    #+end_src
 ** Quelpa - Install from source
    #+begin_src emacs-lisp :tangle init.el
-     (leaf quelpa :ensure t :leaf-defer nil :require t)
+     (unless (package-installed-p 'quelpa)
+       (with-temp-buffer
+         (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+         (eval-buffer)
+         (quelpa-self-upgrade)))
    #+end_src
 ** Ligatures
    #+begin_src emacs-lisp :tangle init.el
-     (quelpa
-      '(ligature
-        :fetcher url
-        :url "https://raw.githubusercontent.com/mickeynp/ligature.el/master/ligature.el"))
-
      (leaf ligature :ensure nil :require t :leaf-defer nil
+       :disabled (< emacs-major-version 27)
+       :preface
+       (require 'quelpa)
+       (when (not (quelpa--package-installed-p 'ligature))
+         (quelpa
+          '(ligature
+            :fetcher url
+            :url "https://raw.githubusercontent.com/mickeynp/ligature.el/master/ligature.el")))
        :config
        ;; Enable the "www" ligature in every possible major mode
        (ligature-set-ligatures 't '("www"))
@@ -1992,7 +2032,7 @@
           "<$" "<=" "<>" "<-" "<<" "<+" "</" "#{" "#[" "#:" "#=" "#!"
           "##" "#(" "#?" "#_" "%%" ".=" ".-" ".." ".?" "+>" "++" "?:"
           "?=" "?." "??" ";;" "/*" "/=" "/>" "//" "__" "~~" "(*" "*)"
-          "\\" "://"))
+          "\\\\" "://"))
        ;; Enables ligature checks globally in all buffers. You can also do it
        ;; per mode with `ligature-mode'.
        (global-ligature-mode t))
