@@ -1033,7 +1033,7 @@ _=_       _+_
    ("<f9> p v e" . pipenv-envs)))
 
 (leaf company :ensure t :leaf-defer nil :require t
-  :hook (after-init . global-company-mode)
+  :hook (after-init-hook . global-company-mode)
   :config
   (setq company-show-numbers 'left
         company-idle-delay 0.165
