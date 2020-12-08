@@ -1280,7 +1280,7 @@
    #+end_src
 ** Inbuffer Completion using company-mode
    #+begin_src emacs-lisp :tangle init.el
-     (leaf company :ensure t :leaf-defer nil :require t
+     (leaf company :ensure t
        :hook (after-init-hook . global-company-mode)
        :config
        (setq company-show-numbers 'left

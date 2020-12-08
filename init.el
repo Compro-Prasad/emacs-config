@@ -1032,7 +1032,7 @@ _=_       _+_
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(leaf company :ensure t :leaf-defer nil :require t
+(leaf company :ensure t
   :hook (after-init-hook . global-company-mode)
   :config
   (setq company-show-numbers 'left
