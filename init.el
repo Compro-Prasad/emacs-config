@@ -1701,6 +1701,10 @@ made unique when necessary."
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
+(leaf volatile-highlights :ensure t :require t :leaf-defer nil
+  :config
+  (volatile-highlights-mode t))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
