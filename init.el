@@ -909,7 +909,10 @@ The return value is nil if no font was found, truthy otherwise."
              er/mark-inside-quotes
              er/mark-outside-quotes
              er/contract-region)
-  :bind (("C-=" . hydra-er/body))
+  :bind (("C-=" . hydra-er/er/expand-region)
+         ("C--" . hydra-er/er/expand-region)
+         ("M-[ 1 ; 5 k" . hydra-er/er/expand-region)  ; Strange key in git bash (msys2) on windows
+         ("M-[ 1 ; 5 m" . hydra-er/er/contract-region))  ; Strange key in git bash (msys2) on windows
   :config
   (require 'hydra)
   (defhydra hydra-er (:hint nil)
