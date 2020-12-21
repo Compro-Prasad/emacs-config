@@ -1708,6 +1708,13 @@ made unique when necessary."
   :config
   (volatile-highlights-mode t))
 
+(leaf diff-hl :ensure t
+  :config
+  (global-diff-hl-mode t)
+  (diff-hl-margin-mode t)
+  (diff-hl-flydiff-mode t)
+  (diff-hl-dired-mode t))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

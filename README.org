@@ -2048,6 +2048,15 @@
        :config
        (volatile-highlights-mode t))
    #+end_src
+** Diff in buffers
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf diff-hl :ensure t
+       :config
+       (global-diff-hl-mode t)
+       (diff-hl-margin-mode t)
+       (diff-hl-flydiff-mode t)
+       (diff-hl-dired-mode t))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
