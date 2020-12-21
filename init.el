@@ -1710,6 +1710,8 @@ made unique when necessary."
 
 (leaf diff-hl :ensure t
   :config
+  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   (global-diff-hl-mode t)
   (diff-hl-margin-mode t)
   (diff-hl-flydiff-mode t)
