@@ -1021,7 +1021,7 @@ _=_       _+_
 
 (leaf kaolin-themes :ensure t)
 
-(leaf modus-operandi-theme :ensure t :require t :leaf-defer nil
+(leaf modus-themes :ensure t :require t :leaf-defer nil
   :config (load-theme 'modus-operandi t))
 
 (leaf page-break-lines :ensure t

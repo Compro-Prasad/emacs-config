@@ -1260,7 +1260,7 @@
     #+end_src
 *** Modus operandi theme
     #+begin_src emacs-lisp :tangle init.el
-      (leaf modus-operandi-theme :ensure t :require t :leaf-defer nil
+      (leaf modus-themes :ensure t :require t :leaf-defer nil
         :config (load-theme 'modus-operandi t))
     #+end_src
 ** Page break lines
