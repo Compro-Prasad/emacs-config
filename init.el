@@ -1646,7 +1646,7 @@ made unique when necessary."
         vterm-buffer-name-string "*vterm-%s*"
         vterm-always-compile-module t))
 
-(leaf tree-sitter :ensure t :require t :leaf-defer nil
+(leaf tree-sitter :ensure t :require t :leaf-defer nil :disabled is-windows
   :preface
   (leaf tree-sitter-langs :ensure t :require t :leaf-defer nil)
   :config
@@ -1668,7 +1668,7 @@ made unique when necessary."
     (quelpa-self-upgrade)))
 
 (leaf ligature :ensure nil :require t :leaf-defer nil
-  :disabled (< emacs-major-version 27)
+  :disabled (or (< emacs-major-version 27) is-windows)
   :preface
   (require 'quelpa)
   (when (not (quelpa--package-installed-p 'ligature))
