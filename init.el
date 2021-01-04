@@ -1065,7 +1065,7 @@ is useful."
       (lsp)))
   )
 
-(leaf floobits :ensure t :leaf-defer nil :require t)
+(leaf floobits :ensure t)
 
 (leaf selectrum :ensure t :leaf-defer nil :require t
   :bind (("M-y" . compro/yank-pop)

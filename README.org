@@ -1323,7 +1323,7 @@
    and sends text instead of whole screen. As of now, Emacs, Neovim, IntelliJ,
    Sublime Text and Atom are supported.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf floobits :ensure t :leaf-defer nil :require t)
+     (leaf floobits :ensure t)
    #+end_src
 ** Autocompletion for Emacs
    =selectrum= provides a simple interface for completions in Emacs.
