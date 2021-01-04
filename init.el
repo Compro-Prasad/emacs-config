@@ -1067,16 +1067,16 @@ is useful."
 
 (leaf floobits :ensure t)
 
-(leaf selectrum :ensure t :leaf-defer nil :require t
+(leaf selectrum :ensure t
   :bind (("M-y" . compro/yank-pop)
          ("C-x C-r" . recentf-open-files+)
          ("C-x b" . selectrum-switch-buffer+))
+  :hook (after-init-hook . selectrum-mode)
   :config
-  (leaf selectrum-prescient :ensure t :leaf-defer nil :require t
+  (leaf selectrum-prescient :ensure t :after selectrum
     :config
     (selectrum-prescient-mode +1)
     (prescient-persist-mode +1))
-  (selectrum-mode +1)
   ;; Wiki - Minibuffer default add function
   (autoload 'ffap-guesser "ffap")
   (setq minibuffer-default-add-function
