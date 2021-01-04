@@ -941,9 +941,8 @@ _=_       _+_
 
 (leaf ag :ensure t :when (executable-find "ag"))
 
-(leaf switch-window :ensure t :leaf-defer nil :require t
-  :config
-  (global-set-key (kbd "C-x o") 'switch-window))
+(leaf switch-window :ensure t
+  :bind ("C-x o" . switch-window))
 
 (leaf which-key :ensure t
   :init
