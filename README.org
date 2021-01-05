@@ -1107,7 +1107,7 @@
    Expand region is a technique to iteratively select larger or smaller blocks
    of text based on the context using a single keybinding.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf expand-region :ensure t :require t :leaf-defer nil
+     (leaf expand-region :ensure t
        :commands (er/expand-region
                   er/mark-paragraph
                   er/mark-inside-pairs

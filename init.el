@@ -901,7 +901,7 @@ The return value is nil if no font was found, truthy otherwise."
 (leaf git-messenger :ensure t
   :bind (("C-x v p" . git-messenger:popup-message)))
 
-(leaf expand-region :ensure t :require t :leaf-defer nil
+(leaf expand-region :ensure t
   :commands (er/expand-region
              er/mark-paragraph
              er/mark-inside-pairs
