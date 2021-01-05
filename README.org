@@ -1201,7 +1201,9 @@
      (leaf undo-tree :ensure t :leaf-defer nil :require t
        :bind
        ((:undo-tree-map
-         ("C-_" . nil))
+         ("C-_" . nil)
+         ("C-/" . nil)
+         ("C-?" . nil))
         (:global-map
          ("C-_" . nil)))
        :init
