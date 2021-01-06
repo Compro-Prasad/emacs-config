@@ -652,9 +652,8 @@ The return value is nil if no font was found, truthy otherwise."
 
 (delete-selection-mode 1)
 
-(if (not window-system)
-    (xterm-mouse-mode 1)
-  (xterm-mouse-mode 0))
+(when (not window-system)
+  (xterm-mouse-mode 1))  ; Enable mouse in terminal
 
 (when (display-graphic-p)
   (general-define-key

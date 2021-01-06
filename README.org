@@ -797,9 +797,8 @@
 
      (delete-selection-mode 1)
 
-     (if (not window-system)
-         (xterm-mouse-mode 1)
-       (xterm-mouse-mode 0))
+     (when (not window-system)
+       (xterm-mouse-mode 1))  ; Enable mouse in terminal
    #+end_src
 ** Maximize the frame
    Presently I use Emacs on i3 and in the terminal, so maximizing isn't an
