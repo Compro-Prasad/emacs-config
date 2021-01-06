@@ -929,7 +929,7 @@ _=_       _+_
     ("-" er/contract-region)))
 
 (leaf projectile :leaf-defer nil :ensure t :require t
-  :when (< emacs-major-version 28)  ;; Use project.el for > 28
+  :disabled (> emacs-major-version 27)  ;; Use project.el for > 27
   :bind (("C-x p" . projectile-command-map))
   :config
   (setq
