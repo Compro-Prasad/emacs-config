@@ -1223,7 +1223,10 @@
    effectively. *undo-tree* helps visualize the undos in a buffer and easily
    revert to different states.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf undo-tree :ensure t :leaf-defer nil :require t
+     (leaf undo-tree
+       :ensure t
+       :leaf-defer nil
+       :require t
        :bind
        ((:undo-tree-map
          ("C-_" . nil)
@@ -2088,6 +2091,13 @@
        (diff-hl-margin-mode t)
        (diff-hl-flydiff-mode t)
        (diff-hl-dired-mode t))
+   #+end_src
+** Whole line or region
+   Emacs has bad default behaviour when there is no region selected for
+   keybindings like =C-w=, =M-;=, etc.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf whole-line-or-region :ensure t
+       :config (whole-line-or-region-global-mode +1))
    #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el

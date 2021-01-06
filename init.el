@@ -965,7 +965,10 @@ _=_       _+_
     :config
     (phi-search-mc/setup-keys)))
 
-(leaf undo-tree :ensure t :leaf-defer nil :require t
+(leaf undo-tree
+  :ensure t
+  :leaf-defer nil
+  :require t
   :bind
   ((:undo-tree-map
     ("C-_" . nil)
@@ -1720,6 +1723,9 @@ made unique when necessary."
   (diff-hl-margin-mode t)
   (diff-hl-flydiff-mode t)
   (diff-hl-dired-mode t))
+
+(leaf whole-line-or-region :ensure t
+  :config (whole-line-or-region-global-mode +1))
 
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
