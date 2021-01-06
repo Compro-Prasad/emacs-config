@@ -1,4 +1,30 @@
 #+TITLE: Emacs configuration
+* Downloading Emacs
+  - TODO Make an automation script to install Emacs
+** Arch Linux and its derivatives
+   #+begin_src sh
+   pacman -S emacs
+   #+end_src
+** Arch User Repository
+   #+begin_src sh
+   yay -S emacs-git
+   #+end_src
+** Debian stable is not tested on
+** Ubuntu and its derivatives
+   Master branch of Emacs ([[https://launchpad.net/~ubuntu-elisp/+archive/ubuntu/ppa][Ref]]):
+   #+begin_src sh
+   sudo add-apt-repository ppa:ubuntu-elisp/ppa
+   sudo apt update
+   sudo apt install -y emacs-snapshot
+   #+end_src
+   Stable release of Emacs:
+   #+begin_src sh
+   sudo apt update && sudo apt install -y emacs
+   #+end_src
+   Emacs without GUI:
+   #+begin_src sh
+   sudo apt update && sudo apt install -y emacs-nox
+   #+end_src
 * Copyright notice
   #+begin_src emacs-lisp :tangle (early-init)
     ;;; early-init.el ---                                -*- lexical-binding: t; -*-
