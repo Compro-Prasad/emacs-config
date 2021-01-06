@@ -1357,8 +1357,8 @@ will search current project, if begin with 'o ' then will search org-directory.
   (fset 'compro/notmuch/remove-flagged-tag
         (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
 
-(leaf iedit :ensure t :require t :leaf-defer nil
-  :bind ("C-;" . iedit-mode))
+(leaf iedit :ensure t
+  :bind ("C-c i" . iedit-mode))
 
 (leaf wgrep :ensure t :after grep :require t)
 
