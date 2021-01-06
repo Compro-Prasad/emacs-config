@@ -881,7 +881,7 @@ The return value is nil if no font was found, truthy otherwise."
           ([C-backtab] . nil)
           ([M-tab] . nil)))
   :preface
-  (leaf forge :after magit :ensure t :require t)
+  (leaf forge :disabled is-windows :after magit :ensure t :require t)
   :config
   (defun compro/kill-magit-buffers ()
     "Kill magit buffers related to a project."
