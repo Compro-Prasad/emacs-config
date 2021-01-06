@@ -1020,9 +1020,16 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(leaf kaolin-themes :ensure t)
+(leaf kaolin-themes  ; Load only in GUI
+  :disabled (not window-system)
+  :ensure t
+  :config (load-theme 'kaolin-ocean t))
 
-(leaf modus-themes :ensure t :require t :leaf-defer nil
+(leaf modus-themes  ; Load only in terminal
+  :disabled window-system
+  :ensure t
+  :require t
+  :leaf-defer nil
   :config (load-theme 'modus-operandi t))
 
 (leaf page-break-lines :ensure t

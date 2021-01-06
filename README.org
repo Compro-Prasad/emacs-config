@@ -1283,11 +1283,18 @@
     #+end_src
 *** Kaolin Themes
     #+begin_src emacs-lisp :tangle init.el
-      (leaf kaolin-themes :ensure t)
+      (leaf kaolin-themes  ; Load only in GUI
+        :disabled (not window-system)
+        :ensure t
+        :config (load-theme 'kaolin-ocean t))
     #+end_src
 *** Modus operandi theme
     #+begin_src emacs-lisp :tangle init.el
-      (leaf modus-themes :ensure t :require t :leaf-defer nil
+      (leaf modus-themes  ; Load only in terminal
+        :disabled window-system
+        :ensure t
+        :require t
+        :leaf-defer nil
         :config (load-theme 'modus-operandi t))
     #+end_src
 ** Page break lines
