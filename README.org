@@ -1286,10 +1286,10 @@
     #+end_src
 *** Kaolin Themes
     #+begin_src emacs-lisp :tangle init.el
-      (leaf kaolin-themes  ; Load only in GUI
+      (leaf spacemacs-theme  ; Load only in GUI
         :disabled (not window-system)
         :ensure t
-        :config (load-theme 'kaolin-ocean t))
+        :config (load-theme 'spacemacs-dark t))
     #+end_src
 *** Modus operandi theme
     #+begin_src emacs-lisp :tangle init.el

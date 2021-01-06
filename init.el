@@ -1023,10 +1023,10 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(leaf kaolin-themes  ; Load only in GUI
+(leaf spacemacs-theme  ; Load only in GUI
   :disabled (not window-system)
   :ensure t
-  :config (load-theme 'kaolin-ocean t))
+  :config (load-theme 'spacemacs-dark t))
 
 (leaf modus-themes  ; Load only in terminal
   :disabled window-system
