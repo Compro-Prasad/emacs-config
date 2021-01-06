@@ -973,7 +973,8 @@ _=_       _+_
     ("C-?" . nil))
    (:global-map
     ("C-_" . nil)))
-  :init
+  :config
+  (setq undo-tree-enable-undo-in-region t)
   (global-undo-tree-mode t))
 
 (leaf doom-themes
