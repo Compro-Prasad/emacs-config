@@ -1592,10 +1592,10 @@
 ** Snippet completion
    Yasnippet is a snippet completion framework for Emacs.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf yasnippet :ensure t :leaf-defer nil :require t
+     (leaf yasnippet :ensure t
        :bind ("C-/" . yas-expand)
        :preface
-       (leaf yasnippet-snippets :ensure t :after yasnippet :require t)
+       (leaf yasnippet-snippets :ensure t :after yasnippet)
        :config
        (yas-global-mode 1))
    #+end_src

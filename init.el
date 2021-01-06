@@ -1320,10 +1320,10 @@ will search current project, if begin with 'o ' then will search org-directory.
 (leaf ctrlf :ensure t :leaf-defer nil :require t
   :config (ctrlf-mode 1))
 
-(leaf yasnippet :ensure t :leaf-defer nil :require t
+(leaf yasnippet :ensure t
   :bind ("C-/" . yas-expand)
   :preface
-  (leaf yasnippet-snippets :ensure t :after yasnippet :require t)
+  (leaf yasnippet-snippets :ensure t :after yasnippet)
   :config
   (yas-global-mode 1))
 
