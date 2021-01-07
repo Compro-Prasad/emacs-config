@@ -635,6 +635,7 @@ The return value is nil if no font was found, truthy otherwise."
  delete-old-versions -1
  version-control t
  vc-make-backup-files t
+ vc-handled-backends '(Git)
  auto-save-file-name-transforms `((".*" ,(concat cache-d "auto-save-list") t))
  auto-save-list-file-prefix (concat cache-d "auto-save-list/saves-")
 
