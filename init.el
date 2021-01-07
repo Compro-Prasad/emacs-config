@@ -912,6 +912,8 @@ The return value is nil if no font was found, truthy otherwise."
   :preface
   (leaf forge :disabled is-windows :after magit :ensure t :require t)
   :config
+  (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
   (defun compro/kill-magit-buffers ()
     "Kill magit buffers related to a project."
     (interactive)
