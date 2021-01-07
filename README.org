@@ -520,7 +520,11 @@
        :hook (find-file-hook . narrow-reindent-mode))
    #+end_src
 ** Dired - File manager
-   Dired is nice but doesn't have good keybindings.
+   Dired is a good file manager but we can make it better by adding some more
+   functionality on top using:
+   - =dired-collapse-mode= to show long paths having single directories
+   - =dired-du-mode= to show file and dir size
+   - =dired-subtree-toggle= to show tree like structure under the dir
    #+begin_src emacs-lisp :tangle init.el
      (leaf dired
        :hook (dired-mode-hook . dired-hide-details-mode)
