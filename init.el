@@ -412,9 +412,7 @@ The return value is nil if no font was found, truthy otherwise."
   (leaf dired-x
     :bind (("C-x <C-j>" . dired-jump)
            ("C-x C-j" . dired-jump)))
-  (leaf dired-collapse :ensure t
-    :after dired
-    :hook (dired-mode-hook . dired-collapse-mode))
+  (leaf dired-collapse :ensure t)
   (leaf dired-du :ensure t :after dired)
   (leaf dired-dups :ensure t :after dired)
   (leaf dired-filetype-face :ensure t :after dired)
