@@ -446,7 +446,7 @@
     (leaf general :leaf-defer nil :ensure t :require t)
   #+end_src
 * Native Emacs configurations
-** Tramp
+** Speedup file operations in Tramp
    Create directory:
    #+begin_src emacs-lisp :tangle init.el
      (make-directory "~/.ssh/sockets" t)
@@ -454,17 +454,14 @@
    Write the following in =~/.ssh/config=:
    #+begin_src conf :tangle ~/.ssh/config
      Host *
-     ControlMaster auto
-     ControlPath ~/.ssh/sockets/%r@%h-%p
-     ControlPersist 600
+          ControlMaster auto
+          ControlPath ~/.ssh/sockets/%r@%h-%p
+          ControlPersist 600
+          ServerAliveInterval 5
    #+end_src
    Create the =~/.ssh/sockets/= dir. TODO: automate this.
 
-   Then remove tramp's default control master settings:
-   #+begin_src emacs-lisp :tangle init.el
-     (setq tramp-ssh-controlmaster-options "")
-   #+end_src
-   Remove backups:
+   Don't use backups in tramp:
    #+begin_src emacs-lisp :tangle init.el
      (defvar disable-tramp-backups '(all))
 
@@ -491,9 +488,11 @@
           (advice-add 'tramp-set-auto-save :around #'tramp-set-auto-save--check)
 
           ;; Use my ~/.ssh/config control master settings according to https://puppet.com/blog/speed-up-ssh-by-reusing-connections
-          (setq tramp-ssh-controlmaster-options "")))
+          (setq tramp-ssh-controlmaster-options ""
+                remote-file-name-inhibit-cache 30)))
    #+end_src
    Thanks to [[https://emacs.stackexchange.com/users/12634/luke-lee][Luke Lee]] on [[https://emacs.stackexchange.com/a/24654][Emacs Stack Exchange]].
+
 ** Tab line
    Tab line is a feature in Emacs to show tabs.
    #+begin_src emacs-lisp :tangle init.el

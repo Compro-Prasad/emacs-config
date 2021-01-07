@@ -333,8 +333,6 @@ The return value is nil if no font was found, truthy otherwise."
 
 (make-directory "~/.ssh/sockets" t)
 
-(setq tramp-ssh-controlmaster-options "")
-
 (defvar disable-tramp-backups '(all))
 
 (eval-after-load "tramp"
@@ -360,7 +358,8 @@ The return value is nil if no font was found, truthy otherwise."
      (advice-add 'tramp-set-auto-save :around #'tramp-set-auto-save--check)
 
      ;; Use my ~/.ssh/config control master settings according to https://puppet.com/blog/speed-up-ssh-by-reusing-connections
-     (setq tramp-ssh-controlmaster-options "")))
+     (setq tramp-ssh-controlmaster-options ""
+           remote-file-name-inhibit-cache 30)))
 
 (leaf tab-bar :leaf-defer nil :require t
   :when (> emacs-major-version 27)
