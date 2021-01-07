@@ -446,6 +446,54 @@
     (leaf general :leaf-defer nil :ensure t :require t)
   #+end_src
 * Native Emacs configurations
+** Tramp
+   Create directory:
+   #+begin_src emacs-lisp :tangle init.el
+     (make-directory "~/.ssh/sockets" t)
+   #+end_src
+   Write the following in =~/.ssh/config=:
+   #+begin_src conf :tangle ~/.ssh/config
+     Host *
+     ControlMaster auto
+     ControlPath ~/.ssh/sockets/%r@%h-%p
+     ControlPersist 600
+   #+end_src
+   Create the =~/.ssh/sockets/= dir. TODO: automate this.
+
+   Then remove tramp's default control master settings:
+   #+begin_src emacs-lisp :tangle init.el
+     (setq tramp-ssh-controlmaster-options "")
+   #+end_src
+   Remove backups:
+   #+begin_src emacs-lisp :tangle init.el
+     (defvar disable-tramp-backups '(all))
+
+     (eval-after-load "tramp"
+       '(progn
+          ;; Modified from https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-and-Backup.html
+          (setq backup-enable-predicate
+                (lambda (name)
+                  (and (normal-backup-enable-predicate name)
+                   ;; Disable all tramp backups
+                   (and disable-tramp-backups
+                        (member 'all disable-tramp-backups)
+                        (not (file-remote-p name 'method)))
+                   (not ;; disable backup for tramp with the listed methods
+                    (let ((method (file-remote-p name 'method)))
+                      (when (stringp method)
+                        (member method disable-tramp-backups)))))))
+
+          (defun tramp-set-auto-save--check (original)
+            (if (funcall backup-enable-predicate (buffer-file-name))
+                (funcall original)
+              (auto-save-mode -1)))
+
+          (advice-add 'tramp-set-auto-save :around #'tramp-set-auto-save--check)
+
+          ;; Use my ~/.ssh/config control master settings according to https://puppet.com/blog/speed-up-ssh-by-reusing-connections
+          (setq tramp-ssh-controlmaster-options "")))
+   #+end_src
+   Thanks to [[https://emacs.stackexchange.com/users/12634/luke-lee][Luke Lee]] on [[https://emacs.stackexchange.com/a/24654][Emacs Stack Exchange]].
 ** Tab line
    Tab line is a feature in Emacs to show tabs.
    #+begin_src emacs-lisp :tangle init.el
