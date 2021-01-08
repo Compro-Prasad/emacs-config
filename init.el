@@ -36,15 +36,15 @@
 
 (require 'seq)
 (setq is-windows
-      (seq-filter
+      (seq-find
        (lambda (x) (string= system-type x))
        '("ms-dos" "windows-nt" "cygwin")))
 (setq is-unix
-      (seq-filter
+      (seq-find
        (lambda (x) (string= system-type x))
        '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
 (setq is-gnu
-      (seq-filter
+      (seq-find
        (lambda (x) (string= system-type x))
        '("gnu" "gnu/linux" "gnu/kfreebsd")))
 (setq is-linux

@@ -1,5 +1,8 @@
 #+TITLE: Emacs configuration
 * Downloading Emacs
+  I prefer using master branch of Emacs with all the latest and greatest
+  features. So, I would recommend installing the same. Preferably from
+  https://github.com/emacs-mirror/emacs.
   - TODO Make an automation script to install Emacs
 ** Arch Linux and its derivatives
    #+begin_src sh
@@ -9,9 +12,8 @@
    #+begin_src sh
    yay -S emacs-git
    #+end_src
-** Debian stable is not tested on
 ** Ubuntu and its derivatives
-   Master branch of Emacs ([[https://launchpad.net/~ubuntu-elisp/+archive/ubuntu/ppa][Ref]]):
+   Master branch of Emacs ([[https://launchpad.net/~ubuntu-elisp/+archive/ubuntu/ppa][Ref]]) updated daily:
    #+begin_src sh
    sudo add-apt-repository ppa:ubuntu-elisp/ppa
    sudo apt update
@@ -21,11 +23,12 @@
    #+begin_src sh
    sudo apt update && sudo apt install -y emacs
    #+end_src
-   Emacs without GUI:
+   Emacs without GUI (useful for SSH logins):
    #+begin_src sh
    sudo apt update && sudo apt install -y emacs-nox
    #+end_src
 * Copyright notice
+  TL; DR -> License is GNU GPL v3
   #+begin_src emacs-lisp :tangle (early-init)
     ;;; early-init.el ---                                -*- lexical-binding: t; -*-
 
@@ -105,15 +108,15 @@
   #+begin_src emacs-lisp :tangle init.el
     (require 'seq)
     (setq is-windows
-          (seq-filter
+          (seq-find
            (lambda (x) (string= system-type x))
            '("ms-dos" "windows-nt" "cygwin")))
     (setq is-unix
-          (seq-filter
+          (seq-find
            (lambda (x) (string= system-type x))
            '("gnu" "gnu/linux" "gnu/kfreebsd" "darwin" "cygwin")))
     (setq is-gnu
-          (seq-filter
+          (seq-find
            (lambda (x) (string= system-type x))
            '("gnu" "gnu/linux" "gnu/kfreebsd")))
     (setq is-linux
@@ -127,7 +130,8 @@
            (string= system-type "darwin")))
   #+end_src
 * Tangle =README.org= to =init.el=
-  Automatically tangle code blocks from =README.org= to =init.el=.
+  Automatically tangle / export code blocks from =README.org= to =init.el= when
+  saving =README.org= inside of Emacs.
 
   #+begin_src emacs-lisp :tangle init.el
     (defun tangle-README.org-to-init.el ()
@@ -147,7 +151,7 @@
     (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
   #+end_src
 * Setup package repositories
-  Setup MELPA and Org Mode repositories.
+  Setup MELPA, Org Mode and tree sitter repositories.
 
   #+begin_src emacs-lisp :tangle init.el
     (require 'package)
