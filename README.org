@@ -1427,19 +1427,47 @@
    by design.
    #+begin_src emacs-lisp :tangle init.el
      (leaf selectrum :ensure t
-       :bind (("M-y" . consult-yank-pop)
-              ("M-:" . consult-complex-command)
-              ("M-g l" . consult-line)
-              ("M-g o" . consult-outline)
-              ("C-x C-r" . consult-recent-file)
-              ("C-x b" . consult-buffer))
        :hook (after-init-hook . selectrum-mode)
        :config
-       (leaf consult-selectrum :ensure t :after selectrum)
+       (leaf consult-selectrum :ensure t
+         :bind (("M-y" . consult-yank-pop)
+                ("M-v" . consult-yank-pop)
+                ("C-v" . consult-yank-pop)
+                ("M-:" . consult-complex-command)
+                ("M-g l" . consult-line)
+                ("M-g o" . consult-outline)
+                ("C-x C-r" . consult-recent-file)
+                ("C-x b" . consult-buffer)))
        (leaf selectrum-prescient :ensure t :after selectrum
          :config
          (selectrum-prescient-mode +1)
          (prescient-persist-mode +1))
+       (leaf marginalia :ensure t :after selectrum
+         :config
+         (setq marginalia-annotators
+               '(marginalia-annotators-heavy marginalia-annotators-light nil))
+         (marginalia-mode +1))
+       (leaf embark :ensure t
+         :bind (("C-S-a" . embark-act)
+                ("C-S-e" . embark-act-noexit)
+                ("C-S-b" . embark-become))
+         :hook ((embark-target-finders . current-candidate+category)
+                (embark-candidate-collectors . current-candidates+category)
+                ;; No unnecessary computation delay after injection.
+                (embark-setup-hook . selectrum-set-selected-candidate))
+         :config
+         (defun current-candidate+category ()
+           (when selectrum-active-p
+             (cons (selectrum--get-meta 'category)
+                   (selectrum-get-current-candidate))))
+
+         (defun current-candidates+category ()
+           (when selectrum-active-p
+             (cons (selectrum--get-meta 'category)
+                   (selectrum-get-current-candidates
+                    ;; Pass relative file names for dired.
+                    minibuffer-completing-file-name)))))
+
        ;; Wiki - Minibuffer default add function
        (autoload 'ffap-guesser "ffap")
        (setq minibuffer-default-add-function
