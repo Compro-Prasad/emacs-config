@@ -914,7 +914,22 @@
    #+end_src
 ** Set default font
    #+begin_src emacs-lisp :tangle init.el
-     (set-default-font '("Fira Code" :size 12 :weight normal :width normal))
+     (cond
+      ((find-font (font-spec :name "Source Code Pro"))
+       (set-default-font '("Source Code Mono" :size 12 :weight normal :width normal)))
+      ((find-font (font-spec :name "Fira Code"))
+       (set-default-font '("Fira Code" :size 12 :weight normal :width normal)))
+      ((find-font (font-spec :name "Ubuntu Mono"))
+       (set-default-font '("Ubuntu Mono" :size 12 :weight normal :width normal)))
+      ((find-font (font-spec :name "Noto Mono"))
+       (set-default-font '("Noto Mono" :size 12 :weight normal :width normal)))
+      ((find-font (font-spec :name "Input Mono"))
+       (set-default-font '("Input Mono" :size 12 :weight normal :width normal)))
+      ((find-font (font-spec :name "DejaVu Sans Mono"))
+       (set-default-font '("Dejavu Sans Mono" :size 12 :weight normal :width normal)))
+      ((find-font (font-spec :name "Monospace"))
+       (set-default-font '("Monospace" :size 12 :weight normal :width normal))))
+
    #+end_src
 ** Colorize compilation buffer
    #+begin_src emacs-lisp :tangle init.el
