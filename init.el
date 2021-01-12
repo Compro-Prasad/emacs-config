@@ -1151,7 +1151,13 @@ is useful."
         (cons (selectrum--get-meta 'category)
               (selectrum-get-current-candidates
                ;; Pass relative file names for dired.
-               minibuffer-completing-file-name)))))
+               minibuffer-completing-file-name))))
+    ;; which-key support
+    (setq embark-action-indicator
+        (lambda (map)
+          (which-key--show-keymap "Embark" map nil nil 'no-paging)
+          #'which-key--hide-popup-ignore-command)
+        embark-become-indicator embark-action-indicator))
 
   ;; Wiki - Minibuffer default add function
   (autoload 'ffap-guesser "ffap")
