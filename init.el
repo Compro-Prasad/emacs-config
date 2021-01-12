@@ -835,7 +835,9 @@ The return value is nil if no font was found, truthy otherwise."
 ;; Show whitespaces only in buffers pointing to specific files
 (add-hook 'find-file-hook 'compro/set-show-whitespace-mode)
 ;; Remove the trailing whitespaces on save
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+(add-hook 'before-save-hook '(lambda ()
+                               (when (not (eq major-mode 'org-mode))
+                                 (delete-trailing-whitespace))))
 
 (defun my/minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
