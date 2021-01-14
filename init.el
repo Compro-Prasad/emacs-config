@@ -361,7 +361,7 @@ The return value is nil if no font was found, truthy otherwise."
      (setq tramp-ssh-controlmaster-options ""
            remote-file-name-inhibit-cache 30)))
 
-(leaf tab-bar :leaf-defer nil :require t
+(leaf tab-bar :leaf-defer nil :require t :disabled t
   :when (> emacs-major-version 27)
   :bind (("C-t" . tab-bar-new-tab-event)
          ([C-f4] . tab-bar-close-tab)

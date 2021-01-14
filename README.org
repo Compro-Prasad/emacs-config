@@ -500,7 +500,7 @@
 ** Tab line
    Tab line is a feature in Emacs to show tabs.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf tab-bar :leaf-defer nil :require t
+     (leaf tab-bar :leaf-defer nil :require t :disabled t
        :when (> emacs-major-version 27)
        :bind (("C-t" . tab-bar-new-tab-event)
               ([C-f4] . tab-bar-close-tab)
