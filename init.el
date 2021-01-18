@@ -756,7 +756,9 @@ The return value is nil if no font was found, truthy otherwise."
   :bind (("C-a" . compro/beginning-of-line)
          ("C-o" . compro/open-line-below)
          ("C-S-p" . list-processes)
-         ("C-S-o" . compro/open-line-above))
+         ("" . list-processes)
+         ("C-S-o" . compro/open-line-above)
+         ("" . compro/open-line-above))
   :config
   (defun compro/beginning-of-line ()
     (interactive)
@@ -1148,8 +1150,11 @@ is useful."
     (marginalia-mode +1))
   (leaf embark :ensure t
     :bind (("C-S-a" . embark-act)
+           ("" . embark-act)
            ("C-S-e" . embark-act-noexit)
-           ("C-S-b" . embark-become))
+           ("" . embark-act-noexit)
+           ("C-S-b" . embark-become)
+           ("" . embark-become))
     :hook ((embark-target-finders . current-candidate+category)
            (embark-candidate-collectors . current-candidates+category)
            ;; No unnecessary computation delay after injection.
