@@ -989,6 +989,17 @@ _=_       _+_
    projectile-completion-system 'default)
   (projectile-mode 1))
 
+(leaf project-x
+  :after project
+  :config
+  (setq project-window-list-file (concat cache-d "project-window-list"))
+  (add-hook 'project-find-functions 'project-try-local 90)
+  (add-hook 'kill-emacs-hook 'project--window-state-write)
+  (add-to-list 'project-switch-commands
+               '(?j "Restore windows" project-windows) t)
+    :bind (("C-x p w" . project-window-state-save)
+           ("C-x p j" . project-window-state-load)))
+
 (leaf ag :ensure t :when (executable-find "ag"))
 
 (leaf switch-window :ensure t

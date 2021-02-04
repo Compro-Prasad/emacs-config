@@ -1255,6 +1255,25 @@
         projectile-completion-system 'default)
        (projectile-mode 1))
    #+end_src
+   Setting up =project-x=. From its Github README:
+   - Recognize any directory with a .project file as a project. Also works if
+     any parent directory has this file.
+   - Save and restore project files and window configurations across sessions.
+     Project-X will load all saved project files and directories (as dired
+     buffers) and try to recreate the window configuration at the time of
+     saving.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf project-x
+       :after project
+       :config
+       (setq project-window-list-file (concat cache-d "project-window-list"))
+       (add-hook 'project-find-functions 'project-try-local 90)
+       (add-hook 'kill-emacs-hook 'project--window-state-write)
+       (add-to-list 'project-switch-commands
+                    '(?j "Restore windows" project-windows) t)
+         :bind (("C-x p w" . project-window-state-save)
+                ("C-x p j" . project-window-state-load)))
+   #+end_src
 ** Silver Searcher
    [[https://github.com/ggreer/the_silver_searcher#installing][the_silver_searcher]] is an alternative to =grep= which is faster.
    #+begin_src emacs-lisp :tangle init.el
