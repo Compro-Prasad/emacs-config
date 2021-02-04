@@ -1492,7 +1492,6 @@ made unique when necessary."
 (leaf treemacs :ensure t
   :bind ((treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action)))
-  :hook (projectile-after-switch-project-hook . treemacs-display-current-project-exclusively)
   :config
   (treemacs-resize-icons 17))
 
