@@ -1098,6 +1098,8 @@ _=_       _+_
 (leaf company :ensure t
   :hook (after-init-hook . global-company-mode)
   :config
+  (leaf company-box :after company
+    :hook (company-mode-hook . company-box-mode))
   (setq company-show-numbers 'left
         company-idle-delay 0.165
         company-minimum-prefix-length 1))
