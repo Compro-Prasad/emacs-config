@@ -99,6 +99,10 @@
     (defalias 'ft 'file-truename)
     (defvaralias 'emacs-d 'user-emacs-directory)
   #+end_src
+* Change load-path
+  #+begin_src emacs-lisp :tangle init.el
+    (add-to-list 'load-path (concat emacs-d "lisp"))
+  #+end_src
 * Cache directory
   #+begin_src emacs-lisp :tangle init.el
     (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
