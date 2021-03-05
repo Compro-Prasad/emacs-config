@@ -1119,14 +1119,6 @@ _=_       _+_
 
 (leaf lsp-mode :ensure t
   :hook (c-mode-common-hook . compro/init-lsp)
-  :preface
-  ;; (leaf lsp-pyright :ensure t)
-  (add-hook 'python-mode-hook
-            (lambda ()
-              (require 'lsp)
-              (pipenv-activate)
-              (sleep-for 1)
-              (lsp)))
   :init
   (setq lsp-keymap-prefix "<f8>"
         lsp-session-file (locate-user-emacs-file
