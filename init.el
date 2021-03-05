@@ -1511,9 +1511,11 @@ made unique when necessary."
 (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
 (leaf python
   :config
-  (when (locate-file "ipython" exec-path)
-    (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "-i --simple-prompt"))
+  (if (locate-file "ipython" exec-path)
+      (setq python-shell-interpreter "ipython"
+            python-shell-interpreter-args "-i --simple-prompt")
+    (if (locate-file "python3" exec-path)
+        (setq python-shell-interpreter "python3")))
   (setq python-indent-guess-indent-offset-verbose nil))
 
 (leaf vterm :ensure t :when is-linux
