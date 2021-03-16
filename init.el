@@ -1109,7 +1109,7 @@ _=_       _+_
    ("<f9> p v e" . pipenv-envs)))
 
 (leaf company :ensure t
-  :hook (after-init-hook . global-company-mode)
+  :hook (prog-mode-hook . company-mode)
   :config
   (leaf company-box :ensure t
     :hook (company-mode-hook . company-box-mode))

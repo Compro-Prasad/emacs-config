@@ -1419,7 +1419,7 @@
 ** Inbuffer Completion using company-mode
    #+begin_src emacs-lisp :tangle init.el
      (leaf company :ensure t
-       :hook (after-init-hook . global-company-mode)
+       :hook (prog-mode-hook . company-mode)
        :config
        (leaf company-box :ensure t
          :hook (company-mode-hook . company-box-mode))
