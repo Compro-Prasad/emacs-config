@@ -1598,6 +1598,9 @@ made unique when necessary."
 (leaf whole-line-or-region :ensure t
   :config (whole-line-or-region-global-mode +1))
 
+(leaf jupyter :ensure t)
+(leaf ein :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
