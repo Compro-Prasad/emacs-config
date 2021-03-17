@@ -1137,7 +1137,7 @@ is useful."
 (leaf selectrum :ensure t
   :hook (after-init-hook . selectrum-mode)
   :config
-  (leaf consult-selectrum :ensure t
+  (leaf consult :ensure t
     :bind (("M-y" . consult-yank-pop)
            ("M-v" . consult-yank-pop)
            ("C-v" . consult-yank-pop)
