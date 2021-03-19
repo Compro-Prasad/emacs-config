@@ -1599,6 +1599,15 @@ made unique when necessary."
 
 (leaf jupyter :ensure t)
 (leaf ein :ensure t)
+(leaf cascading-dir-locals :ensure t
+  :config
+  (cascading-dir-locals-mode 1))
+
+(leaf just-mode :ensure t)
+
+(leaf numpydoc :ensure t
+  :bind ((python-mode-map
+          ("C-c C-n" . numpydoc-generate))))
 
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."

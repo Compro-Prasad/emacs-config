@@ -2015,6 +2015,28 @@
      (leaf jupyter :ensure t)
      (leaf ein :ensure t)
    #+end_src
+** cascading-dir-locals.el
+   Provides a global minor mode that changes how Emacs handles the lookup of
+   applicable dir-locals files (=.dir-locals.el=): instead of starting at the
+   directory of the visited file and moving up the directory tree only until a
+   first dir-locals file is found, collect and apply all (!) dir-locals files
+   found from the current directory up to the root one.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf cascading-dir-locals :ensure t
+       :config
+       (cascading-dir-locals-mode 1))
+   #+end_src
+** Just mode
+   Alternative to GNU Make.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf just-mode :ensure t)
+   #+end_src
+** Numpy doc generator
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf numpydoc :ensure t
+       :bind ((python-mode-map
+               ("C-c C-n" . numpydoc-generate))))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
