@@ -738,8 +738,8 @@
       gc-cons-threshold 94371840
 
       ;;;   Prevent recursion limits
-      max-lisp-eval-depth 48000
-      max-specpdl-size 10000
+      max-lisp-eval-depth 700
+      max-specpdl-size 700
 
       ;;;   No bells
       ring-bell-function 'ignore

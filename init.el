@@ -581,8 +581,8 @@ The return value is nil if no font was found, truthy otherwise."
  gc-cons-threshold 94371840
 
  ;;;   Prevent recursion limits
- max-lisp-eval-depth 48000
- max-specpdl-size 10000
+ max-lisp-eval-depth 700
+ max-specpdl-size 700
 
  ;;;   No bells
  ring-bell-function 'ignore
@@ -1599,6 +1599,7 @@ made unique when necessary."
 
 (leaf jupyter :ensure t)
 (leaf ein :ensure t)
+
 (leaf cascading-dir-locals :ensure t
   :config
   (cascading-dir-locals-mode 1))
