@@ -2050,6 +2050,10 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf filetree :ensure t)
    #+end_src
+** Flycheck in Flymake
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf flymake-flycheck :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
