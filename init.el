@@ -1610,6 +1610,8 @@ made unique when necessary."
   :bind ((python-mode-map
           ("C-c C-n" . numpydoc-generate))))
 
+(leaf chembalance :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

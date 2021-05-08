@@ -2037,6 +2037,11 @@
        :bind ((python-mode-map
                ("C-c C-n" . numpydoc-generate))))
    #+end_src
+** Balancing chemical equations
+   https://github.com/sergiruiztrepat/chembalance
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf chembalance :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
