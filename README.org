@@ -2054,6 +2054,12 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf flymake-flycheck :ensure t)
    #+end_src
+** Bash completion
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf bash-completion :ensure t :require t :leaf-defer nil
+       :config
+       (bash-completion-setup))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()

@@ -1618,6 +1618,10 @@ made unique when necessary."
 
 (leaf flymake-flycheck :ensure t)
 
+(leaf bash-completion :ensure t :require t :leaf-defer nil
+  :config
+  (bash-completion-setup))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
