@@ -1614,6 +1614,8 @@ made unique when necessary."
 
 (leaf eping :ensure t)
 
+(leaf filetree :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

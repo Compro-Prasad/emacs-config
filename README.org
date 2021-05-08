@@ -2046,6 +2046,10 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf eping :ensure t)
    #+end_src
+** TODO Filetree
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf filetree :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
