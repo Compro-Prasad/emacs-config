@@ -2042,6 +2042,10 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf chembalance :ensure t)
    #+end_src
+** Ping
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf eping :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
