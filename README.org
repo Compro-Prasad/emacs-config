@@ -863,7 +863,9 @@
    #+end_src
 ** Enable line numbers
    #+begin_src emacs-lisp :tangle init.el
-     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+     (if (>= emacs-major-version 26)
+         (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+       (add-hook 'prog-mode-hook 'linum-mode))
    #+end_src
 ** Which function mode
    #+begin_src emacs-lisp :tangle init.el

@@ -676,7 +676,9 @@ The return value is nil if no font was found, truthy otherwise."
         show-paren-when-point-inside-paren t
         show-paren-when-point-in-periphery t))
 
-(add-hook 'prog-mode-hook 'display-line-numbers-mode)
+(if (>= emacs-major-version 26)
+    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook 'linum-mode))
 
 (add-hook 'prog-mode-hook 'which-function-mode)
 
