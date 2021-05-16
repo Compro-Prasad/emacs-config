@@ -854,7 +854,12 @@
    #+end_src
 ** Highlight matching brackets
    #+begin_src emacs-lisp :tangle init.el
-     (show-paren-mode t)
+     (leaf paren :ensure nil
+       :config
+       (show-paren-mode t)
+       (setq show-paren-style 'mixed
+             show-paren-when-point-inside-paren t
+             show-paren-when-point-in-periphery t))
    #+end_src
 ** Enable line numbers
    #+begin_src emacs-lisp :tangle init.el

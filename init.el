@@ -669,7 +669,12 @@ The return value is nil if no font was found, truthy otherwise."
 
 (global-auto-revert-mode t)
 
-(show-paren-mode t)
+(leaf paren :ensure nil
+  :config
+  (show-paren-mode t)
+  (setq show-paren-style 'mixed
+        show-paren-when-point-inside-paren t
+        show-paren-when-point-in-periphery t))
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 
