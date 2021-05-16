@@ -711,17 +711,32 @@ The return value is nil if no font was found, truthy otherwise."
   (toggle-read-only))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
-(defun compro/rename-file-buffer ()
-  "Rename current buffer and the file it is linked to."
-  (interactive)
-  (let ((filename (basename (buffer-file-name))))
-    (if (and filename (file-exists-p filename))
-        (let* ((new-name (read-string
-                          (concat "Rename '" filename "' to: ")
-                          filename)))
-          (rename-file filename new-name 1)
-          (set-visited-file-name new-name t t))
-      (message "This buffer is not linked to a file"))))
+(defun compro/rename-file-buffer (&optional arg)
+  "Rename current buffer and the file it is linked to.
+
+If no prefix argument is provided simple string input is provided
+using `read-string' function.
+
+If a prefix argument (\\[universal-argument]) is provided full
+featured `read-file-name' is used to read the filename. This is
+useful if you want to move the file from one directory to another."
+  (interactive "p")
+  (when (null (buffer-file-name))
+    (error "Buffer `%s' is not linked to a file" (buffer-name)))
+  (let* ((filepath (buffer-file-name))
+         (filename (f-filename filepath))
+         (filedir (file-name-directory (directory-file-name filepath)))
+         (prompt (concat "Rename '" filename "' to: "))
+         (move-p (> arg 1))
+         (new-location (if move-p
+                           (read-file-name prompt filedir filepath)
+                         (read-string prompt filename)))
+         (new-filepath (if (string-suffix-p "/" new-location)
+                           (concat new-location filename)
+                         new-location)))
+    (rename-file filename new-location 1)
+    (set-visited-file-name new-filepath t t)))
+
 (global-set-key (kbd "C-c f r") 'compro/rename-file-buffer)
 
 (leaf simple
