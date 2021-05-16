@@ -1254,7 +1254,9 @@ is useful."
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
-  (leaf org-superstar :ensure t)
+  (leaf org-superstar :ensure t
+    :config
+    (setq org-superstar-leading-bullet ?\s))
   (leaf org-re-reveal :ensure t :require t :after ox)
   (add-hook 'org-mode-hook
             '(lambda ()
