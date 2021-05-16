@@ -1241,6 +1241,7 @@ is useful."
 (leaf telega :ensure t :when is-linux)
 
 (leaf org :ensure org-plus-contrib
+  :hook (org-mode-hook . org-superstar-mode)
   :preface
   (leaf ob-async :ensure t :require t :after ob)
   (leaf org-babel-eval-in-repl :ensure t
@@ -1253,8 +1254,7 @@ is useful."
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
-  (leaf org-bullets :ensure t :require t :after org
-    :config (org-bullets-mode 1))
+  (leaf org-superstar :ensure t)
   (leaf org-re-reveal :ensure t :require t :after ox)
   (add-hook 'org-mode-hook
             '(lambda ()
