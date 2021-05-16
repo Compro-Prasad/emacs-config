@@ -1608,6 +1608,12 @@ made unique when necessary."
   :config
   (bash-completion-setup))
 
+(leaf python-isort :ensure t
+  :hook (python-mode-hook . python-isort-on-save-mode)
+  :config
+  (setq python-isort-command "usort"
+        python-isort-arguments '("format" "-")))
+
 (leaf narrow-reindent :ensure t :leaf-defer nil :require t
   :hook (find-file-hook . narrow-reindent-mode))
 
