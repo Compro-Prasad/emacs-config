@@ -763,16 +763,18 @@ The return value is nil if no font was found, truthy otherwise."
 (add-hook 'comint-preoutput-filter-functions
           'compro/comint/preoutput-read-only)
 
+(require 'savehist)
 (setq history-length t
       history-delete-duplicates t
       savehist-file (concat cache-d "savehist")
       save-place-file (concat cache-d "saveplace")
-      savehist-additional-variables '(kill-ring
-                                      extended-command-history
-                                      global-mark-ring
-                                      mark-ring
-                                      regexp-search-ring
-                                      search-ring))
+      savehist-additional-variables (nconc savehist-additional-variables
+                                           '(kill-ring
+                                             extended-command-history
+                                             global-mark-ring
+                                             mark-ring
+                                             regexp-search-ring
+                                             search-ring)))
 (save-place-mode 1)
 (savehist-mode 1)
 

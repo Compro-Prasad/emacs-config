@@ -975,16 +975,18 @@
    #+end_src
 ** Save history for future Emacs sessions
    #+begin_src emacs-lisp :tangle init.el
+     (require 'savehist)
      (setq history-length t
            history-delete-duplicates t
            savehist-file (concat cache-d "savehist")
            save-place-file (concat cache-d "saveplace")
-           savehist-additional-variables '(kill-ring
-                                           extended-command-history
-                                           global-mark-ring
-                                           mark-ring
-                                           regexp-search-ring
-                                           search-ring))
+           savehist-additional-variables (nconc savehist-additional-variables
+                                                '(kill-ring
+                                                  extended-command-history
+                                                  global-mark-ring
+                                                  mark-ring
+                                                  regexp-search-ring
+                                                  search-ring)))
      (save-place-mode 1)
      (savehist-mode 1)
    #+end_src
