@@ -532,12 +532,6 @@
        :config
        (setq diary-file "~/diary"))
    #+end_src
-** Narrow reindent
-   Dedent after narrowing.
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf narrow-reindent :ensure t :leaf-defer nil :require t
-       :hook (find-file-hook . narrow-reindent-mode))
-   #+end_src
 ** Dired - File manager
    Dired is a good file manager but we can make it better by adding some more
    functionality on top using:
@@ -2023,6 +2017,13 @@
        :config
        (bash-completion-setup))
    #+end_src
+** Narrow reindent
+   Dedent after narrowing.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf narrow-reindent :ensure t :leaf-defer nil :require t
+       :hook (find-file-hook . narrow-reindent-mode))
+   #+end_src
+
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()

@@ -391,9 +391,6 @@ The return value is nil if no font was found, truthy otherwise."
   :config
   (setq diary-file "~/diary"))
 
-(leaf narrow-reindent :ensure t :leaf-defer nil :require t
-  :hook (find-file-hook . narrow-reindent-mode))
-
 (leaf dired
   :hook (dired-mode-hook . dired-hide-details-mode)
   :bind ((dired-mode-map
@@ -1586,6 +1583,9 @@ made unique when necessary."
 (leaf bash-completion :ensure t :require t :leaf-defer nil
   :config
   (bash-completion-setup))
+
+(leaf narrow-reindent :ensure t :leaf-defer nil :require t
+  :hook (find-file-hook . narrow-reindent-mode))
 
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
