@@ -193,40 +193,6 @@ The return value is nil if no font was found, truthy otherwise."
             (kill-region beg point)
           (kill-region beg end))))))
 
-(defun compro/comint/last-output-beg ()
-  (save-excursion
-    (comint-goto-process-mark)
-    (while (not (or (eq (get-char-property (point) 'field) 'boundary)
-                    (= (point) (point-min))))
-      (goto-char (previous-char-property-change (point) (point-min))))
-    (if (= (point) (point-min))
-        (point)
-      (1+ (point)))))
-
-(defun compro/comint/last-output-end ()
-  (save-excursion
-    (comint-goto-process-mark)
-    (while (not (or (eq (get-char-property (point) 'font-lock-face)
-                        'comint-highlight-prompt)
-                    (= (point) (point-min))))
-      (goto-char (previous-char-property-change (point) (point-min))))
-    (let ((overlay (car (overlays-at (point)))))
-      (when (and overlay (eq (overlay-get overlay 'font-lock-face)
-                             'comint-highlight-prompt))
-        (goto-char (overlay-start overlay))))
-    (1- (point))))
-
-(defun compro/comint/clear-last-output ()
-  (interactive)
-  (let ((start (compro/comint/last-output-beg))
-        (end (compro/comint/last-output-end)))
-    (let ((inhibit-read-only t))
-      (delete-region start end)
-      (save-excursion
-        (goto-char start)
-        (insert (propertize "output cleared"
-                            'font-lock-face 'font-lock-comment-face))))))
-
 (defun compro/comint/preoutput-read-only (text)
   (propertize text 'read-only t))
 
@@ -788,8 +754,7 @@ The return value is nil if no font was found, truthy otherwise."
 (with-eval-after-load 'comint
   (general-define-key
    :kemaps 'comint-mode-map
-   "<remap> <kill-word>" 'compro/comint/kill-word
-   "C-S-l" 'compro/comint/clear-last-output))
+   "<remap> <kill-word>" 'compro/comint/kill-word))
 
 (add-hook 'comint-preoutput-filter-functions
           'compro/comint/preoutput-read-only)
