@@ -1435,65 +1435,67 @@
      (leaf floobits :ensure t)
    #+end_src
 ** Autocompletion for Emacs
-   =selectrum= provides a simple interface for completions in Emacs.
+   =vertico= provides a simpler interface for completions in Emacs as compared to
+   =selectrum=.
 
    Previously I used =ivy= but I didn't like its sorting mechanism. Sure, there is
    =ivy-prescient= which changes the sorting mechanism but its developed by the
    same author who developed =selectrum= who also claims that =ivy= is complicated
    by design.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf selectrum :ensure t
-       :hook (after-init-hook . selectrum-mode)
+     (leaf orderless :ensure t :leaf-defer nil :require t
+       :init
+       (setq completion-styles '(orderless)
+             completion-category-defaults nil
+             completion-category-overrides '((file (styles . (partial-completion))))))
+     (leaf consult :ensure t
+       :bind (("M-y" . consult-yank-pop)
+              ("M-v" . consult-yank-pop)
+              ("C-v" . consult-yank-pop)
+              ("M-:" . consult-complex-command)
+              ("M-g l" . consult-line)
+              ("M-g o" . consult-outline)
+              ("C-x C-r" . consult-recent-file)
+              ("C-x b" . consult-buffer)))
+     (leaf marginalia :ensure t :after selectrum
        :config
-       (leaf consult :ensure t
-         :bind (("M-y" . consult-yank-pop)
-                ("M-v" . consult-yank-pop)
-                ("C-v" . consult-yank-pop)
-                ("M-:" . consult-complex-command)
-                ("M-g l" . consult-line)
-                ("M-g o" . consult-outline)
-                ("C-x C-r" . consult-recent-file)
-                ("C-x b" . consult-buffer)))
-       (leaf selectrum-prescient :ensure t :after selectrum
-         :config
-         (selectrum-prescient-mode +1)
-         (prescient-persist-mode +1))
-       (leaf marginalia :ensure t :after selectrum
-         :config
-         (setq marginalia-annotators
-               '(marginalia-annotators-heavy marginalia-annotators-light nil))
-         (marginalia-mode +1))
-       (leaf embark :ensure t
-         :bind (("C-S-a" . embark-act)
-                ("" . embark-act)
-                ("C-S-e" . embark-act-noexit)
-                ("" . embark-act-noexit)
-                ("C-S-b" . embark-become)
-                ("" . embark-become))
-         :hook ((embark-target-finders . current-candidate+category)
-                (embark-candidate-collectors . current-candidates+category)
-                ;; No unnecessary computation delay after injection.
-                (embark-setup-hook . selectrum-set-selected-candidate))
-         :config
-         (defun current-candidate+category ()
-           (when selectrum-active-p
-             (cons (selectrum--get-meta 'category)
-                   (selectrum-get-current-candidate))))
+       (setq marginalia-annotators
+             '(marginalia-annotators-heavy marginalia-annotators-light nil))
+       (marginalia-mode +1))
+     (leaf embark :ensure t
+       :bind (("C-S-a" . embark-act)
+              ("" . embark-act)
+              ("C-S-e" . embark-act-noexit)
+              ("" . embark-act-noexit)
+              ("C-S-b" . embark-become)
+              ("" . embark-become))
+       :hook ((embark-target-finders . current-candidate+category)
+              (embark-candidate-collectors . current-candidates+category)
+              ;; No unnecessary computation delay after injection.
+              (embark-setup-hook . selectrum-set-selected-candidate))
+       :config
+       (defun current-candidate+category ()
+         (when selectrum-active-p
+           (cons (selectrum--get-meta 'category)
+                 (selectrum-get-current-candidate))))
 
-         (defun current-candidates+category ()
-           (when selectrum-active-p
-             (cons (selectrum--get-meta 'category)
-                   (selectrum-get-current-candidates
-                    ;; Pass relative file names for dired.
-                    minibuffer-completing-file-name))))
-         ;; which-key support
-         (setq embark-action-indicator
+       (defun current-candidates+category ()
+         (when selectrum-active-p
+           (cons (selectrum--get-meta 'category)
+                 (selectrum-get-current-candidates
+                  ;; Pass relative file names for dired.
+                  minibuffer-completing-file-name))))
+       ;; which-key support
+       (setq embark-action-indicator
              (lambda (map)
                (which-key--show-keymap "Embark" map nil nil 'no-paging)
                #'which-key--hide-popup-ignore-command)
              embark-become-indicator embark-action-indicator))
+     (leaf vertico :ensure t
+       :hook (after-init-hook . vertico-mode)
+       :config
 
-       ;; Wiki - Minibuffer default add function
+       ;; Selectrum Wiki - Minibuffer default add function
        (autoload 'ffap-guesser "ffap")
        (setq minibuffer-default-add-function
              (defun minibuffer-default-add-function+ ()
