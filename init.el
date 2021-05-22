@@ -1124,15 +1124,16 @@ is useful."
   (setq completion-styles '(orderless)
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
-(leaf consult :ensure t
+(leaf consult :ensure t :leaf-defer nil :require t
   :bind (("M-y" . consult-yank-pop)
          ("M-v" . consult-yank-pop)
          ("C-v" . consult-yank-pop)
-         ("M-:" . consult-complex-command)
          ("M-g l" . consult-line)
          ("M-g o" . consult-outline)
          ("C-x C-r" . consult-recent-file)
-         ("C-x b" . consult-buffer)))
+         ("C-x b" . consult-buffer)
+         (:minibuffer-local-map
+          ("C-r" . consult-history))))
 (leaf marginalia :ensure t :after vertico
   :config
   (setq marginalia-annotators
