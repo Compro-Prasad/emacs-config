@@ -1133,7 +1133,7 @@ is useful."
          ("M-g o" . consult-outline)
          ("C-x C-r" . consult-recent-file)
          ("C-x b" . consult-buffer)))
-(leaf marginalia :ensure t :after selectrum
+(leaf marginalia :ensure t :after vertico
   :config
   (setq marginalia-annotators
         '(marginalia-annotators-heavy marginalia-annotators-light nil))
