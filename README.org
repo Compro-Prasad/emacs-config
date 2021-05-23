@@ -1801,6 +1801,11 @@
                                        :strike-through t))
                ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
    #+end_src
+   To export to pdf the following packages need to be installed:
+*** Arch Linux
+    #+begin_src sh
+      sudo pacman -Sy texlive-core texlive-latexextra texlive-fontsextra --noconfirm
+    #+end_src
 ** Rust
    #+begin_src emacs-lisp :tangle init.el
      (leaf rust-mode :ensure t
