@@ -2041,6 +2041,10 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf go-mode :ensure t)
    #+end_src
+   The following packages are good to have:
+   - =go get github.com/mdempsky/gocode= (For completions in Go code)
+   - =go get -u github.com/traefik/yaegi/cmd/yaegi= (Good REPL)
+   - =go get github.com/motemen/gore/cmd/gore= (REPL compiles everytime)
 ** TODO Filetree
    #+begin_src emacs-lisp :tangle init.el
      (leaf filetree :ensure t)
