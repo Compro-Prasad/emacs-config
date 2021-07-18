@@ -1604,6 +1604,8 @@ made unique when necessary."
 
 (leaf eping :ensure t)
 
+(leaf go-mode :ensure t)
+
 (leaf filetree :ensure t)
 
 (leaf flymake-flycheck :ensure t)
