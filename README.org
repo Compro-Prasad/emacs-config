@@ -1619,10 +1619,10 @@
      (leaf telega :ensure t :when is-linux)
    #+end_src
 ** Org mode
-   [[https://orgmode.org][Org mode]] is a note taking system which has other uses too. This
-   configuration is written in org mode.
+   [[https://orgmode.org][Org mode]] is a note taking system which has other uses too. This configuration
+   is written in org mode.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf org :ensure org-plus-contrib
+     (leaf org :ensure org-plus-contrib :require t :leaf-defer nil
        :hook (org-mode-hook . org-superstar-mode)
        :preface
        (leaf ob-async :ensure t :require t :after ob)

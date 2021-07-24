@@ -1259,7 +1259,7 @@ is useful."
 
 (leaf telega :ensure t :when is-linux)
 
-(leaf org :ensure org-plus-contrib
+(leaf org :ensure org-plus-contrib :require t :leaf-defer nil
   :hook (org-mode-hook . org-superstar-mode)
   :preface
   (leaf ob-async :ensure t :require t :after ob)
