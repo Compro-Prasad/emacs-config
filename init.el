@@ -295,6 +295,23 @@ The return value is nil if no font was found, truthy otherwise."
       (ignore-errors (package-reinstall pkg)))))
 (advice-add 'package-install :after 're-download)
 
+(defun switch-to-buffer-current-major-mode ()
+  "Switch to buffer like functionality based on current major mode."
+  (interactive)
+  (let* ((cur-buf (current-buffer))
+         (m-mode (with-current-buffer cur-buf major-mode))
+         (prompt (concat "Buffers[" (symbol-name m-mode) "]: "))
+         (reqd-buffers (seq-filter
+                        (lambda (buf)
+                          (with-current-buffer buf
+                            (and
+                             (eq m-mode major-mode)
+                             (not (eq buf cur-buf)))))
+                        (buffer-list)))
+         (buffer-names (seq-map 'buffer-name reqd-buffers)))
+    (completing-read prompt buffer-names)))
+(global-set-key (kbd "C-x C-b") 'switch-to-buffer-current-major-mode)
+
 (setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
 
 (leaf general :leaf-defer nil :ensure t :require t)

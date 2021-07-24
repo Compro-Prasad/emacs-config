@@ -407,6 +407,25 @@
            (ignore-errors (package-reinstall pkg)))))
      (advice-add 'package-install :after 're-download)
    #+end_src
+** Switch to buffer based on current major mode
+   #+begin_src emacs-lisp :tangle init.el
+     (defun switch-to-buffer-current-major-mode ()
+       "Switch to buffer like functionality based on current major mode."
+       (interactive)
+       (let* ((cur-buf (current-buffer))
+              (m-mode (with-current-buffer cur-buf major-mode))
+              (prompt (concat "Buffers[" (symbol-name m-mode) "]: "))
+              (reqd-buffers (seq-filter
+                             (lambda (buf)
+                               (with-current-buffer buf
+                                 (and
+                                  (eq m-mode major-mode)
+                                  (not (eq buf cur-buf)))))
+                             (buffer-list)))
+              (buffer-names (seq-map 'buffer-name reqd-buffers)))
+         (completing-read prompt buffer-names)))
+     (global-set-key (kbd "C-x C-b") 'switch-to-buffer-current-major-mode)
+   #+end_src
 * Check if its my laptop
   #+begin_src emacs-lisp :tangle init.el
   (setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
