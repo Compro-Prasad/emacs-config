@@ -915,7 +915,7 @@ useful if you want to move the file from one directory to another."
         transient-levels-file (locate-user-emacs-file
                                (concat cache-d "transient/levels.el"))))
 
-(leaf magit :ensure t
+(leaf magit :ensure t :require t :leaf-defer nil
   :bind (("C-x g" . magit-status)
          (magit-mode-map
           ([C-tab] . nil)
