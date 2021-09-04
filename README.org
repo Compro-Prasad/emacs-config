@@ -1262,16 +1262,9 @@
      buffers) and try to recreate the window configuration at the time of
      saving.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf project-x
-       :after project
+     (leaf project-x :leaf-defer nil :require t
        :config
-       (setq project-window-list-file (concat cache-d "project-window-list"))
-       (add-hook 'project-find-functions 'project-try-local 90)
-       (add-hook 'kill-emacs-hook 'project--window-state-write)
-       (add-to-list 'project-switch-commands
-                    '(?j "Restore windows" project-windows) t)
-         :bind (("C-x p w" . project-window-state-save)
-                ("C-x p j" . project-window-state-load)))
+       (project-x-mode 1))
    #+end_src
 ** Silver Searcher
    [[https://github.com/ggreer/the_silver_searcher#installing][the_silver_searcher]] is an alternative to =grep= which is faster.
