@@ -437,6 +437,10 @@
     (leaf general :leaf-defer nil :ensure t :require t)
   #+end_src
 * Native Emacs configurations
+** Speedup find-file
+   #+begin_src emacs-listp :tangle init.el
+     (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
+   #+end_src
 ** Speedup file operations in Tramp
    Create directory:
    #+begin_src emacs-lisp :tangle init.el

@@ -316,6 +316,8 @@ The return value is nil if no font was found, truthy otherwise."
 
 (leaf general :leaf-defer nil :ensure t :require t)
 
+(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
+
 (make-directory "~/.ssh/sockets" t)
 
 (defvar disable-tramp-backups '(all))
@@ -1650,3 +1652,5 @@ made unique when necessary."
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
   (add-hook 'kill-emacs-hook 'unpropertize-kill-ring))
 (add-hook 'after-init-hook 'after-init-jobs)
+
+(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
