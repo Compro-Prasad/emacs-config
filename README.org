@@ -1514,8 +1514,14 @@
              embark-become-indicator embark-action-indicator))
      (leaf vertico :ensure t
        :hook (after-init-hook . vertico-mode)
+       :preface
+       (setq read-file-name-completion-ignore-case t
+             read-buffer-completion-ignore-case t)
        :config
-
+       (require 'vertico-mouse)
+       (require 'vertico-indexed)
+       (vertico-mouse-mode 1)
+       (vertico-indexed-mode 1)
        ;; Selectrum Wiki - Minibuffer default add function
        (autoload 'ffap-guesser "ffap")
        (setq minibuffer-default-add-function
