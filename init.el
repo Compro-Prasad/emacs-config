@@ -639,7 +639,9 @@ The return value is nil if no font was found, truthy otherwise."
  ido-save-directory-list-file (concat cache-d "ido.last")
  )
 
-(fset 'yes-or-no-p 'y-or-n-p)
+(if (>= emacs-major-version 28)
+    (setq use-short-answers t)
+  (fset 'yes-or-no-p 'y-or-n-p))
 
 (when (file-readable-p custom-file)
   (load custom-file))

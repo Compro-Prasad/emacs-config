@@ -797,7 +797,9 @@
    #+end_src
 ** Convert yes/no to y/n
    #+begin_src emacs-lisp :tangle init.el
-     (fset 'yes-or-no-p 'y-or-n-p)
+     (if (>= emacs-major-version 28)
+         (setq use-short-answers t)
+       (fset 'yes-or-no-p 'y-or-n-p))
    #+end_src
 ** Load custom file
    #+begin_src emacs-lisp :tangle init.el
