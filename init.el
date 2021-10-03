@@ -1148,6 +1148,8 @@ is useful."
          ("C-x b" . consult-buffer)
          (:minibuffer-local-map
           ("C-r" . consult-history))))
+(leaf consult-dir :ensure t
+  :bind ("C-x d" . consult-dir))
 (leaf marginalia :ensure t :after vertico
   :config
   (setq marginalia-annotators
