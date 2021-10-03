@@ -847,7 +847,7 @@ useful if you want to move the file from one directory to another."
        (browse-url-interactive-arg "xwidget-webkit URL: ")))
     (xwidget-webkit-browse-url url t)))
 
-(add-hook 'package-menu-mode-hook 'hl-line-mode)
+(add-hook 'tabulated-list-mode-hook 'hl-line-mode)
 
 (leaf winner :require t :leaf-defer nil
   :config (winner-mode 1))

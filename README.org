@@ -1070,7 +1070,7 @@
    #+end_src
 ** Highlight current line in some modes
    #+begin_src emacs-lisp :tangle init.el
-     (add-hook 'package-menu-mode-hook 'hl-line-mode)
+     (add-hook 'tabulated-list-mode-hook 'hl-line-mode)
    #+end_src
 ** Winner mode for undo
    Undo and redo window configurations.
