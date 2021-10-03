@@ -1135,7 +1135,7 @@ is useful."
 
 (leaf orderless :ensure t :leaf-defer nil :require t
   :init
-  (setq completion-styles '(orderless)
+  (setq completion-styles '(substring orderless flex)
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion))))))
 (leaf consult :ensure t :leaf-defer nil :require t
@@ -1171,7 +1171,6 @@ is useful."
     (when selectrum-active-p
       (cons (selectrum--get-meta 'category)
             (selectrum-get-current-candidate))))
-
   (defun current-candidates+category ()
     (when selectrum-active-p
       (cons (selectrum--get-meta 'category)
