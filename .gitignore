@@ -13,4 +13,4 @@ quelpa/
 !.gitignore
 !.gitmodules
 !README.org
-!lisp/project-x.el
+!lisp/*
