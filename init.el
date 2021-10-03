@@ -1639,6 +1639,8 @@ made unique when necessary."
 (leaf narrow-reindent :ensure t :leaf-defer nil :require t
   :hook (find-file-hook . narrow-reindent-mode))
 
+(leaf daemons :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

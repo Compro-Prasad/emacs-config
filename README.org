@@ -2097,6 +2097,11 @@
      (leaf narrow-reindent :ensure t :leaf-defer nil :require t
        :hook (find-file-hook . narrow-reindent-mode))
    #+end_src
+** Daemons
+   Show all systemd services.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf daemons :ensure t)
+   #+end_src
 
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
