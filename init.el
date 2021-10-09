@@ -517,6 +517,9 @@ The return value is nil if no font was found, truthy otherwise."
  find-file-visit-truename t
  vc-follow-symlinks t
 
+ ;;;   Don't redisplay if input is in buffer. Makes scrolling smoother.
+ redisplay-skip-fontification-on-input t
+
  ;;;   Jump by words separated by punctuations
  global-subword-mode t
 
@@ -605,6 +608,9 @@ The return value is nil if no font was found, truthy otherwise."
 
  ;;;   Scroll one line at a time no matter what
  scroll-conservatively  10000
+
+ ;;;   Increase update time
+ idle-update-delay 1.0
 
  ;;;   Initial scratch message is nil
  initial-scratch-message ""
