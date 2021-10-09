@@ -630,7 +630,7 @@ The return value is nil if no font was found, truthy otherwise."
 
  ;;;   ERC configurations
  erc-hide-list '("PART" "QUIT" "JOIN")
- erc-server    "107.182.226.199"  ;;; IP for "irc.freenode.net"
+ erc-server    "irc.libera.chat"
  erc-nick      "compro"
 
  ;;;   Dired
