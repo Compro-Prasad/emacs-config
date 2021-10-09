@@ -1650,6 +1650,11 @@ made unique when necessary."
 
 (leaf daemons :ensure t)
 
+(leaf all-the-icons-completion :ensure t :leaf-defer nil :require t
+  :when (display-graphic-p)
+  :hook ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
+         (after-init-hook . all-the-icons-completion-mode)))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
