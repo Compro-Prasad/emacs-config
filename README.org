@@ -1524,21 +1524,7 @@
               ("" . embark-act-noexit)
               ("C-S-b" . embark-become)
               ("" . embark-become))
-       :hook ((embark-target-finders . current-candidate+category)
-              (embark-candidate-collectors . current-candidates+category)
-              ;; No unnecessary computation delay after injection.
-              (embark-setup-hook . selectrum-set-selected-candidate))
        :config
-       (defun current-candidate+category ()
-         (when selectrum-active-p
-           (cons (selectrum--get-meta 'category)
-                 (selectrum-get-current-candidate))))
-       (defun current-candidates+category ()
-         (when selectrum-active-p
-           (cons (selectrum--get-meta 'category)
-                 (selectrum-get-current-candidates
-                  ;; Pass relative file names for dired.
-                  minibuffer-completing-file-name))))
        ;; which-key support
        (setq embark-action-indicator
              (lambda (map)
