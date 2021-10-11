@@ -1227,7 +1227,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   :config (ctrlf-mode 1))
 
 (leaf yasnippet :ensure t
-  :bind ("C-/" . yas-expand)
+  :bind ("C-c e" . yas-expand)
   :preface
   (leaf yasnippet-snippets :ensure t :after yasnippet)
   :config

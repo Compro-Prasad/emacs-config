@@ -1563,7 +1563,7 @@
    Yasnippet is a snippet completion framework for Emacs.
    #+begin_src emacs-lisp :tangle init.el
      (leaf yasnippet :ensure t
-       :bind ("C-/" . yas-expand)
+       :bind ("C-c e" . yas-expand)
        :preface
        (leaf yasnippet-snippets :ensure t :after yasnippet)
        :config
