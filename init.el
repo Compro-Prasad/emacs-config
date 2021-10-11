@@ -1669,6 +1669,25 @@ made unique when necessary."
   :hook ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
          (after-init-hook . all-the-icons-completion-mode)))
 
+(leaf popper
+  :ensure t :leaf-defer nil :require t
+  :bind (("C-`"   . popper-toggle-latest)
+         ("M-`"   . popper-cycle)
+         ("C-M-`" . popper-toggle-type))
+  :init
+  (setq popper-reference-buffers
+        '("\\*Messages\\*"
+          "Output\\*$"
+          "\\*Async Shell Command\\*"
+          help-mode
+          compilation-mode
+          vterm-mode
+          eshell-mode
+          shell-mode
+          term-mode))
+  (popper-mode +1)
+  (popper-echo-mode +1))                ; For echo area hints
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
