@@ -1689,6 +1689,10 @@ made unique when necessary."
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
+(leaf flimenu :ensure t :leaf-defer nil :require t
+  :config
+  (flimenu-global-mode 1))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

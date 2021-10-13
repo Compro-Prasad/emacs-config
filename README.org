@@ -2156,6 +2156,12 @@
        (popper-mode +1)
        (popper-echo-mode +1))                ; For echo area hints
    #+end_src
+** Flatten imenu
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf flimenu :ensure t :leaf-defer nil :require t
+       :config
+       (flimenu-global-mode 1))
+   #+end_src
 
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
