@@ -1681,10 +1681,11 @@ made unique when necessary."
           "\\*Async Shell Command\\*"
           help-mode
           compilation-mode
-          vterm-mode
-          eshell-mode
-          shell-mode
-          term-mode))
+          "^\\*eshell.*\\*$" eshell-mode ;eshell as a popup
+          "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
+          "^\\*term.*\\*$"   term-mode   ;term as a popup
+          "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
+          ))
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
