@@ -1693,6 +1693,10 @@ made unique when necessary."
   :config
   (flimenu-global-mode 1))
 
+(leaf coterm :ensure t :leaf-defer nil :require t
+  :config
+  (coterm-mode 1))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
