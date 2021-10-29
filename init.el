@@ -1697,6 +1697,8 @@ made unique when necessary."
   :config
   (coterm-mode 1))
 
+(leaf git-modes :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
