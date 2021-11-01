@@ -406,6 +406,10 @@ The return value is nil if no font was found, truthy otherwise."
       (set-face-attribute 'tab-bar-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
       (set-face-attribute 'tab-bar-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
 
+(leaf project-tab-groups :ensure t :leaf-defer nil :require t
+  :config
+  (project-tab-groups-mode 1))
+
 (leaf diary-lib
   :config
   (setq diary-file "~/diary"))
