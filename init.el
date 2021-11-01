@@ -1288,25 +1288,54 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 (leaf org :ensure org-plus-contrib :require t :leaf-defer nil
   :hook (org-mode-hook . org-superstar-mode)
   :preface
+  ;; see https://list.orgmode.org/87r5718ytv.fsf@sputnik.localhost
+  (eval-after-load 'org-list
+    '(add-hook 'org-checkbox-statistics-hook (function ndk/checkbox-list-complete)))
+
+  (defun ndk/checkbox-list-complete ()
+    (save-excursion
+      (org-back-to-heading t)
+      (let ((beg (point)) end)
+        (end-of-line)
+        (setq end (point))
+        (goto-char beg)
+        (if (re-search-forward "\\[\\([0-9]*%\\)\\]\\|\\[\\([0-9]*\\)/\\([0-9]*\\)\\]" end t)
+            (if (match-end 1)
+                (if (equal (match-string 1) "100%")
+                    ;; all done - do the state change
+                    (org-todo 'done)
+                  (org-todo 'todo))
+              (if (and (> (match-end 2) (match-beginning 2))
+                       (equal (match-string 2) (match-string 3)))
+                  (org-todo 'done)
+                (org-todo 'todo)))))))
+
   (leaf ob-async :ensure t :require t :after ob)
+
   (leaf org-babel-eval-in-repl :ensure t
     :after ob
     :bind
     (org-mode-map
      ("C-c C-<return>" . ober-eval-block-in-repl)))
+
   (leaf org-plus-contrib :ensure t)
+
   (leaf ox-hugo :require t :ensure t :after ox :disabled t
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
+
   (leaf org-superstar :ensure t
     :config
     (setq org-superstar-leading-bullet ?\s))
+
   (leaf org-re-reveal :ensure t :require t :after ox)
+
   (add-hook 'org-mode-hook
             '(lambda ()
                (setq line-spacing 0.2) ;; Add more line padding for readability
                ))
+
   :bind
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
