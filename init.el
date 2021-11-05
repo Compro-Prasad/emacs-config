@@ -1470,7 +1470,7 @@ made unique when necessary."
         (goto-char (point-min))
         (while (outline-next-heading)
           (let* ((old-id (plist-get (org-element--get-node-properties) :CUSTOM_ID))
-                 (heading (replace-regexp-in-string "[^A-Za-z0-9]" "-" (strip-text-properties (org-get-heading t t t t))))
+                 (heading (replace-regexp-in-string "[^A-Za-z0-9]" "-" (substring-no-properties (org-get-heading t t t t))))
                  (new-id (concat "h-" heading))
                  (dup (assoc heading hlist))
                  (dup-count (if dup (1+ (cdr dup)) 1)))
