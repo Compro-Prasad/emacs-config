@@ -1312,6 +1312,8 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 
   (leaf ob-async :ensure t :require t :after ob)
 
+  (leaf boxy-headings :ensure t)
+
   (leaf org-babel-eval-in-repl :ensure t
     :after ob
     :bind
