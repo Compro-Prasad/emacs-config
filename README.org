@@ -1173,7 +1173,7 @@
    #+end_src
 ** Nano modeline
    #+begin_src emacs-lisp :tangle init.el
-     (leaf nano-modeline :ensure t :leaf-defer nil :require t
+     (leaf nano-modeline :ensure t :leaf-defer nil :require t :disabled t
        :config
        (nano-modeline-mode))
    #+end_src
