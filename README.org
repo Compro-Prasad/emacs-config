@@ -859,7 +859,7 @@
    issue. Uncomment if needed. Not tested.
    #+begin_src emacs-lisp :tangle (early-init)
      ;; start the initial frame maximized
-     ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+     (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
      ;; start every frame maximized
      ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
