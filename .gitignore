@@ -14,3 +14,4 @@ quelpa/
 !.gitmodules
 !README.org
 !lisp/*
+/elpa/
