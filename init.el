@@ -1121,7 +1121,7 @@ _=_       _+_
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(leaf company :ensure t
+(leaf company :ensure t :disabled t
   :hook (prog-mode-hook . company-mode)
   :config
   (leaf company-box :ensure t

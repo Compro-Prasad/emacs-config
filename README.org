@@ -1435,7 +1435,7 @@
    #+end_src
 ** Inbuffer Completion using company-mode
    #+begin_src emacs-lisp :tangle init.el
-     (leaf company :ensure t
+     (leaf company :ensure t :disabled t
        :hook (prog-mode-hook . company-mode)
        :config
        (leaf company-box :ensure t
