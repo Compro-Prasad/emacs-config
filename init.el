@@ -1706,6 +1706,8 @@ made unique when necessary."
   :config
   (setq corfu-auto t
         corfu-quit-at-boundary t))
+(leaf corfu-doc
+  :hook (corfu-mode-hook . corfu-doc-mode))
 (leaf cape :ensure t)
 
 (defun after-init-jobs ()
