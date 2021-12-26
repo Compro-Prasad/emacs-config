@@ -1225,6 +1225,14 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   (require 'vertico-indexed)
   (vertico-mouse-mode 1)
   (vertico-indexed-mode 1)
+  (advice-add #'vertico--format-candidate :around
+            (lambda (orig cand prefix suffix index _start)
+              (setq cand (funcall orig cand prefix suffix index _start))
+              (concat
+               (if (= vertico--index index)
+                   (propertize "» " 'face 'vertico-current)
+                 "  ")
+               cand)))
   ;; Selectrum Wiki - Minibuffer default add function
   (autoload 'ffap-guesser "ffap")
   (setq minibuffer-default-add-function
