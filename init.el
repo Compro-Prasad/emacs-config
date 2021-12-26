@@ -930,10 +930,6 @@ useful if you want to move the file from one directory to another."
 (leaf minions :ensure t
   :bind ([S-down-mouse-3] . minions-minor-modes-menu))
 
-(leaf nano-modeline :ensure t :leaf-defer nil :require t :disabled t
-  :config
-  (nano-modeline-mode))
-
 (leaf transient :ensure t
   :init
   (setq transient-history-file (locate-user-emacs-file
