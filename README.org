@@ -1437,26 +1437,6 @@
         ("<f9> p v g" . pipenv-graph)
         ("<f9> p v e" . pipenv-envs)))
    #+end_src
-** Language Server Protocol
-   [[https://langserver.org][LSP]] is a way to provide IDE like experience in any text editor that
-   supports the protocol. Emacs has LSP support through *lsp-mode*.
-
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf lsp-mode :ensure t
-       :hook (c-mode-common-hook . compro/init-lsp)
-       :init
-       (setq lsp-keymap-prefix "<f8>"
-             lsp-session-file (locate-user-emacs-file
-                               (ft (concat cache-d ".lsp-session-v1")))
-             lsp-prefer-capf t
-             lsp-idle-delay 0.7)
-       (defun compro/init-lsp ()
-         "Start lsp server only when it is a valid project where lsp
-     is useful."
-         (when (and (fboundp 'projectile-project-p) (projectile-project-p))
-           (lsp)))
-       )
-   #+end_src
 ** Floobits - Like screensharing
    Its a third party application that works like screen sharing but is API based
    and sends text instead of whole screen. As of now, Emacs, Neovim, IntelliJ,
@@ -1905,8 +1885,7 @@
     #+end_src
 ** Rust
    #+begin_src emacs-lisp :tangle init.el
-     (leaf rust-mode :ensure t
-       :hook (rust-mode . lsp))
+     (leaf rust-mode :ensure t)
 
      (leaf cargo :ensure t
        :hook (rust-mode . cargo-minor-mode))

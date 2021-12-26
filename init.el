@@ -1127,21 +1127,6 @@ _=_       _+_
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(leaf lsp-mode :ensure t
-  :hook (c-mode-common-hook . compro/init-lsp)
-  :init
-  (setq lsp-keymap-prefix "<f8>"
-        lsp-session-file (locate-user-emacs-file
-                          (ft (concat cache-d ".lsp-session-v1")))
-        lsp-prefer-capf t
-        lsp-idle-delay 0.7)
-  (defun compro/init-lsp ()
-    "Start lsp server only when it is a valid project where lsp
-is useful."
-    (when (and (fboundp 'projectile-project-p) (projectile-project-p))
-      (lsp)))
-  )
-
 (leaf floobits :ensure t)
 
 (leaf orderless :ensure t :leaf-defer nil :require t
@@ -1532,8 +1517,7 @@ made unique when necessary."
                                   :strike-through t))
           ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
 
-(leaf rust-mode :ensure t
-  :hook (rust-mode . lsp))
+(leaf rust-mode :ensure t)
 
 (leaf cargo :ensure t
   :hook (rust-mode . cargo-minor-mode))
