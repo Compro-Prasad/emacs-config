@@ -2141,6 +2141,7 @@
        (coterm-mode 1))
    #+end_src
 ** Mode for editing git files
+   This helps in editing files like =.gitignore= and =.gitattributes=.
    #+begin_src emacs-lisp :tangle init.el
      (leaf git-modes :ensure t)
    #+end_src
