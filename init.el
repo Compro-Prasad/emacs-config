@@ -76,12 +76,24 @@ Else it will return `init.el'. Useful for tangling source code."
 (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
 
 (require 'package)
-(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
-                    (not (gnutls-available-p))))
-       (proto (if no-ssl "http" "https")))
-  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
-  (add-to-list 'package-archives (cons "org" (concat proto "://orgmode.org/elpa/")) t)
-  (add-to-list 'package-archives (cons "tree-sitter" (concat proto "://elpa.ubolonton.org/packages/"))))
+
+(defvar sslp (and (not (memq system-type '(windows-nt ms-dos)))
+                  (gnutls-available-p))
+  "Tells if SSL is enabled or not.")
+
+(defvar protocol (if sslp "https" "http")
+  "Protocol value as string.")
+
+(defun compro/add-package-list (name url)
+  "Add NAME and URL to `package-archives'.
+
+URL should not have http:// or https:// as a prefix."
+  (setf (alist-get name package-archives nil nil 'string=) (concat protocol "://" url)))
+
+(compro/add-package-list "melpa" "melpa.org/packages/")
+(compro/add-package-list "nongnu" "elpa.nongnu.org/nongnu/")
+(compro/add-package-list "tree-sitter" "elpa.ubolonton.org/packages/")
+
 (package-initialize)
 
 (unless (package-installed-p 'leaf)
@@ -1285,7 +1297,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 
 (leaf telega :ensure t :when is-linux)
 
-(leaf org :ensure org-plus-contrib :require t :leaf-defer nil
+(leaf org :ensure org-contrib :require t :leaf-defer nil
   :hook (org-mode-hook . org-superstar-mode)
   :preface
   ;; see https://list.orgmode.org/87r5718ytv.fsf@sputnik.localhost
@@ -1319,8 +1331,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
     :bind
     (org-mode-map
      ("C-c C-<return>" . ober-eval-block-in-repl)))
-
-  (leaf org-plus-contrib :ensure t)
 
   (leaf ox-hugo :require t :ensure t :after ox :disabled t
     :config
