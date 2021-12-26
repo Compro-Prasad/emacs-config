@@ -1540,16 +1540,6 @@
      (leaf ctrlf :ensure t :leaf-defer nil :require t
        :config (ctrlf-mode 1))
    #+end_src
-** Snippet completion
-   Yasnippet is a snippet completion framework for Emacs.
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf yasnippet :ensure t
-       :bind ("C-c e" . yas-expand)
-       :preface
-       (leaf yasnippet-snippets :ensure t :after yasnippet)
-       :config
-       (yas-global-mode 1))
-   #+end_src
 ** Better M-< and M->
    #+begin_src emacs-lisp :tangle init.el
      (leaf beginend :ensure t :leaf-defer nil :require t

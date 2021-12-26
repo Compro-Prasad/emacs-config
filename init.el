@@ -1218,13 +1218,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 (leaf ctrlf :ensure t :leaf-defer nil :require t
   :config (ctrlf-mode 1))
 
-(leaf yasnippet :ensure t
-  :bind ("C-c e" . yas-expand)
-  :preface
-  (leaf yasnippet-snippets :ensure t :after yasnippet)
-  :config
-  (yas-global-mode 1))
-
 (leaf beginend :ensure t :leaf-defer nil :require t
   :config (beginend-global-mode))
 
