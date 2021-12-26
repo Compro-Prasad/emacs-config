@@ -2003,14 +2003,6 @@
        ;; per mode with `ligature-mode'.
        (global-ligature-mode t))
    #+end_src
-** Volatile Highlight
-   Brings visual feedback to some operations by highlighting portions relating
-   to the operations.
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf volatile-highlights :ensure t :require t :leaf-defer nil
-       :config
-       (volatile-highlights-mode t))
-   #+end_src
 ** Diff in buffers
    #+begin_src emacs-lisp :tangle init.el
      (leaf diff-hl :ensure t

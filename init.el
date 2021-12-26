@@ -1614,10 +1614,6 @@ made unique when necessary."
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(leaf volatile-highlights :ensure t :require t :leaf-defer nil
-  :config
-  (volatile-highlights-mode t))
-
 (leaf diff-hl :ensure t
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
