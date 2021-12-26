@@ -1443,17 +1443,6 @@
         ("<f9> p v g" . pipenv-graph)
         ("<f9> p v e" . pipenv-envs)))
    #+end_src
-** Inbuffer Completion using company-mode
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf company :ensure t :disabled t
-       :hook (prog-mode-hook . company-mode)
-       :config
-       (leaf company-box :ensure t
-         :hook (company-mode-hook . company-box-mode))
-       (setq company-show-numbers 'left
-             company-idle-delay 0.165
-             company-minimum-prefix-length 1))
-   #+end_src
 ** Language Server Protocol
    [[https://langserver.org][LSP]] is a way to provide IDE like experience in any text editor that
    supports the protocol. Emacs has LSP support through *lsp-mode*.
@@ -1621,7 +1610,6 @@
                ("D" . compro/notmuch/remove-deleted-tag)
                ("f" . compro/notmuch/tag-as-flagged)
                ("F" . compro/notmuch/remove-flagged-tag)))
-       :hook (message-mode-hook . notmuch-company-setup)
        :init
        (fset 'compro/notmuch/tag-as-deleted
              (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
@@ -1933,9 +1921,9 @@
    *web-mode* is a package that provides integration for web related
    major modes together in the same mode.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf company-web :ensure t :after mhtml-mode)
+     ;; (leaf company-web :ensure t :after mhtml-mode)
 
-     (leaf ac-html-csswatcher :ensure t :after mhtml-mode)
+     ;; (leaf ac-html-csswatcher :ensure t :after mhtml-mode)
 
      (leaf mhtml-mode
        :when (>= emacs-major-version 26)
@@ -1943,17 +1931,18 @@
        :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
        :config
        (setq mhtml-tag-relative-indent nil)
-       (require 'company)                                   ; load company mode
-       (require 'company-web-html)                          ; load company mode html backend
-       ;; and/or
-       (require 'company-web-jade)                          ; load company mode jade backend
-       (require 'company-web-slim)                          ; load company mode slim backend
-       (require 'ac-html-csswatcher)
-       (company-web-csswatcher-setup)
-       (define-key mhtml-mode-map (kbd "C-'") 'company-web-html)
-       (add-hook 'mhtml-mode-hook (lambda ()
-                                  (set (make-local-variable 'company-backends) '(company-web-html company-files))
-                                  (company-mode t))))
+       ;; (require 'company)                                   ; load company mode
+       ;; (require 'company-web-html)                          ; load company mode html backend
+       ;; ;; and/or
+       ;; (require 'company-web-jade)                          ; load company mode jade backend
+       ;; (require 'company-web-slim)                          ; load company mode slim backend
+       ;; (require 'ac-html-csswatcher)
+       ;; (company-web-csswatcher-setup)
+       ;; (define-key mhtml-mode-map (kbd "C-'") 'company-web-html)
+       ;; (add-hook 'mhtml-mode-hook (lambda ()
+       ;;                            (set (make-local-variable 'company-backends) '(company-web-html company-files))
+       ;;                            (company-mode t)))
+       )
 
      (leaf web-mode :ensure t
        :when (< emacs-major-version 26)

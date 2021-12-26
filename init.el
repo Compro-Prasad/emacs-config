@@ -1131,15 +1131,6 @@ _=_       _+_
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(leaf company :ensure t :disabled t
-  :hook (prog-mode-hook . company-mode)
-  :config
-  (leaf company-box :ensure t
-    :hook (company-mode-hook . company-box-mode))
-  (setq company-show-numbers 'left
-        company-idle-delay 0.165
-        company-minimum-prefix-length 1))
-
 (leaf lsp-mode :ensure t
   :hook (c-mode-common-hook . compro/init-lsp)
   :init
@@ -1274,7 +1265,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
           ("D" . compro/notmuch/remove-deleted-tag)
           ("f" . compro/notmuch/tag-as-flagged)
           ("F" . compro/notmuch/remove-flagged-tag)))
-  :hook (message-mode-hook . notmuch-company-setup)
   :init
   (fset 'compro/notmuch/tag-as-deleted
         (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
@@ -1552,9 +1542,9 @@ made unique when necessary."
 (leaf cargo :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
-(leaf company-web :ensure t :after mhtml-mode)
+;; (leaf company-web :ensure t :after mhtml-mode)
 
-(leaf ac-html-csswatcher :ensure t :after mhtml-mode)
+;; (leaf ac-html-csswatcher :ensure t :after mhtml-mode)
 
 (leaf mhtml-mode
   :when (>= emacs-major-version 26)
@@ -1562,17 +1552,18 @@ made unique when necessary."
   :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
   :config
   (setq mhtml-tag-relative-indent nil)
-  (require 'company)                                   ; load company mode
-  (require 'company-web-html)                          ; load company mode html backend
-  ;; and/or
-  (require 'company-web-jade)                          ; load company mode jade backend
-  (require 'company-web-slim)                          ; load company mode slim backend
-  (require 'ac-html-csswatcher)
-  (company-web-csswatcher-setup)
-  (define-key mhtml-mode-map (kbd "C-'") 'company-web-html)
-  (add-hook 'mhtml-mode-hook (lambda ()
-                             (set (make-local-variable 'company-backends) '(company-web-html company-files))
-                             (company-mode t))))
+  ;; (require 'company)                                   ; load company mode
+  ;; (require 'company-web-html)                          ; load company mode html backend
+  ;; ;; and/or
+  ;; (require 'company-web-jade)                          ; load company mode jade backend
+  ;; (require 'company-web-slim)                          ; load company mode slim backend
+  ;; (require 'ac-html-csswatcher)
+  ;; (company-web-csswatcher-setup)
+  ;; (define-key mhtml-mode-map (kbd "C-'") 'company-web-html)
+  ;; (add-hook 'mhtml-mode-hook (lambda ()
+  ;;                            (set (make-local-variable 'company-backends) '(company-web-html company-files))
+  ;;                            (company-mode t)))
+  )
 
 (leaf web-mode :ensure t
   :when (< emacs-major-version 26)
