@@ -1559,7 +1559,8 @@
      (leaf default-text-scale :ensure t
        :config (default-text-scale-mode 1))
    #+end_src
-** iedit
+** TODO iedit
+   Make a hydra.
    Interactive editing using *iedit-mode*. Similar to multiple cursors but:
    - simpler
    - smarter
