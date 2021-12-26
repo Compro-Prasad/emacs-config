@@ -1703,6 +1703,7 @@ made unique when necessary."
 (leaf git-modes :ensure t)
 
 (leaf corfu :ensure t
+  :disabled (not window-system)
   :config
   (setq corfu-auto t
         corfu-quit-at-boundary t))

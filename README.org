@@ -2159,6 +2159,7 @@
    https://github.com/minad/cape
    #+begin_src emacs-lisp :tangle init.el
      (leaf corfu :ensure t
+       :disabled (not window-system)
        :config
        (setq corfu-auto t
              corfu-quit-at-boundary t))
