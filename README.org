@@ -592,11 +592,9 @@
                ("RET"    . compro/dired-open-dir)
                ("^"      . compro/dired-up-dir)
                ("DEL"    . compro/dired-up-dir)
-               ("<left>" . compro/dired-up-dir)))
+               ("<left>" . compro/dired-up-dir)
+               ("C-x <C-j>" . dired-jump)))
        :preface
-       (leaf dired-x
-         :bind (("C-x <C-j>" . dired-jump)
-                ("C-x C-j" . dired-jump)))
        (leaf dired-collapse :ensure t)
        (leaf dired-du :ensure t :after dired)
        (leaf dired-dups :ensure t :after dired)
