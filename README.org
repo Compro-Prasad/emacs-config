@@ -1403,7 +1403,7 @@
                             markdown-pre-face))
               (set-face-attribute face nil :extend t)))))
     #+end_src
-*** Kaolin Themes
+*** Spacemacs Theme
     #+begin_src emacs-lisp :tangle init.el
       (leaf spacemacs-theme  ; Load only in GUI
         :disabled (not window-system)
