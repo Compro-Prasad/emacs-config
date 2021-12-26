@@ -2145,6 +2145,19 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf git-modes :ensure t)
    #+end_src
+** Corfu and cape
+   Better completions. Is it simple??
+
+   Configuration of keybinds need to be done.
+
+   https://github.com/minad/cape
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf corfu :ensure t
+       :config
+       (setq corfu-auto t
+             corfu-quit-at-boundary t))
+     (leaf cape :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
@@ -2156,6 +2169,7 @@
       (minions-mode 1)
       (setq debug-on-error  nil
             init-file-debug nil)
+      (corfu-global-mode 1)
       (remove-hook 'after-init-hook 'after-init-jobs)
       (compro/redownload-empty-pkgs)
 

@@ -1696,6 +1696,12 @@ made unique when necessary."
 
 (leaf git-modes :ensure t)
 
+(leaf corfu :ensure t
+  :config
+  (setq corfu-auto t
+        corfu-quit-at-boundary t))
+(leaf cape :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
@@ -1705,6 +1711,7 @@ made unique when necessary."
   (minions-mode 1)
   (setq debug-on-error  nil
         init-file-debug nil)
+  (corfu-global-mode 1)
   (remove-hook 'after-init-hook 'after-init-jobs)
   (compro/redownload-empty-pkgs)
 
