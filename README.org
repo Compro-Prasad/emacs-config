@@ -1437,13 +1437,6 @@
         ("<f9> p v g" . pipenv-graph)
         ("<f9> p v e" . pipenv-envs)))
    #+end_src
-** Floobits - Like screensharing
-   Its a third party application that works like screen sharing but is API based
-   and sends text instead of whole screen. As of now, Emacs, Neovim, IntelliJ,
-   Sublime Text and Atom are supported.
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf floobits :ensure t)
-   #+end_src
 ** Autocompletion for Emacs
    =vertico= provides a simpler interface for completions in Emacs as compared to
    =selectrum=.

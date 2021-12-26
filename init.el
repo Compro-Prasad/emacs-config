@@ -1127,8 +1127,6 @@ _=_       _+_
    ("<f9> p v g" . pipenv-graph)
    ("<f9> p v e" . pipenv-envs)))
 
-(leaf floobits :ensure t)
-
 (leaf orderless :ensure t :leaf-defer nil :require t
   :init
   (setq completion-styles '(substring orderless flex)
