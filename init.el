@@ -1716,5 +1716,3 @@ made unique when necessary."
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
   (add-hook 'kill-emacs-hook 'unpropertize-kill-ring))
 (add-hook 'after-init-hook 'after-init-jobs)
-
-(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
