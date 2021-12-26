@@ -1229,24 +1229,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 (leaf default-text-scale :ensure t
   :config (default-text-scale-mode 1))
 
-(leaf notmuch :ensure t
-  :bind ((notmuch-search-mode-map
-          ("d" . compro/notmuch/tag-as-deleted)
-          ("<delchar>" . compro/notmuch/tag-as-deleted)
-          ("u" . compro/notmuch/remove-deleted-tag)
-          ("D" . compro/notmuch/remove-deleted-tag)
-          ("f" . compro/notmuch/tag-as-flagged)
-          ("F" . compro/notmuch/remove-flagged-tag)))
-  :init
-  (fset 'compro/notmuch/tag-as-deleted
-        (kmacro-lambda-form [?+ ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
-  (fset 'compro/notmuch/remove-deleted-tag
-        (kmacro-lambda-form [?- ?d ?e ?l ?e ?t ?e ?d return] 0 "%d"))
-  (fset 'compro/notmuch/tag-as-flagged
-        (kmacro-lambda-form [?+ ?f ?l ?a ?g ?g ?e ?d return] 0 "%d"))
-  (fset 'compro/notmuch/remove-flagged-tag
-        (kmacro-lambda-form [?- ?f ?l ?a ?g ?g ?e ?d return] 0 "%d")))
-
 (leaf iedit :ensure t
   :bind ("C-c i" . iedit-mode))
 
