@@ -1576,15 +1576,6 @@
      (leaf wgrep :ensure t :after grep :require t)
    #+end_src
 
-** Place windows at specific positions using Shackle
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf shackle :ensure t :require t
-       :config
-       (setq shackle-default-rule '(:select t))
-       (setq shackle-rules
-             '((help-mode :size 0.33 :select t :align bottom)))
-       (shackle-mode 1))
-   #+end_src
 ** Clang format
    Format C++ buffers on save.
    #+begin_src emacs-lisp :tangle init.el

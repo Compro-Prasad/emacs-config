@@ -1234,13 +1234,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 
 (leaf wgrep :ensure t :after grep :require t)
 
-(leaf shackle :ensure t :require t
-  :config
-  (setq shackle-default-rule '(:select t))
-  (setq shackle-rules
-        '((help-mode :size 0.33 :select t :align bottom)))
-  (shackle-mode 1))
-
 (leaf clang-format+ :ensure t
   :init
   (setq clang-format+-context 'buffer))
