@@ -1626,9 +1626,6 @@ made unique when necessary."
 (leaf whole-line-or-region :ensure t
   :config (whole-line-or-region-global-mode +1))
 
-(leaf jupyter :ensure t)
-(leaf ein :ensure t)
-
 (leaf cascading-dir-locals :ensure t
   :config
   (cascading-dir-locals-mode 1))

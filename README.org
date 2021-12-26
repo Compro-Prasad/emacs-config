@@ -2021,16 +2021,6 @@
      (leaf whole-line-or-region :ensure t
        :config (whole-line-or-region-global-mode +1))
    #+end_src
-** Jupyter notebook
-   First install the package using =pip=:
-   #+begin_src sh
-     pip3 install jupyter
-   #+end_src
-   Then install the Emacs package =emacs-jupyter=:
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf jupyter :ensure t)
-     (leaf ein :ensure t)
-   #+end_src
 ** cascading-dir-locals.el
    Provides a global minor mode that changes how Emacs handles the lookup of
    applicable dir-locals files (=.dir-locals.el=): instead of starting at the
