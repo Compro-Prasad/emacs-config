@@ -816,6 +816,12 @@
       ;;;   Ido mode
       ido-enable-flex-matching t
       ido-save-directory-list-file (concat cache-d "ido.last")
+
+      ;;;   TAB cycle if there are only few candidates
+      completion-cycle-threshold 5
+
+      ;;;   Complete after indenting
+      tab-always-indent 'complete
       )
    #+end_src
 ** Convert yes/no to y/n

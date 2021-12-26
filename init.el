@@ -657,6 +657,12 @@ The return value is nil if no font was found, truthy otherwise."
  ;;;   Ido mode
  ido-enable-flex-matching t
  ido-save-directory-list-file (concat cache-d "ido.last")
+
+ ;;;   TAB cycle if there are only few candidates
+ completion-cycle-threshold 5
+
+ ;;;   Complete after indenting
+ tab-always-indent 'complete
  )
 
 (if (>= emacs-major-version 28)
