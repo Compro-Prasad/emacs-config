@@ -418,10 +418,6 @@ The return value is nil if no font was found, truthy otherwise."
   :config
   (project-tab-groups-mode 1))
 
-(leaf diary-lib
-  :config
-  (setq diary-file "~/diary"))
-
 (leaf dired
   :hook (dired-mode-hook . dired-hide-details-mode)
   :bind ((dired-mode-map

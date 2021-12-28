@@ -564,12 +564,6 @@
         :config
         (project-tab-groups-mode 1))
     #+end_src
-** Diary
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf diary-lib
-       :config
-       (setq diary-file "~/diary"))
-   #+end_src
 ** Dired - File manager
    Dired is a good file manager but we can make it better by adding some more
    functionality on top using:
