@@ -424,18 +424,14 @@
      (defun switch-to-buffer-current-major-mode ()
        "Switch to buffer like functionality based on current major mode."
        (interactive)
-       (let* ((cur-buf (current-buffer))
-              (m-mode (with-current-buffer cur-buf major-mode))
-              (prompt (concat "Buffers[" (symbol-name m-mode) "]: "))
-              (reqd-buffers (seq-filter
-                             (lambda (buf)
-                               (with-current-buffer buf
-                                 (and
-                                  (eq m-mode major-mode)
-                                  (not (eq buf cur-buf)))))
-                             (buffer-list)))
-              (buffer-names (seq-map 'buffer-name reqd-buffers)))
-         (completing-read prompt buffer-names)))
+       (let* ((m-mode major-mode)
+              (prompt (concat (symbol-name m-mode) " buffers: ")))
+         (read-buffer
+          prompt nil (confirm-nonexistent-file-or-buffer)
+          (lambda (buf)
+            (with-current-buffer (cdr buf)
+              (eq m-mode major-mode))))))
+
      (global-set-key (kbd "C-x C-b") 'switch-to-buffer-current-major-mode)
    #+end_src
 * Check if its my laptop
