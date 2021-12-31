@@ -1063,8 +1063,8 @@ _=_       _+_
   :commands (doom-themes-org-config)
   :config
   (doom-themes-org-config)
-  (setq doom-themes-enable-bold t
-        doom-themes-enable-italic t)
+  ;; (setq doom-themes-enable-bold t     ;; Causes font-lock to slow down
+  ;;       doom-themes-enable-italic t)
   (when (>= emacs-major-version 27)
     (with-eval-after-load 'org
       (dolist (face '(org-block
