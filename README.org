@@ -1356,7 +1356,7 @@
 ** Themes
 *** Doom Themes
     #+begin_src emacs-lisp :tangle init.el
-      (leaf doom-themes
+      (leaf doom-themes :ensure t :disabled t
         :commands (doom-themes-org-config)
         :config
         (doom-themes-org-config)
@@ -1402,14 +1402,14 @@
 *** Spacemacs Theme
     #+begin_src emacs-lisp :tangle init.el
       (leaf spacemacs-theme  ; Load only in GUI
-        :disabled (not window-system)
+        :disabled t
         :ensure t
         :config (load-theme 'spacemacs-dark t))
     #+end_src
 *** Modus operandi theme
     #+begin_src emacs-lisp :tangle init.el
       (leaf modus-themes  ; Load only in terminal
-        :disabled window-system
+        :disabled t
         :ensure t
         :require t
         :leaf-defer nil
