@@ -560,7 +560,7 @@ The return value is nil if no font was found, truthy otherwise."
  x-stretch-cursor t
 
  ;;;   Time to wait before start of stealth fontify
- jit-lock-stealth-time 1
+ jit-lock-stealth-time 120
 
  ;;;   Sentences are separated by single space after dot(.)
  sentence-end-double-space nil
