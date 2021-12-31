@@ -1415,6 +1415,13 @@
         :leaf-defer nil
         :config (load-theme 'modus-operandi t))
     #+end_src
+*** Custom faces
+    #+begin_src emacs-lisp :tangle init.el
+      (custom-set-faces
+       '(default ((t (:inherit nil :extend nil :stipple nil :background "gray9" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "ADBO" :family "Source Code Pro"))))
+       '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
+       '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4")))))
+    #+end_src
 ** Page break lines
    Convert "^L" characters to single lines for better readability.
    #+begin_src emacs-lisp :tangle init.el

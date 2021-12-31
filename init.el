@@ -1114,6 +1114,11 @@ _=_       _+_
   :leaf-defer nil
   :config (load-theme 'modus-operandi t))
 
+(custom-set-faces
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "gray9" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "ADBO" :family "Source Code Pro"))))
+ '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
+ '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4")))))
+
 (leaf page-break-lines :ensure t
   :init
   (global-page-break-lines-mode t))
