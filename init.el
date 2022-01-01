@@ -405,6 +405,14 @@ The return value is nil if no font was found, truthy otherwise."
       (message "New tab created with `%s' option" (nth 1 choice))))
 
   :config
+  (setq tab-bar-format
+        '(tab-bar-format-history
+          tab-bar-separator tab-bar-separator
+          tab-bar-format-tabs
+          tab-bar-separator tab-bar-separator tab-bar-separator
+          tab-bar-format-add-tab
+          tab-bar-separator tab-bar-separator tab-bar-separator
+          tab-bar-format-global))
   (when (fboundp 'doom-color)
     (let ((bg (doom-color 'bg))
           (fg (doom-color 'fg))
@@ -1117,7 +1125,10 @@ _=_       _+_
 (custom-set-faces
  '(default ((t (:inherit nil :extend nil :stipple nil :background "gray9" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "ADBO" :family "Source Code Pro"))))
  '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
- '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4")))))
+ '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4"))))
+ '(tab-bar ((t (:inherit variable-pitch :background "gray26" :foreground "white"))))
+ '(tab-bar-tab ((t (:inherit tab-bar :background "gray9" :box nil))))
+ '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20" :foreground "gray35")))))
 
 (leaf page-break-lines :ensure t
   :init
