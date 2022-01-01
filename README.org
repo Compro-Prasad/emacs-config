@@ -1564,13 +1564,9 @@
      (leaf beginend :ensure t :leaf-defer nil :require t
        :config (beginend-global-mode))
    #+end_src
-** TODO Move text up and down easily
-   Make a hydra.
+** Move text up and down easily
    #+begin_src emacs-lisp :tangle init.el
-     (leaf move-text :ensure t :leaf-defer nil :require t
-       :bind
-       (("C-_" . move-text-up)
-        ("C--" . move-text-down)))
+     (leaf move-text :ensure t)
    #+end_src
 ** TODO Zoom in and zoom out text
    Make a hydra.

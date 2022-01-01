@@ -1230,10 +1230,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 (leaf beginend :ensure t :leaf-defer nil :require t
   :config (beginend-global-mode))
 
-(leaf move-text :ensure t :leaf-defer nil :require t
-  :bind
-  (("C-_" . move-text-up)
-   ("C--" . move-text-down)))
+(leaf move-text :ensure t)
 
 (leaf default-text-scale :ensure t
   :config (default-text-scale-mode 1))
