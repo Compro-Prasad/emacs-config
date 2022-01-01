@@ -897,8 +897,13 @@
       "<C-S-mouse-1>"   'imenu
       "C-c r"           'imenu
       "M-/"             'hippie-expand
-      [mouse-3]         menu-bar-edit-menu
       "M-^"             'compile)
+   #+end_src
+** Context menu on right click
+   #+begin_src emacs-lisp :tangle init.el
+     (if (< emacs-major-version 28)
+         (global-set-key [mouse-3] menu-bar-edit-menu)
+       (context-menu-mode 1))
    #+end_src
 ** Auto revert files
    #+begin_src emacs-lisp :tangle init.el

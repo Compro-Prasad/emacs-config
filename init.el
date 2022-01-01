@@ -711,8 +711,11 @@ The return value is nil if no font was found, truthy otherwise."
  "<C-S-mouse-1>"   'imenu
  "C-c r"           'imenu
  "M-/"             'hippie-expand
- [mouse-3]         menu-bar-edit-menu
  "M-^"             'compile)
+
+(if (< emacs-major-version 28)
+    (global-set-key [mouse-3] menu-bar-edit-menu)
+  (context-menu-mode 1))
 
 (global-auto-revert-mode t)
 
