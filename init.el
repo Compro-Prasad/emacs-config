@@ -683,16 +683,6 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(menu-bar-mode 0)
-(menu-bar-no-scroll-bar)
-(blink-cursor-mode 0)
-(tool-bar-mode 0)
-
-(delete-selection-mode 1)
-
-(when (not window-system)
-  (xterm-mouse-mode 1))  ; Enable mouse in terminal
-
 (when (display-graphic-p)
   (general-define-key
    :keymaps 'input-decode-map

@@ -853,7 +853,7 @@
    - Delete selected text when typing
    - Enable mouse in terminal
    - Disable cursor blinking
-   #+begin_src emacs-lisp :tangle init.el
+   #+begin_src emacs-lisp :tangle (early-init)
      (menu-bar-mode 0)
      (menu-bar-no-scroll-bar)
      (blink-cursor-mode 0)

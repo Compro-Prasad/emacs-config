@@ -25,6 +25,16 @@
 
 ;;; Code:
 
+(menu-bar-mode 0)
+(menu-bar-no-scroll-bar)
+(blink-cursor-mode 0)
+(tool-bar-mode 0)
+
+(delete-selection-mode 1)
+
+(when (not window-system)
+  (xterm-mouse-mode 1))  ; Enable mouse in terminal
+
 ;; start the initial frame maximized
 (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
