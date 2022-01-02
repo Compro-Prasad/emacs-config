@@ -1568,8 +1568,7 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf move-text :ensure t)
    #+end_src
-** TODO Zoom in and zoom out text
-   Make a hydra.
+** Zoom in and zoom out text
    #+begin_src emacs-lisp :tangle init.el
      (leaf default-text-scale :ensure t
        :config (default-text-scale-mode 1))
