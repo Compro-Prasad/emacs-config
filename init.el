@@ -1711,6 +1711,18 @@ made unique when necessary."
   :hook (corfu-mode-hook . corfu-doc-mode))
 (leaf cape :ensure t)
 
+(leaf subed :ensure t
+  ;; :init
+  ;; ;; Disable automatic movement of point by default
+  ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)
+  ;; ;; Remember cursor position between sessions
+  ;; (add-hook 'subed-mode-hook 'save-place-local-mode)
+  ;; ;; Break lines automatically while typing
+  ;; (add-hook 'subed-mode-hook 'turn-on-auto-fill)
+  ;; ;; Break lines at 40 characters
+  ;; (add-hook 'subed-mode-hook (lambda () (setq-local fill-column 40)))
+  )
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
