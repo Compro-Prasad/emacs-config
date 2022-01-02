@@ -688,9 +688,6 @@ The return value is nil if no font was found, truthy otherwise."
 (blink-cursor-mode 0)
 (tool-bar-mode 0)
 
-(column-number-mode 1)
-(display-time-mode 1)
-
 (delete-selection-mode 1)
 
 (when (not window-system)

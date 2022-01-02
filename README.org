@@ -850,7 +850,6 @@
   #+end_src
 ** Change UI
    - Hide menu bar, tool bar and scroll bar
-   - Show time and column number in modeline
    - Delete selected text when typing
    - Enable mouse in terminal
    - Disable cursor blinking
@@ -859,9 +858,6 @@
      (menu-bar-no-scroll-bar)
      (blink-cursor-mode 0)
      (tool-bar-mode 0)
-
-     (column-number-mode 1)
-     (display-time-mode 1)
 
      (delete-selection-mode 1)
 
