@@ -1723,6 +1723,8 @@ made unique when necessary."
   ;; (add-hook 'subed-mode-hook (lambda () (setq-local fill-column 40)))
   )
 
+(leaf buffer-move :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

@@ -2189,6 +2189,10 @@
        ;; (add-hook 'subed-mode-hook (lambda () (setq-local fill-column 40)))
        )
    #+end_src
+** Move buffers or Swap windows
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf buffer-move :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
