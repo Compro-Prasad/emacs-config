@@ -931,7 +931,85 @@ useful if you want to move the file from one directory to another."
 
 (leaf restclient :ensure t)
 
-(leaf hydra :ensure t)
+(leaf hydra :ensure t :require t :leaf-defer nil)
+
+(global-set-key
+ (kbd "C-c u")
+ (defhydra hydra-ui (:hint nil)
+   "
+  ^Emacs^              ^Move to window^   ^Move window to^   ^Buffer^
+  ^^^^-----------------------------------------------------------------------
+  _M-+_: Inc font      _<left>_           _S-<left>_         _f_: Col indicator
+  _M-=_: Inc font      _<right>_          _S-<right>_        _l_: Line numbers
+  _M--_: Dec font      _<up>_             _S-<up>_           _+_: Inc font
+  _F_: Col indicator   _<down>_           _S-<down>_         _=_: Inc font
+  _L_: Line numbers    ^ ^                ^ ^                _-_: Dec font
+  _t_: Tabs
+  _T_: Toolbar
+  _m_: Menubar
+  _s_: Scrollbar"
+   ("+" text-scale-increase)
+   ("=" text-scale-increase)
+   ("-" text-scale-decrease)
+   ("M-+" default-text-scale-increase)
+   ("M-=" default-text-scale-increase)
+   ("M--" default-text-scale-decrease)
+   ("t" tab-bar-mode)
+   ("m" menu-bar-mode)
+   ("s" scroll-bar-mode)
+   ("f" display-fill-column-indicator-mode)
+   ("l" display-line-numbers-mode)
+   ("F" global-display-fill-column-indicator-mode)
+   ("L" global-display-line-numbers-mode)
+   ("T" tool-bar-mode)
+   ("<left>" windmove-left)
+   ("<right>" windmove-right)
+   ("<up>" windmove-up)
+   ("<down>" windmove-down)
+   ("S-<left>" buf-move-left)
+   ("S-<right>" buf-move-right)
+   ("S-<up>" buf-move-up)
+   ("S-<down>" buf-move-down)))
+
+(global-set-key
+ (kbd "C-c t")
+ (defhydra hydra-text ()
+   ("x" whole-line-or-region-kill-region "Cut")
+   ("c" whole-line-or-region-kill-ring-save "Copy")
+   ("v" yank "Paste")
+   ("C-x" whole-line-or-region-kill-region "Cut")
+   ("C-c" whole-line-or-region-kill-ring-save "Copy")
+   ("C-v" yank "Paste")
+   ("C" consult-yank-pop "Clipboard")
+   ("<up>" previous-line nil)
+   ("C-p" previous-line nil)
+   ("<down>" next-line nil)
+   ("C-n" next-line nil)
+   ("<left>" left-char nil)
+   ("<right>" right-char nil)
+   ("C-<left>" left-word nil)
+   ("M-b" backward-word nil)
+   ("C-<right>" right-word nil)
+   ("M-f" forward-word nil)
+   ("s" avy-goto-char-2 "Goto 2 chars")
+   ("S" avy-goto-symbol-1 "Goto symbol")
+   ("C-s" ctrlf-forward-default "Find Next")
+   ("C-f" ctrlf-forward-default "Find Next")
+   ("C-r" ctrlf-backward-default "Find Previous")
+   ("C-S-f" ctrlf-backward-default "Find Previous")
+   ("<home>" compro/beginning-of-line nil)
+   ("C-a" compro/beginning-of-line "Home")
+   ("<end>" move-end-of-line nil)
+   ("C-e" move-end-of-line "End")
+   ("C-SPC" set-mark-command "Mark/Unmark")
+   ("S-<down>" move-text-down "Move line down")
+   ("S-<up>" move-text-up "Move line up")
+   ("+" er/expand-region "Expand")
+   ("=" er/expand-region "Expand")
+   ("C-+" hydra-er/er/expand-region "Expand")
+   ("C-=" hydra-er/er/expand-region "Expand")
+   ("-" er/contract-region "Contract")
+   ("C--" hydra-er/er/contract-region "Contract")))
 
 (leaf hungry-delete :leaf-defer nil :ensure t :require t
   :init (global-hungry-delete-mode t))
