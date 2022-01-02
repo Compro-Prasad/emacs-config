@@ -2159,6 +2159,11 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf git-modes :ensure t)
    #+end_src
+** Make backups asynchronous on save
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf async-backup :ensure t
+       :hook (after-save-hook . async-backup))
+   #+end_src
 ** Corfu and cape
    Better completions. Is it simple??
 

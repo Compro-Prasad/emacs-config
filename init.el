@@ -1702,6 +1702,9 @@ made unique when necessary."
 
 (leaf git-modes :ensure t)
 
+(leaf async-backup :ensure t
+  :hook (after-save-hook . async-backup))
+
 (leaf corfu :ensure t
   :disabled (not window-system)
   :config
