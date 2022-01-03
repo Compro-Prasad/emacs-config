@@ -48,4 +48,4 @@
  '(region ((t (:extend t :background "gray25"))))
  '(tab-bar ((t (:inherit variable-pitch :background "gray26" :foreground "white" :height 1.2))))
  '(tab-bar-tab ((t (:inherit tab-bar :background "gray9" :box nil))))
- '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20" :foreground "gray35")))))
+ '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20")))))
