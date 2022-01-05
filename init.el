@@ -1844,6 +1844,10 @@ made unique when necessary."
 
 (leaf buffer-move :ensure t)
 
+(leaf redacted :ensure t
+  :preface
+  (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

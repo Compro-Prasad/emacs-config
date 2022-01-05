@@ -2330,6 +2330,13 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf buffer-move :ensure t)
    #+end_src
+** Redacted mode
+   To make buffers unreadable like =rot13= but can't be decrypted.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf redacted :ensure t
+       :preface
+       (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el
     (defun after-init-jobs ()
