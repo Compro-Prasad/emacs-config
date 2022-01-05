@@ -1453,13 +1453,7 @@ Will work on both org-mode and any mode that accepts plain html."
         org-hierarchical-todo-statistics nil
         org-checkbox-hierarchical-statistics nil
         org-src-preserve-indentation nil)
-  ;; Replace - with dot in lists
-  (font-lock-add-keywords
-   'org-mode
-   '(("^ *\\([-]\\) "
-      (0 (prog1
-             ()
-           (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
   (defun my-org-autodone (n-done n-not-done)
     "Switch entry to DONE when all subentries are done, to TODO otherwise."
     (let (org-log-done org-log-states)   ; turn off logging
