@@ -324,8 +324,6 @@ The return value is nil if no font was found, truthy otherwise."
 
 (leaf general :leaf-defer nil :ensure t :require t)
 
-(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
-
 (make-directory "~/.ssh/sockets" t)
 
 (defvar disable-tramp-backups '(all))
@@ -1815,11 +1813,12 @@ made unique when necessary."
 (leaf async-backup :ensure t
   :hook (after-save-hook . async-backup))
 
-(leaf corfu :ensure t
+(leaf corfu :ensure t :leaf-defer nil :require t
   :disabled (not window-system)
   :config
   (setq corfu-auto t
-        corfu-quit-at-boundary t))
+        corfu-quit-at-boundary t)
+  (corfu-global-mode 1))
 (leaf corfu-doc
   :hook (corfu-mode-hook . corfu-doc-mode))
 (leaf cape :ensure t)
@@ -1851,7 +1850,6 @@ made unique when necessary."
   (minions-mode 1)
   (setq debug-on-error  nil
         init-file-debug nil)
-  (corfu-global-mode 1)
   (remove-hook 'after-init-hook 'after-init-jobs)
   (compro/redownload-empty-pkgs)
 
@@ -1860,3 +1858,5 @@ made unique when necessary."
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
   (add-hook 'kill-emacs-hook 'unpropertize-kill-ring))
 (add-hook 'after-init-hook 'after-init-jobs)
+
+(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
