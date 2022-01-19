@@ -86,11 +86,40 @@
     ;;; Code:
   #+end_src
 
+* Connecting to client
+  To connect to client, make sure the following code returns =t=:
+  #+begin_src emacs-lisp
+    (server-running-p)
+  #+end_src
+  If the above code returns =nil= then the server hasn't been started yet. You can
+  start the server manually using =M-x server-start=. Or put the following code in
+  =init.el=. This doesn't needs to be done if you are using my init file.
+  #+NAME: start-server-block
+  #+begin_src emacs-lisp
+    (when (not (server-running-p))
+      (let ((server-file (concat cache-d "server/server")))
+        (when (file-exists-p server-file)
+          (delete-file server-file)
+          (message "Old server file deleted")))
+      (message "Starting server")
+      (server-start))
+  #+end_src
+  Then make sure =EMACS_SERVER_FILE= environment variable is set. In this case it
+  should be like the following:
+  #+begin_src sh
+    export EMACS_SERVER_FILE=~/.emacs.d/.cache/server/server
+  #+end_src
+  After doing the necessary setup you can connect using the =emacsclient= binary:
+  #+begin_src sh
+    emacsclient -c
+  #+end_src
+  If the name of server file has changed, you nee
 * Enable debugging
   #+begin_src emacs-lisp :tangle init.el
     (setq debug-on-error  t
           init-file-debug t)
   #+end_src
+
 * Aliases
   Emacs indentifier names are long. Lets shorten the common ones that we will be
   using.
@@ -2333,7 +2362,7 @@
        (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
    #+end_src
 * After init jobs
-  #+begin_src emacs-lisp :tangle init.el
+  #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()
       "Configurations run after Emacs starts."
       (set-face-attribute 'mode-line nil :box nil)
@@ -2345,7 +2374,7 @@
             init-file-debug nil)
       (remove-hook 'after-init-hook 'after-init-jobs)
       (compro/redownload-empty-pkgs)
-    
+      <<start-server-block>>
       ;; Remove text property from text in kill-ring
       (defun unpropertize-kill-ring ()
         (setq kill-ring (mapcar 'substring-no-properties kill-ring)))

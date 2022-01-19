@@ -324,6 +324,8 @@ The return value is nil if no font was found, truthy otherwise."
 
 (leaf general :leaf-defer nil :ensure t :require t)
 
+(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
+
 (make-directory "~/.ssh/sockets" t)
 
 (defvar disable-tramp-backups '(all))
@@ -1852,11 +1854,15 @@ made unique when necessary."
         init-file-debug nil)
   (remove-hook 'after-init-hook 'after-init-jobs)
   (compro/redownload-empty-pkgs)
-
+  (when (not (server-running-p))
+    (let ((server-file (concat cache-d "server/server")))
+      (when (file-exists-p server-file)
+        (delete-file server-file)
+        (message "Old server file deleted")))
+    (message "Starting server")
+    (server-start))
   ;; Remove text property from text in kill-ring
   (defun unpropertize-kill-ring ()
     (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
   (add-hook 'kill-emacs-hook 'unpropertize-kill-ring))
 (add-hook 'after-init-hook 'after-init-jobs)
-
-(remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
