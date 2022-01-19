@@ -107,7 +107,7 @@
   Then make sure =EMACS_SERVER_FILE= environment variable is set. In this case it
   should be like the following:
   #+begin_src sh
-    export EMACS_SERVER_FILE=~/.emacs.d/.cache/server/server
+    export EMACS_SERVER_FILE="$HOME/.emacs.d/.cache/server/server"
   #+end_src
   After doing the necessary setup you can connect using the =emacsclient= binary:
   #+begin_src sh
