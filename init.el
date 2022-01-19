@@ -1445,6 +1445,7 @@ Will work on both org-mode and any mode that accepts plain html."
    '((shell . t)
      (python . t)
      (emacs-lisp . t)))
+
   (setq org-return-follows-link t
         org-agenda-diary-file "~/.org/diary.org"
         org-src-window-setup 'current-window
@@ -1452,7 +1453,8 @@ Will work on both org-mode and any mode that accepts plain html."
         org-image-actual-width 400
         org-hierarchical-todo-statistics nil
         org-checkbox-hierarchical-statistics nil
-        org-src-preserve-indentation nil)
+        org-src-preserve-indentation nil
+        org-adapt-indentation t)
 
   (defun my-org-autodone (n-done n-not-done)
     "Switch entry to DONE when all subentries are done, to TODO otherwise."
