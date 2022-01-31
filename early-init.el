@@ -42,10 +42,10 @@
 ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (custom-set-faces
- '(default ((t (:inherit nil :extend nil :stipple nil :background "gray9" :foreground "white" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "ADBO" :family "Source Code Pro"))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "gray10" :foreground "#bbc0ca" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "ADBO" :family "Source Code Pro"))))
  '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
  '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4"))))
  '(region ((t (:extend t :background "gray25"))))
  '(tab-bar ((t (:inherit variable-pitch :background "gray26" :foreground "white" :height 1.2))))
- '(tab-bar-tab ((t (:inherit tab-bar :background "gray9" :box nil))))
+ '(tab-bar-tab ((t (:inherit tab-bar :background "gray10" :box nil))))
  '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20")))))
