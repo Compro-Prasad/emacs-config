@@ -1595,6 +1595,7 @@
        '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
        '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4"))))
        '(region ((t (:extend t :background "gray25"))))
+       '(shadow ((t (:foreground "SlateBlue1"))))
        '(tab-bar ((t (:inherit variable-pitch :background "gray26" :foreground "white" :height 1.2))))
        '(tab-bar-tab ((t (:inherit tab-bar :background "gray10" :box nil))))
        '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20")))))
@@ -2362,6 +2363,13 @@
      (leaf redacted :ensure t
        :preface
        (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
+   #+end_src
+** Unmodified buffer
+   Automatically restore an Emacs buffer's modified state in case its contents
+   match the original file it is visiting.
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf unmodified-buffer :ensure t
+       :hook (after-init-hook . unmodified-buffer-global-mode))
    #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes

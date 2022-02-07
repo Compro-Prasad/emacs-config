@@ -46,6 +46,7 @@
  '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
  '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4"))))
  '(region ((t (:extend t :background "gray25"))))
+ '(shadow ((t (:foreground "SlateBlue1"))))
  '(tab-bar ((t (:inherit variable-pitch :background "gray26" :foreground "white" :height 1.2))))
  '(tab-bar-tab ((t (:inherit tab-bar :background "gray10" :box nil))))
  '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20")))))
