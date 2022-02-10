@@ -2364,7 +2364,7 @@
        :preface
        (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
    #+end_src
-** Unmodified buffer
+** COMMENT Unmodified buffer
    Automatically restore an Emacs buffer's modified state in case its contents
    match the original file it is visiting.
    #+begin_src emacs-lisp :tangle init.el
