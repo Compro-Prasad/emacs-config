@@ -1186,7 +1186,7 @@ _=_       _+_
   (setq undo-tree-enable-undo-in-region t)
   (global-undo-tree-mode t))
 
-(leaf doom-themes :ensure t :disabled t
+(leaf doom-themes :ensure t
   :commands (doom-themes-org-config)
   :config
   (doom-themes-org-config)
@@ -1229,17 +1229,9 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(leaf spacemacs-theme  ; Load only in GUI
-  :disabled t
-  :ensure t
-  :config (load-theme 'spacemacs-dark t))
+(leaf spacemacs-theme :ensure t)
 
-(leaf modus-themes  ; Load only in terminal
-  :disabled t
-  :ensure t
-  :require t
-  :leaf-defer nil
-  :config (load-theme 'modus-operandi t))
+(leaf modus-themes :ensure t)
 
 (leaf page-break-lines :ensure t
   :init
