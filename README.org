@@ -13,20 +13,28 @@
    yay -S emacs-git
    #+end_src
 ** Ubuntu and its derivatives
-   Master branch of Emacs ([[https://launchpad.net/~ubuntu-elisp/+archive/ubuntu/ppa][Ref]]) updated daily:
+   The following set of commands will install the =master= branch of Emacs ([[https://launchpad.net/~ubuntu-elisp/+archive/ubuntu/ppa][Reference]])
+   which gets updated daily:
    #+begin_src sh
    sudo add-apt-repository ppa:ubuntu-elisp/ppa
    sudo apt update
    sudo apt install -y emacs-snapshot
    #+end_src
-   Stable release of Emacs:
+   If you still insist on using a stable release of Emacs available on your
+   distro then you can use the following command:
    #+begin_src sh
    sudo apt update && sudo apt install -y emacs
    #+end_src
-   Emacs without GUI (useful for SSH logins):
+   If you don't plan on having a GUI version of Emacs then using the =emacs-nox=
+   package should be enough as it doesn't install the GUI libraries. You can use
+   the following command:
    #+begin_src sh
    sudo apt update && sudo apt install -y emacs-nox
    #+end_src
+* The tutorial
+  After Emacs has been installed I would recommend you to go through the
+  tutorial accessible from the startup screen of Emacs. This will help you to
+  understand the basic terminologies used in Emacs.
 * Copyright notice
   TL; DR -> License is GNU GPL v3
   #+begin_src emacs-lisp :tangle (early-init)
@@ -113,7 +121,6 @@
   #+begin_src sh
     emacsclient -c
   #+end_src
-  If the name of server file has changed, you nee
 * Enable debugging
   #+begin_src emacs-lisp :tangle init.el
     (setq debug-on-error  t
