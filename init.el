@@ -1652,6 +1652,11 @@ made unique when necessary."
 
 (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
 (leaf python
+  :bind ((python-mode-map
+          ("TAB" . python-indent-shift-right)
+          ("S-TAB" . python-indent-shift-left)
+          ("<backtab>" . python-indent-shift-left)
+          ("S-<iso-lefttab>" . python-indent-shift-left)))
   :config
   (if (locate-file "ipython" exec-path)
       (setq python-shell-interpreter "ipython"
