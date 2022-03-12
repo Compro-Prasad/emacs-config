@@ -1004,6 +1004,8 @@ useful if you want to move the file from one directory to another."
    "Game mode"
    ("w" previous-line)
    ("s" next-line)
+   ("W" previous-line)
+   ("S" next-line)
    ("a" left-char)
    ("d" right-char)
    ("A" left-word)
