@@ -2370,6 +2370,16 @@
      (leaf unmodified-buffer :ensure t
        :hook (after-init-hook . unmodified-buffer-global-mode))
    #+end_src
+** Cycle at point
+   https://gitlab.com/ideasman42/emacs-cycle-at-point
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf cycle-at-point :ensure t
+       :bind (("M-p" . cycle-at-point)
+              ("M-n" . (lambda ()
+                         (interactive)
+                         (let ((current-prefix-arg '(-1)))
+                           (call-interactively 'cycle-at-point))))))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()

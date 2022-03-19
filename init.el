@@ -1840,6 +1840,13 @@ made unique when necessary."
   :preface
   (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
 
+(leaf cycle-at-point :ensure t
+  :bind (("M-p" . cycle-at-point)
+         ("M-n" . (lambda ()
+                    (interactive)
+                    (let ((current-prefix-arg '(-1)))
+                      (call-interactively 'cycle-at-point))))))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
