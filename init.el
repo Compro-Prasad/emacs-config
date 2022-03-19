@@ -1314,12 +1314,24 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
           #'which-key--hide-popup-ignore-command)
         embark-become-indicator embark-action-indicator))
 (leaf vertico :ensure t
-  :hook (after-init-hook . vertico-mode)
+
+  ;; More convenient directory navigation commands
+  :bind ((vertico-map
+          ("RET" . vertico-directory-enter)
+          ("DEL" . vertico-directory-delete-char)
+          ("M-DEL" . vertico-directory-delete-word)))
+
   :preface
   (setq read-file-name-completion-ignore-case t
         read-buffer-completion-ignore-case t)
+
+  ;; Tidy shadowed file names
+  :hook ((rfn-eshadow-update-overlay . vertico-directory-tidy)
+         (after-init-hook . vertico-mode))
+
   :init
   (setq vertico-count 18)
+
   :config
   (require 'vertico-mouse)
   (require 'vertico-indexed)
@@ -1344,6 +1356,12 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                          (thing-at-point 'list)
                          (ffap-guesser)
                          (thing-at-point-url-at-point))))))))
+
+(leaf vertico-directory :after vertico :ensure nil
+
+
+
+  )
 
 (leaf ctrlf :ensure t :leaf-defer nil :require t
   :config (ctrlf-mode 1))
