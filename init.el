@@ -1305,6 +1305,8 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   :preface
   (setq read-file-name-completion-ignore-case t
         read-buffer-completion-ignore-case t)
+  :init
+  (setq vertico-count 18)
   :config
   (require 'vertico-mouse)
   (require 'vertico-indexed)
