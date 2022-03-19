@@ -872,9 +872,10 @@ useful if you want to move the file from one directory to another."
 ;; Show whitespaces only in buffers pointing to specific files
 (add-hook 'find-file-hook 'compro/set-show-whitespace-mode)
 ;; Remove the trailing whitespaces on save
-(add-hook 'before-save-hook '(lambda ()
-                               (when (not (eq major-mode 'org-mode))
-                                 (delete-trailing-whitespace))))
+(add-hook 'before-save-hook
+          #'(lambda ()
+              (when (not (eq major-mode 'org-mode))
+                (delete-trailing-whitespace))))
 
 (defun my/minibuffer-setup-hook ()
   (setq gc-cons-threshold most-positive-fixnum))
@@ -1413,9 +1414,8 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   (leaf org-re-reveal :ensure t :require t :after ox)
 
   (add-hook 'org-mode-hook
-            '(lambda ()
-               (setq line-spacing 0.2) ;; Add more line padding for readability
-               ))
+            #'(lambda () (setq line-spacing 0.2) ;; Add more line padding for readability
+                ))
 
   :bind
   (("C-c l" . org-store-link)

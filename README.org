@@ -1146,9 +1146,10 @@
      ;; Show whitespaces only in buffers pointing to specific files
      (add-hook 'find-file-hook 'compro/set-show-whitespace-mode)
      ;; Remove the trailing whitespaces on save
-     (add-hook 'before-save-hook '(lambda ()
-                                    (when (not (eq major-mode 'org-mode))
-                                      (delete-trailing-whitespace))))
+     (add-hook 'before-save-hook
+               #'(lambda ()
+                   (when (not (eq major-mode 'org-mode))
+                     (delete-trailing-whitespace))))
    #+end_src
 ** Minibuffer performance optimization
    #+begin_src emacs-lisp :tangle init.el
@@ -1822,9 +1823,8 @@
        (leaf org-re-reveal :ensure t :require t :after ox)
 
        (add-hook 'org-mode-hook
-                 '(lambda ()
-                    (setq line-spacing 0.2) ;; Add more line padding for readability
-                    ))
+                 #'(lambda () (setq line-spacing 0.2) ;; Add more line padding for readability
+                     ))
 
        :bind
        (("C-c l" . org-store-link)
