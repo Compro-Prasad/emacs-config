@@ -601,13 +601,6 @@
            (set-face-attribute 'tab-bar-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
            (set-face-attribute 'tab-bar-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
    #+end_src
-
-*** Project based tab groups
-    #+begin_src emacs-lisp :tangle init.el
-      (leaf project-tab-groups :ensure t :leaf-defer nil :require t
-        :config
-        (project-tab-groups-mode 1))
-    #+end_src
 ** Dired - File manager
    Dired is a good file manager but we can make it better by adding some more
    functionality on top using:
