@@ -1849,6 +1849,10 @@ made unique when necessary."
                     (let ((current-prefix-arg '(-1)))
                       (call-interactively 'cycle-at-point))))))
 
+(leaf echo-bar :ensure t :leaf-defer nil
+  :config
+  (echo-bar-mode 1))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

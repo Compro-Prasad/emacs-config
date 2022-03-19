@@ -2382,6 +2382,12 @@
                          (let ((current-prefix-arg '(-1)))
                            (call-interactively 'cycle-at-point))))))
    #+end_src
+** Status bar in echo area
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf echo-bar :ensure t :leaf-defer nil
+       :config
+       (echo-bar-mode 1))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()
