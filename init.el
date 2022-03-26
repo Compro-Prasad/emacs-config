@@ -1319,7 +1319,12 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   :bind ((vertico-map
           ("RET" . vertico-directory-enter)
           ("DEL" . vertico-directory-delete-char)
-          ("M-DEL" . vertico-directory-delete-word)))
+          ("M-DEL" . vertico-directory-delete-word)
+          ("M-V" . vertico-multiform-vertical)
+          ("M-G" . vertico-multiform-grid)
+          ("M-F" . vertico-multiform-flat)
+          ("M-R" . vertico-multiform-reverse)
+          ("M-U" . vertico-multiform-unobtrusive)))
 
   :preface
   (setq read-file-name-completion-ignore-case t
@@ -1335,6 +1340,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   :config
   (require 'vertico-mouse)
   (require 'vertico-indexed)
+  (vertico-multiform-mode 1)
   (vertico-mouse-mode 1)
   (vertico-indexed-mode 1)
   (advice-add #'vertico--format-candidate :around
@@ -1357,11 +1363,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                          (ffap-guesser)
                          (thing-at-point-url-at-point))))))))
 
-(leaf vertico-directory :after vertico :ensure nil
-
-
-
-  )
+(leaf vertico-directory :after vertico :ensure nil)
 
 (leaf ctrlf :ensure t :leaf-defer nil :require t
   :config (ctrlf-mode 1))

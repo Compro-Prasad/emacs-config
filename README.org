@@ -1698,7 +1698,12 @@
        :bind ((vertico-map
                ("RET" . vertico-directory-enter)
                ("DEL" . vertico-directory-delete-char)
-               ("M-DEL" . vertico-directory-delete-word)))
+               ("M-DEL" . vertico-directory-delete-word)
+               ("M-V" . vertico-multiform-vertical)
+               ("M-G" . vertico-multiform-grid)
+               ("M-F" . vertico-multiform-flat)
+               ("M-R" . vertico-multiform-reverse)
+               ("M-U" . vertico-multiform-unobtrusive)))
 
        :preface
        (setq read-file-name-completion-ignore-case t
@@ -1714,6 +1719,7 @@
        :config
        (require 'vertico-mouse)
        (require 'vertico-indexed)
+       (vertico-multiform-mode 1)
        (vertico-mouse-mode 1)
        (vertico-indexed-mode 1)
        (advice-add #'vertico--format-candidate :around
@@ -1736,11 +1742,7 @@
                               (ffap-guesser)
                               (thing-at-point-url-at-point))))))))
 
-     (leaf vertico-directory :after vertico :ensure nil
-  
-  
-  
-       )
+     (leaf vertico-directory :after vertico :ensure nil)
    #+end_src
 ** Isearch alternative
    =ctrlf= is just a simple improvement over isearch.
