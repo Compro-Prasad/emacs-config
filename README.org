@@ -455,7 +455,7 @@
    #+end_src
 * Check if its my laptop
   #+begin_src emacs-lisp :tangle init.el
-  (setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
+  (setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
   #+end_src
 * Install =general=
   *General* is used for setting keybindings in a simpler way as compared to

@@ -320,7 +320,7 @@ The return value is nil if no font was found, truthy otherwise."
 
 (global-set-key (kbd "C-x C-b") 'switch-to-buffer-current-major-mode)
 
-(setq compro/laptop-p (equal system-name "c-p-dell-manjaro"))
+(setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
 
 (leaf general :leaf-defer nil :ensure t :require t)
 
