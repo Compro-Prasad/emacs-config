@@ -489,6 +489,10 @@ The return value is nil if no font was found, truthy otherwise."
     "Sort dired listings with directories first before adding marks."
     (mydired-sort)))
 
+(when compro/laptop-p
+  (setq user-mail-address "comproprasad@gmail.com"
+        user-full-name "Compro Prasad"))
+
 (setq-default
  ;;;   Use spaces and not tabs for indentation
  indent-tabs-mode nil
@@ -506,13 +510,6 @@ The return value is nil if no font was found, truthy otherwise."
 (setq
  ;;;   Initial major mode for *scratch* buffer
  initial-major-mode 'fundamental-mode
-
- ;;;   Node.js path from nvm
- exec-path (append exec-path '("/home/compro/.nvm/versions/node/v12.13.0/bin/"))
-
- ;;;   User details
- user-mail-address "comproprasad@gmail.com"
- user-full-name "Compro Prasad"
 
  ;;;   Only use ~/.authinfo.gpg
  auth-sources (list (ft "~/.authinfo.gpg"))

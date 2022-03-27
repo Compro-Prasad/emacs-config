@@ -658,6 +658,12 @@
          "Sort dired listings with directories first before adding marks."
          (mydired-sort)))
    #+end_src
+** Set my details
+   #+begin_src emacs-lisp :tangle init.el
+     (when compro/laptop-p
+       (setq user-mail-address "comproprasad@gmail.com"
+             user-full-name "Compro Prasad"))
+   #+end_src
 ** setq-default
    #+begin_src emacs-lisp :tangle init.el
      (setq-default
@@ -679,13 +685,6 @@
      (setq
       ;;;   Initial major mode for *scratch* buffer
       initial-major-mode 'fundamental-mode
-
-      ;;;   Node.js path from nvm
-      exec-path (append exec-path '("/home/compro/.nvm/versions/node/v12.13.0/bin/"))
-
-      ;;;   User details
-      user-mail-address "comproprasad@gmail.com"
-      user-full-name "Compro Prasad"
 
       ;;;   Only use ~/.authinfo.gpg
       auth-sources (list (ft "~/.authinfo.gpg"))
