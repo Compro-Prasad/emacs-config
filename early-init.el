@@ -3,7 +3,7 @@
 ;; Copyright (C) 2018-2020  Abhishek(Compro) Prasad
 
 ;; Author: Abhishek(Compro) Prasad
-;; Keywords: emacs, configuration, elisp, early init
+;; Keywords: emacs, configuration, elisp
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

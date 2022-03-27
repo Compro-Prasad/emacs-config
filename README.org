@@ -37,37 +37,8 @@
   understand the basic terminologies used in Emacs.
 * Copyright notice
   TL; DR -> License is GNU GPL v3
-  #+begin_src emacs-lisp :tangle (early-init)
-    ;;; early-init.el ---                                -*- lexical-binding: t; -*-
-
-    ;; Copyright (C) 2018-2020  Abhishek(Compro) Prasad
-
-    ;; Author: Abhishek(Compro) Prasad
-    ;; Keywords: emacs, configuration, elisp, early init
-
-    ;; This program is free software; you can redistribute it and/or modify
-    ;; it under the terms of the GNU General Public License as published by
-    ;; the Free Software Foundation, either version 3 of the License, or
-    ;; (at your option) any later version.
-
-    ;; This program is distributed in the hope that it will be useful,
-    ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-    ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    ;; GNU General Public License for more details.
-
-    ;; You should have received a copy of the GNU General Public License
-    ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-    ;;; Commentary:
-
-    ;; Comment
-
-    
-    ;;; Code:
-  #+end_src
-  #+begin_src emacs-lisp :tangle init.el
-    ;;; init.el ---                                      -*- lexical-binding: t; -*-
-
+  #+NAME: GPL-v3
+  #+begin_src emacs-lisp
     ;; Copyright (C) 2018-2020  Abhishek(Compro) Prasad
 
     ;; Author: Abhishek(Compro) Prasad
@@ -92,6 +63,18 @@
 
     
     ;;; Code:
+  #+end_src
+
+  #+begin_src emacs-lisp :noweb yes :tangle (early-init)
+    ;;; early-init.el ---                                -*- lexical-binding: t; -*-
+
+    <<GPL-v3>>
+  #+end_src
+
+  #+begin_src emacs-lisp :noweb yes :tangle init.el
+    ;;; init.el ---                                      -*- lexical-binding: t; -*-
+
+    <<GPL-v3>>
   #+end_src
 
 * Connecting to client
