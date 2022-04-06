@@ -508,6 +508,9 @@ The return value is nil if no font was found, truthy otherwise."
  )
 
 (setq
+ ;;;   Load newer files
+ load-prefer-newer t
+
  ;;;   Initial major mode for *scratch* buffer
  initial-major-mode 'fundamental-mode
 
