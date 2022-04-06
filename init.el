@@ -1836,6 +1836,13 @@ made unique when necessary."
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
+(leaf shackle :ensure t :leaf-defer nil :require t
+  :config
+  (setq shackle-rules
+        '((compilation-mode :noselect t :align right :size 0.5))
+        shackle-default-rule
+        '(:select t)))
+
 (leaf flimenu :ensure t :leaf-defer nil :require t
   :config
   (flimenu-global-mode 1))
