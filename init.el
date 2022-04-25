@@ -1170,20 +1170,9 @@ _=_       _+_
     :config
     (phi-search-mc/setup-keys)))
 
-(leaf undo-tree
-  :ensure t
-  :leaf-defer nil
-  :require t
-  :bind
-  ((:undo-tree-map
-    ("C-_" . nil)
-    ("C-/" . nil)
-    ("C-?" . nil))
-   (:global-map
-    ("C-_" . nil)))
-  :config
-  (setq undo-tree-enable-undo-in-region t)
-  (global-undo-tree-mode t))
+(leaf vundo :ensure t
+  :defer-config
+  (setq vundo-glyph-alist vundo-unicode-symbols))
 
 (leaf doom-themes :ensure t
   :commands (doom-themes-org-config)

@@ -1494,25 +1494,12 @@
          :config
          (phi-search-mc/setup-keys)))
    #+end_src
-** Undo tree
-   Emacs has great undo system but it doesn't provide a good UI to access it
-   effectively. *undo-tree* helps visualize the undos in a buffer and easily
-   revert to different states.
+** Vundo
+   Replacement for undo-tree.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf undo-tree
-       :ensure t
-       :leaf-defer nil
-       :require t
-       :bind
-       ((:undo-tree-map
-         ("C-_" . nil)
-         ("C-/" . nil)
-         ("C-?" . nil))
-        (:global-map
-         ("C-_" . nil)))
-       :config
-       (setq undo-tree-enable-undo-in-region t)
-       (global-undo-tree-mode t))
+     (leaf vundo :ensure t
+       :defer-config
+       (setq vundo-glyph-alist vundo-unicode-symbols))
    #+end_src
 ** Themes
 *** Doom Themes
