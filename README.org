@@ -2407,6 +2407,14 @@
        :config
        (echo-bar-mode 1))
    #+end_src
+** Comint mime
+   Display images in comint and related buffers:
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf comint-mime :ensure t :when (display-graphic-p)
+       :hook
+       ((shell-mode-hook . comint-mime-setup)
+        (inferior-python-mode-hook . comint-mime-setup)))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()

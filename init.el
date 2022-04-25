@@ -1888,6 +1888,11 @@ made unique when necessary."
   :config
   (echo-bar-mode 1))
 
+(leaf comint-mime :ensure t :when (display-graphic-p)
+  :hook
+  ((shell-mode-hook . comint-mime-setup)
+   (inferior-python-mode-hook . comint-mime-setup)))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
