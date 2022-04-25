@@ -1674,7 +1674,7 @@ made unique when necessary."
   :config
   (if (locate-file "ipython" exec-path)
       (setq python-shell-interpreter "ipython"
-            python-shell-interpreter-args "-i --simple-prompt")
+            python-shell-interpreter-args "-i --simple-prompt --classic")
     (if (locate-file "python3" exec-path)
         (setq python-shell-interpreter "python3")))
   (setq python-indent-guess-indent-offset-verbose nil))
