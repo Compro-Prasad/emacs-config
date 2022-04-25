@@ -1661,7 +1661,8 @@ made unique when necessary."
   :bind ((treemacs-mode-map
           ([mouse-1] . treemacs-single-click-expand-action)))
   :config
-  (treemacs-resize-icons 17))
+  (treemacs-resize-icons 17)
+  (setq treemacs-read-string-input 'from-minibuffer))
 
 (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
 (leaf python

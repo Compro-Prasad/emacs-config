@@ -2077,7 +2077,8 @@
        :bind ((treemacs-mode-map
                ([mouse-1] . treemacs-single-click-expand-action)))
        :config
-       (treemacs-resize-icons 17))
+       (treemacs-resize-icons 17)
+       (setq treemacs-read-string-input 'from-minibuffer))
    #+end_src
 ** Python
    #+begin_src emacs-lisp :tangle init.el
