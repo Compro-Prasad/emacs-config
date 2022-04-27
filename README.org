@@ -2413,6 +2413,10 @@
        ((shell-mode-hook . comint-mime-setup)
         (inferior-python-mode-hook . comint-mime-setup)))
    #+end_src
+** Prettier for code formatting
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf prettier :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()
