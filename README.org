@@ -192,6 +192,7 @@
     URL should not have http:// or https:// as a prefix."
       (setf (alist-get name package-archives nil nil 'string=) (concat protocol "://" url)))
 
+    (compro/add-package-list "elpa-devel" "elpa.gnu.org/devel/")
     (compro/add-package-list "melpa" "melpa.org/packages/")
     (compro/add-package-list "nongnu" "elpa.nongnu.org/nongnu/")
     (compro/add-package-list "tree-sitter" "elpa.ubolonton.org/packages/")
