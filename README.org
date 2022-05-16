@@ -2414,6 +2414,20 @@
        ((shell-mode-hook . comint-mime-setup)
         (inferior-python-mode-hook . comint-mime-setup)))
    #+end_src
+** TODO Flymake collection
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf flymake-collection :ensure t
+       :hook (after-init . flymake-collection-hook-setup)
+       :config
+       (push
+        '(python-mode
+          flymake-collection-mypy                      ; Always added to diagnostic functions.
+          (flymake-collection-pycodestyle :disabled t) ; Never added.
+          (flymake-collection-pylint                   ; Added when predicate is true.
+           :predicate (lambda ()
+                        (executable-find "pylint"))))
+        flymake-collection-config))
+   #+end_src
 ** Prettier for code formatting
    #+begin_src emacs-lisp :tangle init.el
      (leaf prettier :ensure t)

@@ -1882,6 +1882,18 @@ made unique when necessary."
   ((shell-mode-hook . comint-mime-setup)
    (inferior-python-mode-hook . comint-mime-setup)))
 
+(leaf flymake-collection :ensure t
+  :hook (after-init . flymake-collection-hook-setup)
+  :config
+  (push
+   '(python-mode
+     flymake-collection-mypy                      ; Always added to diagnostic functions.
+     (flymake-collection-pycodestyle :disabled t) ; Never added.
+     (flymake-collection-pylint                   ; Added when predicate is true.
+      :predicate (lambda ()
+                   (executable-find "pylint"))))
+   flymake-collection-config))
+
 (leaf prettier :ensure t)
 
 (leaf eglot :ensure t)
