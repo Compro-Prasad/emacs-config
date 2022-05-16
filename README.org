@@ -2341,14 +2341,14 @@
      (leaf async-backup :ensure t
        :hook (after-save-hook . async-backup))
    #+end_src
-** Corfu and cape
+** COMMENT Corfu and cape
    Better completions. Is it simple??
 
    Configuration of keybinds need to be done.
 
    https://github.com/minad/cape
    #+begin_src emacs-lisp :tangle init.el
-     (leaf corfu :ensure t :leaf-defer nil :require t
+     (leaf corfu :ensure t :leaf-defer nil :require t :disabled t
        :disabled (not window-system)
        :config
        (setq corfu-auto t

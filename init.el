@@ -1848,16 +1848,6 @@ made unique when necessary."
 (leaf async-backup :ensure t
   :hook (after-save-hook . async-backup))
 
-(leaf corfu :ensure t :leaf-defer nil :require t
-  :disabled (not window-system)
-  :config
-  (setq corfu-auto t
-        corfu-quit-at-boundary t)
-  (corfu-global-mode 1))
-(leaf corfu-doc
-  :hook (corfu-mode-hook . corfu-doc-mode))
-(leaf cape :ensure t)
-
 (leaf subed :ensure t
   ;; :init
   ;; ;; Disable automatic movement of point by default
