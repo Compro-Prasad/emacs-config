@@ -1884,6 +1884,8 @@ made unique when necessary."
 
 (leaf prettier :ensure t)
 
+(leaf eglot :ensure t)
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

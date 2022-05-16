@@ -2418,6 +2418,10 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf prettier :ensure t)
    #+end_src
+** Language Sever Protocol interface using Eglot
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf eglot :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()
