@@ -889,15 +889,15 @@
      ;; start every frame maximized
      ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
    #+end_src
-** Disable overlapping keybindings
+** TODO Disable overlapping keybindings
+   Find fix when running in daemon mode
    #+begin_src emacs-lisp :tangle init.el
-     (when (display-graphic-p)
-       (general-define-key
-        :keymaps 'input-decode-map
-        [?\C-m] [C-m]
-        [?\C-i] [C-i]
-        ;; [?\C-j] [C-j]
-        [?\C-\[] (kbd "<C-[>")))
+     (general-define-key
+      :keymaps 'input-decode-map
+      [?\C-m] [C-m]
+      [?\C-i] [C-i]
+      ;; [?\C-j] [C-j]
+      [?\C-\[] (kbd "<C-[>"))
    #+end_src
 ** Some common keybindings
    #+begin_src emacs-lisp :tangle init.el

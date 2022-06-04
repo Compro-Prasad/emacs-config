@@ -680,13 +680,12 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(when (display-graphic-p)
-  (general-define-key
-   :keymaps 'input-decode-map
-   [?\C-m] [C-m]
-   [?\C-i] [C-i]
-   ;; [?\C-j] [C-j]
-   [?\C-\[] (kbd "<C-[>")))
+(general-define-key
+ :keymaps 'input-decode-map
+ [?\C-m] [C-m]
+ [?\C-i] [C-i]
+ ;; [?\C-j] [C-j]
+ [?\C-\[] (kbd "<C-[>"))
 
 (general-define-key
  "C-z"             'undo
