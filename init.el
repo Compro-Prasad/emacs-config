@@ -1893,6 +1893,29 @@ made unique when necessary."
 
 (leaf eglot :ensure t)
 
+(leaf ruby-electric :ensure t
+  :hook (ruby-mode-hook . ruby-electric-mode))
+
+(leaf rbenv :ensure t :leaf-defer nil :require t
+  :config
+  (global-rbenv-mode)
+  (rbenv-use-corresponding))
+
+(leaf inf-ruby :ensure t)
+
+(leaf ruby-test-mode :ensure t
+  :hook (ruby-mode-hook . ruby-test-mode))
+
+(leaf rinari :ensure t :leaf-defer nil :require t
+  :config
+  (global-rinari-mode))
+
+(leaf yari :ensure t
+  :hook (ruby-mode-hook . ri-bind-key)
+  :preface
+  (defun ri-bind-key ()
+    (local-set-key [f1] 'yari)))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

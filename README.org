@@ -2436,6 +2436,31 @@
    #+begin_src emacs-lisp :tangle init.el
      (leaf eglot :ensure t)
    #+end_src
+** Ruby
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf ruby-electric :ensure t
+       :hook (ruby-mode-hook . ruby-electric-mode))
+
+     (leaf rbenv :ensure t :leaf-defer nil :require t
+       :config
+       (global-rbenv-mode)
+       (rbenv-use-corresponding))
+
+     (leaf inf-ruby :ensure t)
+
+     (leaf ruby-test-mode :ensure t
+       :hook (ruby-mode-hook . ruby-test-mode))
+
+     (leaf rinari :ensure t :leaf-defer nil :require t
+       :config
+       (global-rinari-mode))
+
+     (leaf yari :ensure t
+       :hook (ruby-mode-hook . ri-bind-key)
+       :preface
+       (defun ri-bind-key ()
+         (local-set-key [f1] 'yari)))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()
