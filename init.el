@@ -1872,10 +1872,6 @@ made unique when necessary."
                     (let ((current-prefix-arg '(-1)))
                       (call-interactively 'cycle-at-point))))))
 
-(leaf echo-bar :ensure t :leaf-defer nil
-  :config
-  (echo-bar-mode 1))
-
 (leaf comint-mime :ensure t :when (display-graphic-p)
   :hook
   ((shell-mode-hook . comint-mime-setup)
