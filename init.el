@@ -1901,7 +1901,9 @@ made unique when necessary."
   (global-rbenv-mode)
   (rbenv-use-corresponding))
 
-(leaf inf-ruby :ensure t)
+(leaf inf-ruby :ensure t
+  :bind ((inf-ruby-minor-mode-map
+          ("C-c C-c" . ruby-send-buffer-and-go))))
 
 (leaf ruby-test-mode :ensure t
   :hook (ruby-mode-hook . ruby-test-mode))
