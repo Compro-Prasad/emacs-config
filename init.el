@@ -1402,6 +1402,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                 (org-todo 'todo)))))))
 
   (leaf ob-async :ensure t :require t :after ob)
+  (leaf ob-restclient :ensure t :require t :after ob)
 
   (leaf boxy-headings :ensure t)
 
@@ -1457,6 +1458,7 @@ Will work on both org-mode and any mode that accepts plain html."
    'org-babel-load-languages
    '((shell . t)
      (python . t)
+     (restclient . t)
      (emacs-lisp . t)))
 
   (setq org-return-follows-link t
