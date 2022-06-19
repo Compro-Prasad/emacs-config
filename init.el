@@ -1891,8 +1891,6 @@ made unique when necessary."
                    (executable-find "pylint"))))
    flymake-collection-config))
 
-(leaf prettier :ensure t)
-
 (leaf eglot :ensure t)
 
 (leaf ruby-electric :ensure t

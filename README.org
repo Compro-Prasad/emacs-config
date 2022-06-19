@@ -2430,10 +2430,6 @@
                         (executable-find "pylint"))))
         flymake-collection-config))
    #+end_src
-** Prettier for code formatting
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf prettier :ensure t)
-   #+end_src
 ** Language Sever Protocol interface using Eglot
    #+begin_src emacs-lisp :tangle init.el
      (leaf eglot :ensure t)
