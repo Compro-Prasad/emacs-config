@@ -1787,11 +1787,13 @@ made unique when necessary."
   :config
   (bash-completion-setup))
 
-(leaf python-isort :ensure t
-  :hook (python-mode-hook . python-isort-on-save-mode)
+(leaf apheleia :ensure t :leaf-defer nil :require t
   :config
-  (setq python-isort-command "usort"
-        python-isort-arguments '("format" "-")))
+  (setf (alist-get 'isort apheleia-formatters)
+      '("usort" "format" "-"))
+  (setf (alist-get 'python-mode apheleia-mode-alist)
+        '(isort black))
+  (apheleia-global-mode +1))
 
 (leaf narrow-reindent :ensure t :leaf-defer nil :require t
   :hook (find-file-hook . narrow-reindent-mode))

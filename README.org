@@ -2255,17 +2255,19 @@
        :config
        (bash-completion-setup))
    #+end_src
-** Sort python imports (=usort=)
-   First install the package using =pip=:
+** Format buffers using =apheleia=
+   For Python formatting first install the packages using =pip=:
    #+begin_src sh
-     pip3 install usort
+     pip3 install usort black
    #+end_src
    #+begin_src emacs-lisp :tangle init.el
-     (leaf python-isort :ensure t
-       :hook (python-mode-hook . python-isort-on-save-mode)
+     (leaf apheleia :ensure t :leaf-defer nil :require t
        :config
-       (setq python-isort-command "usort"
-             python-isort-arguments '("format" "-")))
+       (setf (alist-get 'isort apheleia-formatters)
+           '("usort" "format" "-"))
+       (setf (alist-get 'python-mode apheleia-mode-alist)
+             '(isort black))
+       (apheleia-global-mode +1))
    #+end_src
 ** Narrow reindent
    Dedent after narrowing.
