@@ -1171,6 +1171,7 @@ _=_       _+_
     (phi-search-mc/setup-keys)))
 
 (leaf vundo :ensure t
+  :bind ("C-x u" . vundo)
   :defer-config
   (setq vundo-glyph-alist vundo-unicode-symbols))
 
