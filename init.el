@@ -543,8 +543,12 @@ The return value is nil if no font was found, truthy otherwise."
  ;;;   Don't compact font cache during GC to optimize redisplay
  inhibit-compacting-font-caches t
 
- ;;;   GC triggers per 90 MB increase in memory
- gc-cons-threshold 94371840
+ ;;;   GC triggers per 100 MB increase in memory
+ gc-cons-threshold (* 100 1024 1024)
+ gc-cons-threshold-bak gc-cons-threshold  ;; Backup
+
+ ;;;   Increase buffer size for reading output of processes (5 MB)
+ read-process-output-max (* 5 1024 1024)
 
  ;;;   Prevent recursion limits
  max-lisp-eval-depth 700
@@ -851,7 +855,7 @@ useful if you want to move the file from one directory to another."
   (setq gc-cons-threshold most-positive-fixnum))
 
 (defun my/minibuffer-exit-hook ()
-  (setq gc-cons-threshold 800000)
+  (setq gc-cons-threshold gc-cons-threshold-bak)
   (garbage-collect))
 
 (add-hook 'minibuffer-setup-hook #'my/minibuffer-setup-hook)
