@@ -1868,7 +1868,11 @@ made unique when necessary."
                    (executable-find "pylint"))))
    flymake-collection-config))
 
-(leaf eglot :ensure t)
+(leaf lsp-mode :ensure t
+  :preface
+  (setq lsp-use-plists t)
+  :config
+  (setq lsp-idle-delay 0.500))
 
 (leaf ruby-electric :ensure t
   :hook (ruby-mode-hook . ruby-electric-mode))
