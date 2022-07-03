@@ -209,10 +209,6 @@ The return value is nil if no font was found, truthy otherwise."
 (defun compro/comint/preoutput-read-only (text)
   (propertize text 'read-only t))
 
-(defun compro/shell-turn-echo-off ()
-  (setq comint-process-echoes t))
-(add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
-
 (defun compro/shell-kill-buffer-sentinel (process event)
   (when (and (memq (process-status process) '(exit signal))
              (buffer-live-p (process-buffer process)))

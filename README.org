@@ -330,12 +330,6 @@
      (defun compro/comint/preoutput-read-only (text)
        (propertize text 'read-only t))
    #+end_src
-** Turn off re-echo of shell commands
-   #+begin_src emacs-lisp :tangle init.el
-     (defun compro/shell-turn-echo-off ()
-       (setq comint-process-echoes t))
-     (add-hook 'shell-mode-hook 'compro/shell-turn-echo-off)
-   #+end_src
 ** Kill process related buffers on exit
    #+begin_src emacs-lisp :tangle init.el
      (defun compro/shell-kill-buffer-sentinel (process event)
