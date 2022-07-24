@@ -1895,6 +1895,16 @@ made unique when necessary."
   (defun ri-bind-key ()
     (local-set-key [f1] 'yari)))
 
+(leaf fancy-compilation :ensure t :after compile
+  :init
+  (fancy-compilation-mode))
+
+(leaf repeat-help :ensure t
+  :hook (repeat-mode-hook . repeat-help-mode))
+
+(leaf yaml-pro :ensure t
+  :hook (yaml-mode-hook . yaml-pro-mode))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)

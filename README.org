@@ -2466,6 +2466,22 @@
        (defun ri-bind-key ()
          (local-set-key [f1] 'yari)))
    #+end_src
+** Fancy compilation buffers
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf fancy-compilation :ensure t :after compile
+       :init
+       (fancy-compilation-mode))
+   #+end_src
+** repeat-mode help
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf repeat-help :ensure t
+       :hook (repeat-mode-hook . repeat-help-mode))
+   #+end_src
+** yaml-pro-mode
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf yaml-pro :ensure t
+       :hook (yaml-mode-hook . yaml-pro-mode))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()
