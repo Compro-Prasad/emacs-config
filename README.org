@@ -1574,16 +1574,11 @@
        :init
        (global-page-break-lines-mode t))
    #+end_src
-** =pipenv= integration
-   =pipenv= is a package manager that relies on =pip= and =virtualenv=
-   internally. This package provides an integration for Emacs.
+** /virtualenv/ integration
+   emacs-PET
    #+begin_src emacs-lisp :tangle init.el
-     (leaf pipenv :ensure t
-       :bind
-       (("<f9> p v a" . pipenv-activate)
-        ("<f9> p v d" . pipenv-deactivate)
-        ("<f9> p v g" . pipenv-graph)
-        ("<f9> p v e" . pipenv-envs)))
+     (leaf pet :ensure t
+       :hook (python-mode-hook . pet-minor-mode))
    #+end_src
 ** Autocompletion for Emacs
    =vertico= provides a simpler interface for completions in Emacs as compared to

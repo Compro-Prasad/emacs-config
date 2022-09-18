@@ -1196,12 +1196,8 @@ _=_       _+_
   :init
   (global-page-break-lines-mode t))
 
-(leaf pipenv :ensure t
-  :bind
-  (("<f9> p v a" . pipenv-activate)
-   ("<f9> p v d" . pipenv-deactivate)
-   ("<f9> p v g" . pipenv-graph)
-   ("<f9> p v e" . pipenv-envs)))
+(leaf pet :ensure t
+  :hook (python-mode-hook . pet-minor-mode))
 
 (leaf orderless :ensure t :leaf-defer nil :require t
   :init
