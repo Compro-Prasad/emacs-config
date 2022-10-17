@@ -1197,7 +1197,7 @@ _=_       _+_
   (global-page-break-lines-mode t))
 
 (leaf pet :ensure t
-  :hook (python-mode-hook . pet-minor-mode))
+  :hook (python-mode-hook . pet-mode))
 
 (leaf orderless :ensure t :leaf-defer nil :require t
   :init

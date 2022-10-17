@@ -1578,7 +1578,7 @@
    emacs-PET
    #+begin_src emacs-lisp :tangle init.el
      (leaf pet :ensure t
-       :hook (python-mode-hook . pet-minor-mode))
+       :hook (python-mode-hook . pet-mode))
    #+end_src
 ** Autocompletion for Emacs
    =vertico= provides a simpler interface for completions in Emacs as compared to
