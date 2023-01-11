@@ -2650,6 +2650,13 @@
      (leaf yaml-pro :ensure t
        :hook (yaml-mode-hook . yaml-pro-mode))
    #+end_src
+** Clean kill ring
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf clean-kill-ring :require t :leaf-defer nil
+       :config
+       (setq clean-kill-ring-prevent-duplicates t)
+       (clean-kill-ring-mode 1))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()

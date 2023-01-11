@@ -2064,6 +2064,11 @@ buffer boundaries with possible narrowing."
 (leaf yaml-pro :ensure t
   :hook (yaml-mode-hook . yaml-pro-mode))
 
+(leaf clean-kill-ring :require t :leaf-defer nil
+  :config
+  (setq clean-kill-ring-prevent-duplicates t)
+  (clean-kill-ring-mode 1))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
