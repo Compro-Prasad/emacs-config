@@ -2599,13 +2599,6 @@
                         (executable-find "pylint"))))
         flymake-collection-config))
    #+end_src
-** Language Sever Protocol interface using lsp-mode
-   #+begin_src emacs-lisp :tangle init.el
-     (leaf lsp-mode :ensure t
-       :preface
-       (setq lsp-use-plists t)
-       :config
-       (setq lsp-idle-delay 0.500))
    #+end_src
 ** Ruby
    #+begin_src emacs-lisp :tangle init.el
