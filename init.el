@@ -1919,10 +1919,10 @@ buffer boundaries with possible narrowing."
 
 (leaf apheleia :ensure t :leaf-defer nil :require t
   :config
-  (setf (alist-get 'isort apheleia-formatters)
-      '("usort" "format" "-"))
-  (setf (alist-get 'python-mode apheleia-mode-alist)
-        '(isort black))
+  ;; (setf (alist-get 'isort apheleia-formatters)
+  ;;     '("usort" "format" "-"))
+  (setf (alist-get 'python-mode apheleia-mode-alist) '(isort black)
+        (alist-get 'rustfmt apheleia-formatters) '("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021"))
   (apheleia-global-mode +1))
 
 (leaf narrow-reindent :ensure t :leaf-defer nil :require t
