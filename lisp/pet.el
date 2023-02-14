@@ -336,13 +336,7 @@ This variable is an alist where the key is the absolute path to a
 
        (defun ,(intern accessor-name) ()
          ,accessor-docstring
-         (when-let ((config-file (,(intern path-accessor-name))))
-           (if-let ((cached-content (assoc-default config-file ,cache-var)))
-               cached-content
-             (pet-watch-config-file config-file ',cache-var #',parser)
-             (when-let ((content (funcall #',parser config-file)))
-               (push (cons config-file content) ,cache-var)
-               content)))))))
+         (,(intern path-accessor-name))))))
 
 (pet-def-config-accessor pre-commit-config
                          :file-name ".pre-commit-config.yaml"
@@ -390,12 +384,7 @@ Returns the path to the `conda' variant found executable."
   "Whether the current project is using `poetry'.
 
 Returns the path to the `poetry' executable."
-  (and (string-match-p
-        "poetry"
-        (or (let-alist (pet-pyproject)
-              .build-system.build-backend)
-            ""))
-       (executable-find "poetry")))
+  (and (pet-pyproject) (executable-find "poetry")))
 
 (defun pet-use-pyenv-p ()
   "Whether the current project is using `pyenv'.
