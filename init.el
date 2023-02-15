@@ -1196,9 +1196,6 @@ _=_       _+_
   :init
   (global-page-break-lines-mode t))
 
-(leaf pet :ensure t
-  :hook (python-mode-hook . pet-mode))
-
 (leaf orderless :ensure t :leaf-defer nil :require t
   :init
   (setq completion-styles '(orderless flex substring)
@@ -1802,12 +1799,39 @@ buffer boundaries with possible narrowing."
           ("<backtab>" . python-indent-shift-left)
           ("S-<iso-lefttab>" . python-indent-shift-left)))
   :config
-  (if (locate-file "ipython" exec-path)
-      (setq python-shell-interpreter "ipython"
-            python-shell-interpreter-args "-i --simple-prompt --classic")
-    (if (locate-file "python3" exec-path)
-        (setq python-shell-interpreter "python3")))
   (setq python-indent-guess-indent-offset-verbose nil))
+
+(leaf pet :leaf-defer nil :require t
+  :hook (python-mode-hook . compro/set-python-variables)
+  :preface
+  (defun compro/set-python-variables ()
+    (let ((ipython3 (pet-executable-find "ipython3"))
+          (python (or
+                   (pet-executable-find "python3")
+                   (pet-executable-find "python2")
+                   (pet-executable-find "python")))
+          (env-root (pet-virtualenv-root)))
+      (cond
+       (ipython3 (setq-local
+                  python-shell-interpreter ipython3
+                  python-shell-interpreter-args "-i --simple-prompt --classic"))
+       (python (setq-local python-shell-interpreter python)))
+
+      (setq-local python-shell-virtualenv-root env-root
+                  lsp-pyright-venv-path env-root
+                  lsp-pyright-python-executable-cmd python
+                  dap-python-executable python
+                  python-pytest-executable (pet-executable-find "pytest")
+                  exec-path (append `(,(concat env-root "/bin")) exec-path)))
+
+      ;; (when-let ((black-executable (pet-executable-find "black")))
+      ;;   (setq-local python-black-command black-executable)
+      ;;   (python-black-on-save-mode 1))
+
+      ;; (when-let ((isort-executable (pet-executable-find "isort")))
+      ;;   (setq-local python-isort-command isort-executable)
+    ;;   (python-isort-on-save-mode 1))
+    ))
 
 (leaf vterm :ensure t :when is-linux
   :init
@@ -1921,6 +1945,12 @@ buffer boundaries with possible narrowing."
   :config
   ;; (setf (alist-get 'isort apheleia-formatters)
   ;;     '("usort" "format" "-"))
+  ;; (cl-defun compro/black (&key scratch remote callback stdin &allow-other-keys)
+  ;;   (print "----------")(print scratch)
+  ;;   (print "----------")(print callback)
+  ;;   (print "----------")(print stdin)
+  ;;   (let ((command (list (pet-executable-find "black") "-")))
+  ;;     (apheleia--run-formatter-process command scratch remote callback stdin 'black)))
   (setf (alist-get 'python-mode apheleia-mode-alist) '(isort black)
         (alist-get 'rustfmt apheleia-formatters) '("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021"))
   (apheleia-global-mode +1))
