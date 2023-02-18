@@ -2245,7 +2245,7 @@
 ** Python
    #+begin_src emacs-lisp :tangle init.el
      (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
-     (leaf python :ensure t
+     (leaf python :ensure python-mode
        :bind ((python-mode-map
                ("TAB" . python-indent-shift-right)
                ("S-TAB" . python-indent-shift-left)
