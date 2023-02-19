@@ -1804,19 +1804,27 @@ buffer boundaries with possible narrowing."
 (leaf pet :leaf-defer nil :require t
   :hook (python-mode-hook . compro/set-python-variables)
   :preface
+  (defun compro/get-exe (root name)
+    (when-let* ((location (concat root "/bin/" name))
+                (exists (file-exists-p location)))
+      location))
   (defun compro/set-python-variables ()
-    (let ((ipython3 (pet-executable-find "ipython3"))
-          (python (or
-                   (pet-executable-find "python3")
-                   (pet-executable-find "python2")
-                   (pet-executable-find "python")))
-          (env-root (pet-virtualenv-root)))
+    (let* ((env-root (or (pet-virtualenv-root) "/usr"))
+           (ipython3 (compro/get-exe env-root "ipython3"))
+           (python (or
+                    (compro/get-exe env-root "python3")
+                    (compro/get-exe env-root "python2")
+                    (compro/get-exe env-root "python"))))
       (cond
        (ipython3 (setq-local
+                  py-use-local-default t
+                  py-shell-local-path ipython3
                   python-shell-interpreter ipython3
                   python-shell-interpreter-args "-i --simple-prompt --classic"))
-       (python (setq-local python-shell-interpreter python)))
-
+       (python (setq-local
+                py-use-local-default t
+                py-shell-local-path python
+                python-shell-interpreter python)))
       (setq-local python-shell-virtualenv-root env-root
                   lsp-pyright-venv-path env-root
                   lsp-pyright-python-executable-cmd python
@@ -1824,12 +1832,12 @@ buffer boundaries with possible narrowing."
                   python-pytest-executable (pet-executable-find "pytest")
                   exec-path (append `(,(concat env-root "/bin")) exec-path)))
 
-      ;; (when-let ((black-executable (pet-executable-find "black")))
-      ;;   (setq-local python-black-command black-executable)
-      ;;   (python-black-on-save-mode 1))
+    ;; (when-let ((black-executable (pet-executable-find "black")))
+    ;;   (setq-local python-black-command black-executable)
+    ;;   (python-black-on-save-mode 1))
 
-      ;; (when-let ((isort-executable (pet-executable-find "isort")))
-      ;;   (setq-local python-isort-command isort-executable)
+    ;; (when-let ((isort-executable (pet-executable-find "isort")))
+    ;;   (setq-local python-isort-command isort-executable)
     ;;   (python-isort-on-save-mode 1))
     ))
 
