@@ -1049,7 +1049,7 @@ useful if you want to move the file from one directory to another."
           ([C-backtab] . nil)
           ([M-tab] . nil)))
   :preface
-  (leaf forge :disabled is-windows :after magit :ensure t :require t)
+  (leaf forge :disabled is-windows :after magit :ensure t)
   :config
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
   (remove-hook 'server-switch-hook 'magit-commit-diff)
