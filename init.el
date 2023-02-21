@@ -1792,7 +1792,7 @@ buffer boundaries with possible narrowing."
   (setq treemacs-read-string-input 'from-minibuffer))
 
 (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
-(leaf python :ensure python-mode
+(leaf python
   :bind ((python-mode-map
           ("TAB" . python-indent-shift-right)
           ("S-TAB" . python-indent-shift-left)
