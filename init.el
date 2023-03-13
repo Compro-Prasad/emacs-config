@@ -1959,7 +1959,7 @@ buffer boundaries with possible narrowing."
               (exists (file-exists-p executable)))
         `(,executable "-")
       "cat"))
-  (setf (alist-get 'python-mode apheleia-mode-alist) '(isort black)
+  (setf (alist-get 'python-mode apheleia-mode-alist) '(black)
         (alist-get 'black apheleia-formatters) '((compro/black))
         (alist-get 'rustfmt apheleia-formatters) '("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021"))
   (apheleia-global-mode +1))
