@@ -323,7 +323,7 @@ The return value is nil if no font was found, truthy otherwise."
 
 (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
 
-(leaf tab-bar :leaf-defer nil :require t :disabled t
+(leaf tab-bar :leaf-defer nil :require t
   :when (> emacs-major-version 27)
   :bind (("C-t" . tab-bar-new-tab-event)
          ([C-f4] . tab-bar-close-tab)

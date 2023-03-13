@@ -510,10 +510,11 @@
    #+end_src
    Thanks to [[https://emacs.stackexchange.com/users/12634/luke-lee][Luke Lee]] on [[https://emacs.stackexchange.com/a/24654][Emacs Stack Exchange]].
 
-** Tab line
-   Tab line is a feature in Emacs to show tabs.
+** Tab bar
+   Tab bar is a feature in Emacs to show tabs but works like workspaces in
+   window managers.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf tab-bar :leaf-defer nil :require t :disabled t
+     (leaf tab-bar :leaf-defer nil :require t
        :when (> emacs-major-version 27)
        :bind (("C-t" . tab-bar-new-tab-event)
               ([C-f4] . tab-bar-close-tab)
