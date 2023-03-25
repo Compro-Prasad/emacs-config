@@ -1801,6 +1801,10 @@ buffer boundaries with possible narrowing."
   :config
   (setq python-indent-guess-indent-offset-verbose nil))
 
+(leaf flymake-ruff :ensure t
+  :hook ((python-mode-hook . flymake-mode)
+         (python-mode-hook . flymake-ruff-load)))
+
 (leaf pet :leaf-defer nil :require t
   :hook (python-mode-hook . compro/set-python-variables)
   :preface

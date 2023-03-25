@@ -2255,6 +2255,12 @@
        :config
        (setq python-indent-guess-indent-offset-verbose nil))
    #+end_src
+*** =ruff= integration using flymake
+    #+begin_src emacs-lisp :tangle init.el
+      (leaf flymake-ruff :ensure t
+        :hook ((python-mode-hook . flymake-mode)
+               (python-mode-hook . flymake-ruff-load)))
+    #+end_src
 *** /virtualenv/ integration
     emacs-PET
     #+begin_src emacs-lisp :tangle init.el
