@@ -1805,6 +1805,30 @@ buffer boundaries with possible narrowing."
   :hook ((python-mode-hook . flymake-mode)
          (python-mode-hook . flymake-ruff-load)))
 
+(leaf eglot
+  :when (>= emacs-major-version 29)
+  :config
+  (defun compro/python-lsp-setup-for-pyright (&rest r)
+    (when (eq major-mode 'python-mode)
+      (if-let* ((root (expand-file-name (project-root (project-current))))
+                (pyright-exe (executable-find "pyright"))
+                (pyrightconfig.json (expand-file-name "pyrightconfig.json" root))
+                (config-not-exists (not (f-exists-p pyrightconfig.json)))
+                (config-data ""))
+          (progn
+            (if-let* ((poetry-exe (executable-find "poetry"))
+                      (virtualenv-root-1 (string-split (shell-command-to-string "poetry env info -p") "\n"))
+                      (virtualenv-root-exists (= (length virtualenv-root-1) 2))
+                      (virtualenv-root (car virtualenv-root-1))
+                      (part1 (file-name-parent-directory virtualenv-root))
+                      (part2 (car (last (file-name-split virtualenv-root)))))
+                (setq config-data (json-encode (list :venvPath part1 :venv part2)))
+              (message "compro/python-lsp-setup-for-pyright: no poetry virtualenv found"))
+            (when (not (string= config-data ""))
+              (with-temp-file pyrightconfig.json (insert config-data))))
+        (warn "compro/python-lsp-setup-for-pyright: Unable to start pyright"))))
+  (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright))
+
 (leaf pet :leaf-defer nil :require t
   :hook (python-mode-hook . compro/set-python-variables)
   :preface
