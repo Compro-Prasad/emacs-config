@@ -2733,6 +2733,11 @@
        (setq clean-kill-ring-prevent-duplicates t)
        (clean-kill-ring-mode 1))
    #+end_src
+** Eldoc box to show documentation in a popup
+   #+begin_src emacs-lisp :tangle init.el
+     (leaf eldoc-box :ensure t
+       :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (defun after-init-jobs ()

@@ -2141,6 +2141,9 @@ buffer boundaries with possible narrowing."
   (setq clean-kill-ring-prevent-duplicates t)
   (clean-kill-ring-mode 1))
 
+(leaf eldoc-box :ensure t
+  :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
+
 (defun after-init-jobs ()
   "Configurations run after Emacs starts."
   (set-face-attribute 'mode-line nil :box nil)
