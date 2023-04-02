@@ -630,6 +630,9 @@ The return value is nil if no font was found, truthy otherwise."
 
  ;;;   Complete after indenting
  tab-always-indent 'complete
+
+ ;;;   Increase interval at which eldoc is shown
+ eldoc-idle-delay 1.5
  )
 
 (if (>= emacs-major-version 28)

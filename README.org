@@ -834,6 +834,9 @@
 
       ;;;   Complete after indenting
       tab-always-indent 'complete
+
+      ;;;   Increase interval at which eldoc is shown
+      eldoc-idle-delay 1.5
       )
    #+end_src
 ** Convert yes/no to y/n
