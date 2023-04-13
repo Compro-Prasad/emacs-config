@@ -379,15 +379,7 @@ The return value is nil if no font was found, truthy otherwise."
           tab-bar-separator tab-bar-separator tab-bar-separator
           tab-bar-format-add-tab
           tab-bar-separator tab-bar-separator tab-bar-separator
-          tab-bar-format-global))
-  (when (fboundp 'doom-color)
-    (let ((bg (doom-color 'bg))
-          (fg (doom-color 'fg))
-          (base1 (doom-color 'base1))
-          (box-width 7))
-      (set-face-attribute 'tab-bar nil :background base1 :foreground fg)
-      (set-face-attribute 'tab-bar-tab nil :background bg :box (list :line-width box-width :color bg) :weight 'bold)
-      (set-face-attribute 'tab-bar-tab-inactive nil :background base1 :box (list :line-width box-width :color base1)))))
+          tab-bar-format-global)))
 
 (leaf dired
   :hook (dired-mode-hook . dired-hide-details-mode)
