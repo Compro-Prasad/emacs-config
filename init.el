@@ -97,14 +97,13 @@ URL should not have http:// or https:// as a prefix."
 
 (package-initialize)
 
-(unless (package-installed-p 'leaf)
-  (package-refresh-contents)
-  (package-install 'leaf))
+(when (< emacs-major-version 29)
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package)))
 
-(leaf leaf)
-
-(leaf f :leaf-defer nil :ensure t :require t)
-(leaf s :leaf-defer nil :ensure t :require t)
+(use-package f :ensure t)
+(use-package s :ensure t)
 
 (defun mplist-remove (plist prop)
   "Return a copy of a modified PLIST without PROP and its values.
@@ -319,11 +318,11 @@ The return value is nil if no font was found, truthy otherwise."
 
 (setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
 
-(leaf general :leaf-defer nil :ensure t :require t)
+(use-package general :ensure t)
 
 (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
 
-(leaf tab-bar :leaf-defer nil :require t
+(use-package tab-bar
   :when (> emacs-major-version 27)
   :bind (("C-t" . tab-bar-new-tab-event)
          ([C-f4] . tab-bar-close-tab)
@@ -333,8 +332,6 @@ The return value is nil if no font was found, truthy otherwise."
          ([C-S-tab] . tab-previous)
          ([C-iso-lefttab] . tab-previous))
   :init
-  (tab-bar-mode)
-
   (defun switch-to-untitled-buffer ()
     (interactive)
     (let ((buf (format "untitled-%d" (random 100000))))
@@ -379,30 +376,31 @@ The return value is nil if no font was found, truthy otherwise."
           tab-bar-separator tab-bar-separator tab-bar-separator
           tab-bar-format-add-tab
           tab-bar-separator tab-bar-separator tab-bar-separator
-          tab-bar-format-global)))
+          tab-bar-format-global))
+  (tab-bar-mode))
 
-(leaf dired
+(use-package dired
   :hook (dired-mode-hook . dired-hide-details-mode)
-  :bind ((dired-mode-map
-          ("C-c C-c" . dired-collapse-mode)
-          ("C-c C-d C-u" . dired-du-mode)
-          ("." . dired-hide-dotfiles-mode)
-          ("<tab>" . dired-subtree-toggle)
-          ("q"      . kill-current-buffer)
-          ("RET"    . compro/dired-open-dir)
-          ("^"      . compro/dired-up-dir)
-          ("DEL"    . compro/dired-up-dir)
-          ("<left>" . compro/dired-up-dir)
-          ("C-x <C-j>" . dired-jump)))
-  :preface
-  (leaf dired-collapse :ensure t)
-  (leaf dired-du :ensure t :after dired)
-  (leaf dired-dups :ensure t :after dired)
-  (leaf dired-filetype-face :ensure t :after dired)
-  (leaf dired-hide-dotfiles :ensure t
+  :bind (:map dired-mode-map
+	      ("C-c C-c" . dired-collapse-mode)
+	      ("C-c C-d C-u" . dired-du-mode)
+	      ("." . dired-hide-dotfiles-mode)
+	      ("<tab>" . dired-subtree-toggle)
+	      ("q"      . kill-current-buffer)
+	      ("RET"    . compro/dired-open-dir)
+	      ("^"      . compro/dired-up-dir)
+	      ("DEL"    . compro/dired-up-dir)
+	      ("<left>" . compro/dired-up-dir)
+	      ("C-x <C-j>" . dired-jump))
+  :init
+  (use-package dired-collapse :ensure t)
+  (use-package dired-du :ensure t :after dired)
+  (use-package dired-dups :ensure t :after dired)
+  (use-package dired-filetype-face :ensure t :after dired)
+  (use-package dired-hide-dotfiles :ensure t
     :after dired
     :hook (dired-mode-hook . dired-hide-dotfiles-mode))
-  (leaf dired-subtree :ensure t :after dired)
+  (use-package dired-subtree :ensure t :after dired)
   (defun compro/dired-up-dir ()
     (interactive)
     (find-alternate-file ".."))
@@ -412,26 +410,26 @@ The return value is nil if no font was found, truthy otherwise."
     (set-buffer-modified-p nil)
     (let ((file-or-dir (dired-get-file-for-visit)))
       (if (f-dir-p file-or-dir)
-          (find-alternate-file file-or-dir)
-        (find-file file-or-dir))))
+	  (find-alternate-file file-or-dir)
+	(find-file file-or-dir))))
 
   (defun compro/dired/mp3-to-ogg ()
     "Used in dired to convert mp3 files to ogg"
     (interactive)
     (let* ((files (dired-get-marked-files)))
       (dolist (file files)
-        (let* ((basename (file-name-nondirectory file))
-               (file-base (file-name-base file))
-               (dirname (file-name-directory file))
-               (extension (file-name-extension file))
-               (ogg-file (concat dirname file-base ".ogg"))
-               (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
-          (if (string= "mp3" (downcase extension))
-              (progn
-                (shell-command command nil nil)
-                (message command)
-                (if (file-exists-p ogg-file)
-                    (delete-file file))))))))
+	(let* ((basename (file-name-nondirectory file))
+	       (file-base (file-name-base file))
+	       (dirname (file-name-directory file))
+	       (extension (file-name-extension file))
+	       (ogg-file (concat dirname file-base ".ogg"))
+	       (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+	  (if (string= "mp3" (downcase extension))
+	      (progn
+		(shell-command command nil nil)
+		(message command)
+		(if (file-exists-p ogg-file)
+		    (delete-file file))))))))
 
   :config
   (setq dired-dwim-target t)
@@ -439,8 +437,8 @@ The return value is nil if no font was found, truthy otherwise."
     "Sort dired listings with directories first."
     (save-excursion
       (let (buffer-read-only)
-        (forward-line 2) ;; beyond dir. header
-        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+	(forward-line 2) ;; beyond dir. header
+	(sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
       (set-buffer-modified-p nil)))
 
   (defadvice dired-readin
@@ -667,12 +665,12 @@ The return value is nil if no font was found, truthy otherwise."
 
 (global-auto-revert-mode t)
 
-(leaf paren :ensure nil
+(use-package paren
   :config
-  (show-paren-mode t)
   (setq show-paren-style 'mixed
         show-paren-when-point-inside-paren t
-        show-paren-when-point-in-periphery t))
+        show-paren-when-point-in-periphery t)
+  (show-paren-mode t))
 
 (if (>= emacs-major-version 26)
     (add-hook 'prog-mode-hook 'display-line-numbers-mode)
@@ -737,14 +735,14 @@ useful if you want to move the file from one directory to another."
 
 (global-set-key (kbd "C-c f r") 'compro/rename-file-buffer)
 
-(leaf simple
+(use-package simple
   :bind (("C-a" . compro/beginning-of-line)
          ("C-o" . compro/open-line-below)
          ("C-S-p" . list-processes)
          ("" . list-processes)
          ("C-S-o" . compro/open-line-above)
          ("" . compro/open-line-above))
-  :config
+  :init
   (defun compro/beginning-of-line ()
     (interactive)
     (if (bolp)
@@ -798,22 +796,19 @@ useful if you want to move the file from one directory to another."
              (concat (regexp-quote (ft (format cache-d))) ".*"))
 (recentf-mode 1)
 
-(leaf xwidget
-  :when (fboundp 'xwidget-webkit-browse-url)
+(use-package xwidget :when (fboundp 'xwidget-webkit-browse-url)
   :bind
-  (xwidget-webkit-mode-map
-   ("<mouse-4>" . xwidget-webkit-scroll-down)
-   ("<mouse-5>" . xwidget-webkit-scroll-up)
-   ("<up>" . xwidget-webkit-scroll-down)
-   ("<down>" . xwidget-webkit-scroll-up)
-   ("M-w" . xwidget-webkit-copy-selection-as-kill)
-   ("C-c" . xwidget-webkit-copy-selection-as-kill))
-  :preface
-  (defun compro/xwidget-webkit/adjust-size ()
-    (when (equal major-mode 'xwidget-webkit-mode)
-      (xwidget-webkit-adjust-size-dispatch)))
+  (:map xwidget-webkit-mode-map
+        ("<mouse-4>" . xwidget-webkit-scroll-down)
+        ("<mouse-5>" . xwidget-webkit-scroll-up)
+        ("<up>" . xwidget-webkit-scroll-down)
+        ("<down>" . xwidget-webkit-scroll-up)
+        ("M-w" . xwidget-webkit-copy-selection-as-kill)
+        ("C-c" . xwidget-webkit-copy-selection-as-kill))
+
   :hook
   (window-configuration-change-hook . compro/xwidget-webkit/adjust-size)
+
   :init
   ;; by default, xwidget reuses previous xwidget window,
   ;; thus overriding your current website, unless a prefix argument
@@ -824,12 +819,15 @@ useful if you want to move the file from one directory to another."
      (progn
        (require 'browse-url)
        (browse-url-interactive-arg "xwidget-webkit URL: ")))
-    (xwidget-webkit-browse-url url t)))
+    (xwidget-webkit-browse-url url t))
+
+  (defun compro/xwidget-webkit/adjust-size ()
+    (when (equal major-mode 'xwidget-webkit-mode)
+      (xwidget-webkit-adjust-size-dispatch))))
 
 (add-hook 'tabulated-list-mode-hook 'hl-line-mode)
 
-(leaf winner :require t :leaf-defer nil
-  :config (winner-mode 1))
+(use-package winner :config (winner-mode 1))
 
 (defun compro/set-show-whitespace-mode ()
   "Show white space in current buffer"
@@ -878,9 +876,9 @@ useful if you want to move the file from one directory to another."
                 (awk-mode . "awk")
                 (other . "mylinux")))
 
-(leaf restclient :ensure t)
+(use-package restclient :ensure t)
 
-(leaf hydra :ensure t :require t :leaf-defer nil)
+(use-package hydra :ensure t)
 
 (global-set-key
  (kbd "C-c u")
@@ -1013,14 +1011,14 @@ useful if you want to move the file from one directory to another."
    ("o" compro/beginning-of-line)
    ("p" move-end-of-line)))
 
-(leaf hungry-delete :leaf-defer nil :ensure t :require t
-  :init (global-hungry-delete-mode t))
+(use-package hungry-delete :ensure t
+  :config (global-hungry-delete-mode t))
 
-(leaf minions :ensure t
+(use-package minions :ensure t
   :bind ([S-down-mouse-3] . minions-minor-modes-menu))
 
-(leaf transient :ensure t
-  :init
+(use-package transient :ensure t
+  :config
   (setq transient-history-file (locate-user-emacs-file
                                 (concat cache-d "transient/history.el"))
         transient-values-file (locate-user-emacs-file
@@ -1028,23 +1026,23 @@ useful if you want to move the file from one directory to another."
         transient-levels-file (locate-user-emacs-file
                                (concat cache-d "transient/levels.el"))))
 
-(leaf magit :ensure t :require t :leaf-defer nil
+(use-package magit :ensure t
   :bind (("C-x g" . magit-status)
-         (magit-mode-map
-          ([C-tab] . nil)
-          ([C-backtab] . nil)
-          ([M-tab] . nil))
-         (magit-status-mode-map
-          ("q" . compro/kill-magit-buffers)
-          ([C-tab] . nil)
-          ([C-backtab] . nil)
-          ([M-tab] . nil))
-         (magit-log-mode-map
-          ([C-tab] . nil)
-          ([C-backtab] . nil)
-          ([M-tab] . nil)))
-  :preface
-  (leaf forge :disabled is-windows :after magit :ensure t)
+         :map magit-mode-map
+         ([C-tab] . nil)
+         ([C-backtab] . nil)
+         ([M-tab] . nil)
+         :map magit-status-mode-map
+         ("q" . compro/kill-magit-buffers)
+         ([C-tab] . nil)
+         ([C-backtab] . nil)
+         ([M-tab] . nil)
+         :map magit-log-mode-map
+         ([C-tab] . nil)
+         ([C-backtab] . nil)
+         ([M-tab] . nil))
+  :init
+  ;; (use-package forge :unless is-windows :after magit :ensure t)
   :config
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
   (remove-hook 'server-switch-hook 'magit-commit-diff)
@@ -1063,10 +1061,10 @@ useful if you want to move the file from one directory to another."
     (define-key magit-file-section-map [M-tab] nil)
     (define-key magit-hunk-section-map [M-tab] nil)))
 
-(leaf git-messenger :ensure t
+(use-package git-messenger :ensure t
   :bind (("C-x v p" . git-messenger:popup-message)))
 
-(leaf expand-region :ensure t
+(use-package expand-region :ensure t
   :commands (er/expand-region
              er/mark-paragraph
              er/mark-inside-pairs
@@ -1094,8 +1092,8 @@ _=_       _+_
     ("+" er/contract-region)
     ("-" er/contract-region)))
 
-(leaf projectile :leaf-defer nil :ensure t :require t
-  :disabled (> emacs-major-version 27)  ;; Use project.el for > 27
+(use-package projectile :ensure t
+  :unless (> emacs-major-version 27)  ;; Use project.el for > 27
   :bind (("C-x p" . projectile-command-map))
   :config
   (setq
@@ -1104,21 +1102,21 @@ _=_       _+_
    projectile-completion-system 'default)
   (projectile-mode 1))
 
-(leaf project-x :leaf-defer nil :require t
+(use-package project-x
   :config
   (project-x-mode 1))
 
-(leaf ag :ensure t :when (executable-find "ag"))
+(use-package ag :ensure t :when (executable-find "ag"))
 
-(leaf switch-window :ensure t
+(use-package switch-window :ensure t
   :bind ("C-x o" . switch-window))
 
-(leaf which-key :ensure t
-  :init
+(use-package which-key :ensure t
+  :config
   (setq which-key-idle-delay (if is-windows 0.212 1.0))
   (which-key-mode))
 
-(leaf multiple-cursors :ensure t
+(use-package multiple-cursors :ensure t
   :bind
   (("C-S-c" . mc/edit-lines)
    ("M-S-<up>" . mc/mark-previous-like-this)
@@ -1130,17 +1128,17 @@ _=_       _+_
    ("M-S-<mouse-2>" . mc/add-cursor-on-click)
    ("M-S-<mouse-3>" . mc/add-cursor-on-click))
   :init
-  (leaf phi-search-mc :ensure t
-    :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
+  (use-package phi-search-mc :ensure t
+    :hook (isearch-mode-hook . phi-search-from-isearch-mc/setup-keys)
     :config
     (phi-search-mc/setup-keys)))
 
-(leaf vundo :ensure t
+(use-package vundo :ensure t
   :bind ("C-x u" . vundo)
-  :defer-config
+  :config
   (setq vundo-glyph-alist vundo-unicode-symbols))
 
-(leaf doom-themes :ensure t
+(use-package doom-themes :ensure t
   :commands (doom-themes-org-config)
   :config
   (doom-themes-org-config)
@@ -1183,16 +1181,16 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(leaf spacemacs-theme :ensure t)
+(use-package spacemacs-common :ensure spacemacs-theme)
 
-(leaf modus-themes :ensure t)
+(use-package modus-themes :ensure t)
 
-(leaf page-break-lines :ensure t
-  :init
+(use-package page-break-lines :ensure t
+  :config
   (global-page-break-lines-mode t))
 
-(leaf orderless :ensure t :leaf-defer nil :require t
-  :init
+(use-package orderless :ensure t
+  :config
   (setq completion-styles '(orderless flex substring)
         completion-category-defaults nil
         completion-category-overrides '((file (styles . (partial-completion)))))
@@ -1208,7 +1206,7 @@ _=_       _+_
         '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-(leaf consult :ensure t :leaf-defer nil :require t
+(use-package consult :ensure t
   :bind (("M-y" . consult-yank-pop)
          ("M-v" . consult-yank-pop)
          ("C-v" . consult-yank-pop)
@@ -1216,11 +1214,12 @@ _=_       _+_
          ("M-g o" . consult-outline)
          ("C-x C-r" . consult-recent-file)
          ("C-x b" . consult-buffer)
-         (:minibuffer-local-map
-          ("C-r" . consult-history))))
-(leaf consult-dir :ensure t
+         :map minibuffer-local-map
+         ("C-r" . consult-history)))
+
+(use-package consult-dir :ensure t
   :bind ("C-x d" . consult-dir)
-  :preface
+  :init
   (with-eval-after-load 'eshell
     (defun eshell/z (&optional regexp)
       "Navigate to a previously visited directory in eshell, or to
@@ -1242,12 +1241,14 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                         (consult-dir--pick "Switch directory: ")))))
          (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
                          (completing-read "cd: " eshell-dirs)))))))))
-(leaf marginalia :ensure t :after vertico
+
+(use-package marginalia :ensure t :after vertico
   :config
   (setq marginalia-annotators
         '(marginalia-annotators-heavy marginalia-annotators-light nil))
   (marginalia-mode +1))
-(leaf embark :ensure t
+
+(use-package embark :ensure t
   :bind (("C-S-a" . embark-act)
          ("" . embark-act)
          ("C-S-e" . embark-act-noexit)
@@ -1261,10 +1262,11 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
           (which-key--show-keymap "Embark" map nil nil 'no-paging)
           #'which-key--hide-popup-ignore-command)
         embark-become-indicator embark-action-indicator))
-(leaf vertico :ensure t
+
+(use-package vertico :ensure t :defer nil
 
   ;; More convenient directory navigation commands
-  :bind ((vertico-map
+  :bind (:map vertico-map
           ("RET" . vertico-directory-enter)
           ("DEL" . vertico-directory-delete-char)
           ("M-DEL" . vertico-directory-delete-word)
@@ -1272,22 +1274,20 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
           ("M-G" . vertico-multiform-grid)
           ("M-F" . vertico-multiform-flat)
           ("M-R" . vertico-multiform-reverse)
-          ("M-U" . vertico-multiform-unobtrusive)))
+          ("M-U" . vertico-multiform-unobtrusive))
 
-  :preface
+  :init
   (setq read-file-name-completion-ignore-case t
         read-buffer-completion-ignore-case t)
 
   ;; Tidy shadowed file names
-  :hook ((rfn-eshadow-update-overlay . vertico-directory-tidy)
-         (after-init-hook . vertico-mode))
-
-  :init
-  (setq vertico-count 18)
+  :hook (rfn-eshadow-update-overlay-hook . vertico-directory-tidy)
 
   :config
+  (setq vertico-count 18)
   (require 'vertico-mouse)
   (require 'vertico-indexed)
+  (vertico-mode 1)
   (vertico-multiform-mode 1)
   (vertico-mouse-mode 1)
   (vertico-indexed-mode 1)
@@ -1311,33 +1311,33 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                          (ffap-guesser)
                          (thing-at-point-url-at-point))))))))
 
-(leaf vertico-directory :after vertico :ensure nil)
+(use-package vertico-directory :after vertico :ensure nil)
 
-(leaf ctrlf :ensure t :leaf-defer nil :require t
+(use-package ctrlf :ensure t
   :config (ctrlf-mode 1))
 
-(leaf beginend :ensure t :leaf-defer nil :require t
+(use-package beginend :ensure t
   :config (beginend-global-mode))
 
-(leaf move-text :ensure t)
+(use-package move-text :ensure t)
 
-(leaf default-text-scale :ensure t
+(use-package default-text-scale :ensure t
   :config (default-text-scale-mode 1))
 
-(leaf iedit :ensure t
+(use-package iedit :ensure t
   :bind ("C-c i" . iedit-mode))
 
-(leaf wgrep :ensure t :after grep :require t)
+(use-package wgrep :ensure t :after grep)
 
-(leaf clang-format+ :ensure t
-  :init
+(use-package clang-format+ :ensure t
+  :config
   (setq clang-format+-context 'buffer))
 
-(leaf telega :ensure t :when is-linux)
+(use-package telega :ensure t :when is-linux)
 
-(leaf org :ensure org-contrib :require t :leaf-defer nil
+(use-package org :ensure org-contrib
   :hook (org-mode-hook . org-superstar-mode)
-  :preface
+  :init
   ;; see https://list.orgmode.org/87r5718ytv.fsf@sputnik.localhost
   (eval-after-load 'org-list
     '(add-hook 'org-checkbox-statistics-hook (function ndk/checkbox-list-complete)))
@@ -1360,27 +1360,27 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                   (org-todo 'done)
                 (org-todo 'todo)))))))
 
-  (leaf ob-async :ensure t :require t :after ob)
-  (leaf ob-restclient :ensure t :require t :after ob)
+  (use-package ob-async :ensure t :after ob)
+  (use-package ob-restclient :ensure t :after ob)
 
-  (leaf boxy-headings :ensure t)
+  (use-package boxy-headings :ensure t)
 
-  (leaf org-babel-eval-in-repl :ensure t
+  (use-package org-babel-eval-in-repl :ensure t
     :after ob
     :bind
-    (org-mode-map
-     ("C-c C-<return>" . ober-eval-block-in-repl)))
+    (:map org-mode-map
+          ("C-c C-<return>" . ober-eval-block-in-repl)))
 
-  (leaf ox-hugo :require t :ensure t :after ox :disabled t
+  (use-package ox-hugo :ensure t :after ox :disabled t
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
 
-  (leaf org-superstar :ensure t
+  (use-package org-superstar :ensure t
     :config
     (setq org-superstar-leading-bullet ?\s))
 
-  (leaf org-re-reveal :ensure t :require t :after ox)
+  (use-package org-re-reveal :ensure t :after ox)
 
   (add-hook 'org-mode-hook
             #'(lambda () (setq line-spacing 0.2) ;; Add more line padding for readability
@@ -1390,13 +1390,12 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
    ("C-c c" . org-capture)
-   (:org-mode-map
-    :package org
-    ([C-tab] . nil)
-    ([C-backtab] . nil)
-    ("M-n" . outline-next-visible-heading)
-    ("C-c k" . endless/insert-key)
-    ("M-p" . outline-previous-visible-heading)))
+   :map org-mode-map
+   ([C-tab] . nil)
+   ([C-backtab] . nil)
+   ("M-n" . outline-next-visible-heading)
+   ("C-c k" . endless/insert-key)
+   ("M-p" . outline-previous-visible-heading))
   :config
   ;; (define-key org-mode-map "\C-ck" #'endless/insert-key)
   (defun endless/insert-key (key)
@@ -1497,20 +1496,20 @@ made unique when necessary."
     "Return new reference for DATUM that is unique in CACHE."
     (cl-macrolet
         ((inc-suffixf
-          (place)
-          `(progn
-             (string-match (rx bos
-                               (minimal-match (group (1+ anything)))
-                               (optional "--" (group (1+ digit)))
-                               eos)
-                           ,place)
-             ;; HACK: `s1' instead of a gensym.
-             (-let* (((s1 suffix) (list (match-string 1 ,place)
-                                        (match-string 2 ,place)))
-                     (suffix (if suffix
-                                 (string-to-number suffix)
-                               0)))
-               (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
+           (place)
+           `(progn
+              (string-match (rx bos
+                                (minimal-match (group (1+ anything)))
+                                (optional "--" (group (1+ digit)))
+                                eos)
+                            ,place)
+              ;; HACK: `s1' instead of a gensym.
+              (-let* (((s1 suffix) (list (match-string 1 ,place)
+                                         (match-string 2 ,place)))
+                      (suffix (if suffix
+                                  (string-to-number suffix)
+                                0)))
+                (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
       (let* ((title (org-element-property :raw-value datum))
              (ref (url-hexify-string (substring-no-properties title)))
              (parent (org-element-property :parent datum)))
@@ -1534,7 +1533,7 @@ made unique when necessary."
         (while (outline-next-heading)
           (let* ((old-id (plist-get (org-element--get-node-properties) :CUSTOM_ID))
                  (heading (replace-regexp-in-string "[^A-Za-z0-9]" "-" (substring-no-properties (org-get-heading t t t t))))
-                 (new-id (concat "h-" heading))
+                 (new-id heading)  ;; (new-id (concat "h-" heading))
                  (dup (assoc heading hlist))
                  (dup-count (if dup (1+ (cdr dup)) 1)))
             (setq new-id (concat new-id (if (= dup-count 1) "" (number-to-string dup-count))))
@@ -1738,16 +1737,16 @@ buffer boundaries with possible narrowing."
               (match-string 1))))
       (when attr-rot (string-to-number attr-rot)))))
 
-(leaf rust-mode :ensure t)
+(use-package rust-mode :ensure t)
 
-(leaf cargo :ensure t
+(use-package cargo :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
-;; (leaf company-web :ensure t :after mhtml-mode)
+;; (use-package company-web :ensure t :after mhtml-mode)
 
-;; (leaf ac-html-csswatcher :ensure t :after mhtml-mode)
+;; (use-package ac-html-csswatcher :ensure t :after mhtml-mode)
 
-(leaf mhtml-mode
+(use-package mhtml-mode
   :when (>= emacs-major-version 26)
   :mode ("\\.vue\\'" "\\.html\\'" "\\.jsx")
   :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
@@ -1766,41 +1765,41 @@ buffer boundaries with possible narrowing."
   ;;                            (company-mode t)))
   )
 
-(leaf web-mode :ensure t)
+(use-package web-mode :ensure t)
 
-(leaf elf-mode :ensure t)
+(use-package elf-mode :ensure t)
 
-(leaf cmake-mode :ensure t)
+(use-package cmake-mode :ensure t)
 
-(leaf plantuml-mode :ensure t
+(use-package plantuml-mode :ensure t
   :when (locate-file "plantuml.jar" '("~/Downloads"))
-  :init
+  :config
   (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
 
-(leaf typescript-mode :ensure t)
+(use-package typescript-mode :ensure t)
 
-(leaf treemacs :ensure t
-  :bind ((treemacs-mode-map
-          ([mouse-1] . treemacs-single-click-expand-action)))
+(use-package treemacs :ensure t
+  :bind (:map treemacs-mode-map
+         ([mouse-1] . treemacs-single-click-expand-action))
   :config
   (treemacs-resize-icons 17)
   (setq treemacs-read-string-input 'from-minibuffer))
 
 (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
-(leaf python
-  :bind ((python-mode-map
-          ("TAB" . python-indent-shift-right)
-          ("S-TAB" . python-indent-shift-left)
-          ("<backtab>" . python-indent-shift-left)
-          ("S-<iso-lefttab>" . python-indent-shift-left)))
+(use-package python
+  :bind (:map python-mode-map
+              ("TAB" . python-indent-shift-right)
+              ("S-TAB" . python-indent-shift-left)
+              ("<backtab>" . python-indent-shift-left)
+              ("S-<iso-lefttab>" . python-indent-shift-left))
   :config
   (setq python-indent-guess-indent-offset-verbose nil))
 
-(leaf flymake-ruff :ensure t
+(use-package flymake-ruff :ensure t
   :hook ((python-mode-hook . flymake-mode)
          (python-mode-hook . flymake-ruff-load)))
 
-(leaf eglot
+(use-package eglot
   :when (>= emacs-major-version 29)
   :config
   (defun compro/python-lsp-setup-for-pyright (&rest r)
@@ -1832,9 +1831,9 @@ buffer boundaries with possible narrowing."
 
   (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright))
 
-(leaf pet :leaf-defer nil :require t
+(use-package pet :ensure t
   :hook (python-mode-hook . compro/set-python-variables)
-  :preface
+  :init
   (defun compro/get-exe (root name)
     (when-let* ((location (concat root "/bin/" name))
                 (exists (file-exists-p location)))
@@ -1872,7 +1871,7 @@ buffer boundaries with possible narrowing."
     ;;   (python-isort-on-save-mode 1))
     ))
 
-(leaf vterm :ensure t :when is-linux
+(use-package vterm :ensure t :when is-linux
   :init
   (defun vterm-directory-sync ()
     "Synchronize current working directory."
@@ -1886,18 +1885,18 @@ buffer boundaries with possible narrowing."
         vterm-buffer-name-string "*vterm-%s*"
         vterm-always-compile-module t))
 
-(leaf tree-sitter :ensure t :require t :leaf-defer nil :disabled is-windows
-  :preface
-  (leaf tree-sitter-langs :ensure t :require t :leaf-defer nil)
+(use-package tree-sitter :ensure t :unless is-windows
+  :init
+  (use-package tree-sitter-langs :ensure t)
   :config
   (require 'tree-sitter-hl)
   (require 'tree-sitter-debug)
   (require 'tree-sitter-query))
 
-(leaf eshell-syntax-highlighting :ensure t :after esh-mode
+(use-package eshell-syntax-highlighting :ensure t :after esh-mode
   :config (eshell-syntax-highlighting-global-mode +1))
 
-(leaf embrace :ensure t
+(use-package embrace :ensure t
   :bind
   ("C-," . embrace-commander))
 
@@ -1907,9 +1906,9 @@ buffer boundaries with possible narrowing."
     (eval-buffer)
     (quelpa-self-upgrade)))
 
-(leaf ligature :ensure nil :require t :leaf-defer nil
-  :disabled (or (< emacs-major-version 27) is-windows)
-  :preface
+(use-package ligature :ensure nil
+  :unless (or (< emacs-major-version 27) is-windows)
+  :init
   (require 'quelpa)
   (when (not (quelpa--package-installed-p 'ligature))
     (quelpa
@@ -1944,7 +1943,7 @@ buffer boundaries with possible narrowing."
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(leaf diff-hl :ensure t
+(use-package diff-hl :ensure t
   :config
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -1953,34 +1952,34 @@ buffer boundaries with possible narrowing."
   (diff-hl-flydiff-mode t)
   (diff-hl-dired-mode t))
 
-(leaf whole-line-or-region :ensure t
+(use-package whole-line-or-region :ensure t
   :config (whole-line-or-region-global-mode +1))
 
-(leaf cascading-dir-locals :ensure t
+(use-package cascading-dir-locals :ensure t
   :config
   (cascading-dir-locals-mode 1))
 
-(leaf just-mode :ensure t)
+(use-package just-mode :ensure t)
 
-(leaf numpydoc :ensure t
-  :bind ((python-mode-map
-          ("C-c C-n" . numpydoc-generate))))
+(use-package numpydoc :ensure t
+  :bind (:map python-mode-map
+              ("C-c C-n" . numpydoc-generate)))
 
-(leaf chembalance :ensure t)
+(use-package chembalance :ensure t)
 
-(leaf eping :ensure t)
+(use-package eping :ensure t)
 
-(leaf go-mode :ensure t)
+(use-package go-mode :ensure t)
 
-(leaf filetree :ensure t)
+(use-package filetree :ensure t)
 
-(leaf flymake-flycheck :ensure t)
+(use-package flymake-flycheck :ensure t)
 
-(leaf bash-completion :ensure t :require t :leaf-defer nil
+(use-package bash-completion :ensure t
   :config
   (bash-completion-setup))
 
-(leaf apheleia :ensure t :leaf-defer nil :require t
+(use-package apheleia :ensure t
   :config
   ;; (setf (alist-get 'isort apheleia-formatters)
   ;;     '("usort" "format" "-"))
@@ -1995,18 +1994,18 @@ buffer boundaries with possible narrowing."
         (alist-get 'rustfmt apheleia-formatters) '("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021"))
   (apheleia-global-mode +1))
 
-(leaf narrow-reindent :ensure t :leaf-defer nil :require t
+(use-package narrow-reindent :ensure t
   :hook (find-file-hook . narrow-reindent-mode))
 
-(leaf daemons :ensure t)
+(use-package daemons :ensure t)
 
-(leaf all-the-icons-completion :ensure t :leaf-defer nil :require t
+(use-package all-the-icons-completion :ensure t
   :when (display-graphic-p)
   :hook ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
          (after-init-hook . all-the-icons-completion-mode)))
 
-(leaf popper
-  :ensure t :leaf-defer nil :require t
+(use-package popper
+  :ensure t
   :bind (("C-`"   . popper-toggle-latest)
          ("M-`"   . popper-cycle)
          ("C-M-`" . popper-toggle-type))
@@ -2014,6 +2013,7 @@ buffer boundaries with possible narrowing."
   (defun popper-shell-output-empty-p (buf)
     (and (string-match-p "\\*Async Shell Command\\*" (buffer-name buf))
          (= (buffer-size buf) 0)))
+  :config
   (setq
    ; group by project.el project root, with fall back to default-directory
    popper-group-function #'popper-group-by-directory
@@ -2031,27 +2031,27 @@ buffer boundaries with possible narrowing."
   (popper-mode +1)
   (popper-echo-mode +1))                ; For echo area hints
 
-(leaf shackle :ensure t :leaf-defer nil :require t
+(use-package shackle :ensure t
   :config
   (setq shackle-rules
         '((compilation-mode :noselect t :align right :size 0.5))
         shackle-default-rule
         '(:select t)))
 
-(leaf flimenu :ensure t :leaf-defer nil :require t
+(use-package flimenu :ensure t
   :config
   (flimenu-global-mode 1))
 
-(leaf coterm :ensure t :leaf-defer nil :require t
+(use-package coterm :ensure t
   :config
   (coterm-mode 1))
 
-(leaf git-modes :ensure t)
+(use-package git-modes :ensure t)
 
-(leaf async-backup :ensure t
+(use-package async-backup :ensure t
   :hook (after-save-hook . async-backup))
 
-(leaf subed :ensure t
+(use-package subed :ensure t
   ;; :init
   ;; ;; Disable automatic movement of point by default
   ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)
@@ -2063,26 +2063,26 @@ buffer boundaries with possible narrowing."
   ;; (add-hook 'subed-mode-hook (lambda () (setq-local fill-column 40)))
   )
 
-(leaf buffer-move :ensure t)
+(use-package buffer-move :ensure t)
 
-(leaf redacted :ensure t
-  :preface
+(use-package redacted :ensure t
+  :init
   (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
 
-(leaf cycle-at-point :ensure t
+(use-package cycle-at-point :ensure t
   :bind (("M-p" . cycle-at-point)
          ("M-n" . (lambda ()
                     (interactive)
                     (let ((current-prefix-arg '(-1)))
                       (call-interactively 'cycle-at-point))))))
 
-(leaf comint-mime :ensure t :when (display-graphic-p)
+(use-package comint-mime :ensure t :when (display-graphic-p)
   :hook
   ((shell-mode-hook . comint-mime-setup)
    (inferior-python-mode-hook . comint-mime-setup)))
 
-(leaf flymake-collection :ensure t
-  :hook (after-init . flymake-collection-hook-setup)
+(use-package flymake-collection :ensure t
+  :hook (after-init-hook . flymake-collection-hook-setup)
   :config
   (push
    '(python-mode
@@ -2093,47 +2093,47 @@ buffer boundaries with possible narrowing."
                    (executable-find "pylint"))))
    flymake-collection-config))
 
-(leaf ruby-electric :ensure t
+(use-package ruby-electric :ensure t
   :hook (ruby-mode-hook . ruby-electric-mode))
 
-(leaf rbenv :ensure t :leaf-defer nil :require t
+(use-package rbenv :ensure t
   :config
   (global-rbenv-mode)
   (rbenv-use-corresponding))
 
-(leaf inf-ruby :ensure t
-  :bind ((inf-ruby-minor-mode-map
-          ("C-c C-c" . ruby-send-buffer-and-go))))
+(use-package inf-ruby :ensure t
+  :bind (:map inf-ruby-minor-mode-map
+              ("C-c C-c" . ruby-send-buffer-and-go)))
 
-(leaf ruby-test-mode :ensure t
+(use-package ruby-test-mode :ensure t
   :hook (ruby-mode-hook . ruby-test-mode))
 
-(leaf rinari :ensure t :leaf-defer nil :require t
+(use-package rinari :ensure t
   :config
   (global-rinari-mode))
 
-(leaf yari :ensure t
+(use-package yari :ensure t
   :hook (ruby-mode-hook . ri-bind-key)
-  :preface
+  :init
   (defun ri-bind-key ()
     (local-set-key [f1] 'yari)))
 
-(leaf fancy-compilation :ensure t :after compile
-  :init
+(use-package fancy-compilation :ensure t :after compile
+  :config
   (fancy-compilation-mode))
 
-(leaf repeat-help :ensure t
+(use-package repeat-help :ensure t
   :hook (repeat-mode-hook . repeat-help-mode))
 
-(leaf yaml-pro :ensure t
+(use-package yaml-pro :ensure t
   :hook (yaml-mode-hook . yaml-pro-mode))
 
-(leaf clean-kill-ring :require t :leaf-defer nil
+(use-package clean-kill-ring :ensure t
   :config
   (setq clean-kill-ring-prevent-duplicates t)
   (clean-kill-ring-mode 1))
 
-(leaf eldoc-box :ensure t
+(use-package eldoc-box :ensure t
   :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
 
 (defun after-init-jobs ()

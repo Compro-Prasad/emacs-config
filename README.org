@@ -199,24 +199,18 @@
 
     (package-initialize)
   #+end_src
-* Install =leaf=
-  *Leaf* is an alternative to *use-package* which is supposed to be brought into
-  Emacs. This is the reason I want to use it.
-
+* Install =use-package=
   #+begin_src emacs-lisp :tangle init.el
-    (unless (package-installed-p 'leaf)
-      (package-refresh-contents)
-      (package-install 'leaf))
-  #+end_src
-* Setup =leaf=
-  #+begin_src emacs-lisp :tangle init.el
-    (leaf leaf)
+    (when (< emacs-major-version 29)
+      (unless (package-installed-p 'use-package)
+        (package-refresh-contents)
+        (package-install 'use-package)))
   #+end_src
 * Install =f= and =s=
   *f* is a package that makes it easier to interact with the filesytem.
   #+begin_src emacs-lisp :tangle init.el
-    (leaf f :leaf-defer nil :ensure t :require t)
-    (leaf s :leaf-defer nil :ensure t :require t)
+    (use-package f :ensure t)
+    (use-package s :ensure t)
   #+end_src
 * Helper functions
 ** mplist-remove
@@ -456,7 +450,7 @@
   *General* is used for setting keybindings in a simpler way as compared to
   *bind-key*.
   #+begin_src emacs-lisp :tangle init.el
-    (leaf general :leaf-defer nil :ensure t :require t)
+    (use-package general :ensure t)
   #+end_src
 * Native Emacs configurations
 ** Speedup find-file
@@ -514,7 +508,7 @@
    Tab bar is a feature in Emacs to show tabs but works like workspaces in
    window managers.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf tab-bar :leaf-defer nil :require t
+     (use-package tab-bar
        :when (> emacs-major-version 27)
        :bind (("C-t" . tab-bar-new-tab-event)
               ([C-f4] . tab-bar-close-tab)
@@ -524,8 +518,6 @@
               ([C-S-tab] . tab-previous)
               ([C-iso-lefttab] . tab-previous))
        :init
-       (tab-bar-mode)
-
        (defun switch-to-untitled-buffer ()
          (interactive)
          (let ((buf (format "untitled-%d" (random 100000))))
@@ -570,8 +562,10 @@
                tab-bar-separator tab-bar-separator tab-bar-separator
                tab-bar-format-add-tab
                tab-bar-separator tab-bar-separator tab-bar-separator
-               tab-bar-format-global)))
+               tab-bar-format-global))
+       (tab-bar-mode))
    #+end_src
+
 ** Dired - File manager
    Dired is a good file manager but we can make it better by adding some more
    functionality on top using:
@@ -579,72 +573,72 @@
    - =dired-du-mode= to show file and dir size
    - =dired-subtree-toggle= to show tree like structure under the dir
    #+begin_src emacs-lisp :tangle init.el
-     (leaf dired
+     (use-package dired
        :hook (dired-mode-hook . dired-hide-details-mode)
-       :bind ((dired-mode-map
-               ("C-c C-c" . dired-collapse-mode)
-               ("C-c C-d C-u" . dired-du-mode)
-               ("." . dired-hide-dotfiles-mode)
-               ("<tab>" . dired-subtree-toggle)
-               ("q"      . kill-current-buffer)
-               ("RET"    . compro/dired-open-dir)
-               ("^"      . compro/dired-up-dir)
-               ("DEL"    . compro/dired-up-dir)
-               ("<left>" . compro/dired-up-dir)
-               ("C-x <C-j>" . dired-jump)))
-       :preface
-       (leaf dired-collapse :ensure t)
-       (leaf dired-du :ensure t :after dired)
-       (leaf dired-dups :ensure t :after dired)
-       (leaf dired-filetype-face :ensure t :after dired)
-       (leaf dired-hide-dotfiles :ensure t
-         :after dired
-         :hook (dired-mode-hook . dired-hide-dotfiles-mode))
-       (leaf dired-subtree :ensure t :after dired)
+       :bind (:map dired-mode-map
+		   ("C-c C-c" . dired-collapse-mode)
+		   ("C-c C-d C-u" . dired-du-mode)
+		   ("." . dired-hide-dotfiles-mode)
+		   ("<tab>" . dired-subtree-toggle)
+		   ("q"      . kill-current-buffer)
+		   ("RET"    . compro/dired-open-dir)
+		   ("^"      . compro/dired-up-dir)
+		   ("DEL"    . compro/dired-up-dir)
+		   ("<left>" . compro/dired-up-dir)
+		   ("C-x <C-j>" . dired-jump))
+       :init
+       (use-package dired-collapse :ensure t)
+       (use-package dired-du :ensure t :after dired)
+       (use-package dired-dups :ensure t :after dired)
+       (use-package dired-filetype-face :ensure t :after dired)
+       (use-package dired-hide-dotfiles :ensure t
+	 :after dired
+	 :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+       (use-package dired-subtree :ensure t :after dired)
        (defun compro/dired-up-dir ()
-         (interactive)
-         (find-alternate-file ".."))
+	 (interactive)
+	 (find-alternate-file ".."))
 
        (defun compro/dired-open-dir ()
-         (interactive)
-         (set-buffer-modified-p nil)
-         (let ((file-or-dir (dired-get-file-for-visit)))
-           (if (f-dir-p file-or-dir)
-               (find-alternate-file file-or-dir)
-             (find-file file-or-dir))))
+	 (interactive)
+	 (set-buffer-modified-p nil)
+	 (let ((file-or-dir (dired-get-file-for-visit)))
+	   (if (f-dir-p file-or-dir)
+	       (find-alternate-file file-or-dir)
+	     (find-file file-or-dir))))
 
        (defun compro/dired/mp3-to-ogg ()
-         "Used in dired to convert mp3 files to ogg"
-         (interactive)
-         (let* ((files (dired-get-marked-files)))
-           (dolist (file files)
-             (let* ((basename (file-name-nondirectory file))
-                    (file-base (file-name-base file))
-                    (dirname (file-name-directory file))
-                    (extension (file-name-extension file))
-                    (ogg-file (concat dirname file-base ".ogg"))
-                    (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
-               (if (string= "mp3" (downcase extension))
-                   (progn
-                     (shell-command command nil nil)
-                     (message command)
-                     (if (file-exists-p ogg-file)
-                         (delete-file file))))))))
+	 "Used in dired to convert mp3 files to ogg"
+	 (interactive)
+	 (let* ((files (dired-get-marked-files)))
+	   (dolist (file files)
+	     (let* ((basename (file-name-nondirectory file))
+		    (file-base (file-name-base file))
+		    (dirname (file-name-directory file))
+		    (extension (file-name-extension file))
+		    (ogg-file (concat dirname file-base ".ogg"))
+		    (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+	       (if (string= "mp3" (downcase extension))
+		   (progn
+		     (shell-command command nil nil)
+		     (message command)
+		     (if (file-exists-p ogg-file)
+			 (delete-file file))))))))
 
        :config
        (setq dired-dwim-target t)
        (defun mydired-sort ()
-         "Sort dired listings with directories first."
-         (save-excursion
-           (let (buffer-read-only)
-             (forward-line 2) ;; beyond dir. header
-             (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
-           (set-buffer-modified-p nil)))
+	 "Sort dired listings with directories first."
+	 (save-excursion
+	   (let (buffer-read-only)
+	     (forward-line 2) ;; beyond dir. header
+	     (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+	   (set-buffer-modified-p nil)))
 
        (defadvice dired-readin
-           (after dired-after-updating-hook first () activate)
-         "Sort dired listings with directories first before adding marks."
-         (mydired-sort)))
+	   (after dired-after-updating-hook first () activate)
+	 "Sort dired listings with directories first before adding marks."
+	 (mydired-sort)))
    #+end_src
 ** Set my details
    #+begin_src emacs-lisp :tangle init.el
@@ -916,12 +910,12 @@
    #+end_src
 ** Highlight matching brackets
    #+begin_src emacs-lisp :tangle init.el
-     (leaf paren :ensure nil
+     (use-package paren
        :config
-       (show-paren-mode t)
        (setq show-paren-style 'mixed
              show-paren-when-point-inside-paren t
-             show-paren-when-point-in-periphery t))
+             show-paren-when-point-in-periphery t)
+       (show-paren-mode t))
    #+end_src
 ** Enable line numbers
    #+begin_src emacs-lisp :tangle init.el
@@ -1007,14 +1001,14 @@
    - =C-o= opens line below current line while =C-S-o= opens above current line
    - =C-S-p= lists processes started from Emacs
    #+begin_src emacs-lisp :tangle init.el
-     (leaf simple
+     (use-package simple
        :bind (("C-a" . compro/beginning-of-line)
               ("C-o" . compro/open-line-below)
               ("C-S-p" . list-processes)
               ("" . list-processes)
               ("C-S-o" . compro/open-line-above)
               ("" . compro/open-line-above))
-       :config
+       :init
        (defun compro/beginning-of-line ()
          (interactive)
          (if (bolp)
@@ -1079,22 +1073,19 @@
 ** xwidget webkit
    Browsing web in Emacs.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf xwidget
-       :when (fboundp 'xwidget-webkit-browse-url)
+     (use-package xwidget :when (fboundp 'xwidget-webkit-browse-url)
        :bind
-       (xwidget-webkit-mode-map
-        ("<mouse-4>" . xwidget-webkit-scroll-down)
-        ("<mouse-5>" . xwidget-webkit-scroll-up)
-        ("<up>" . xwidget-webkit-scroll-down)
-        ("<down>" . xwidget-webkit-scroll-up)
-        ("M-w" . xwidget-webkit-copy-selection-as-kill)
-        ("C-c" . xwidget-webkit-copy-selection-as-kill))
-       :preface
-       (defun compro/xwidget-webkit/adjust-size ()
-         (when (equal major-mode 'xwidget-webkit-mode)
-           (xwidget-webkit-adjust-size-dispatch)))
+       (:map xwidget-webkit-mode-map
+             ("<mouse-4>" . xwidget-webkit-scroll-down)
+             ("<mouse-5>" . xwidget-webkit-scroll-up)
+             ("<up>" . xwidget-webkit-scroll-down)
+             ("<down>" . xwidget-webkit-scroll-up)
+             ("M-w" . xwidget-webkit-copy-selection-as-kill)
+             ("C-c" . xwidget-webkit-copy-selection-as-kill))
+
        :hook
        (window-configuration-change-hook . compro/xwidget-webkit/adjust-size)
+
        :init
        ;; by default, xwidget reuses previous xwidget window,
        ;; thus overriding your current website, unless a prefix argument
@@ -1105,7 +1096,11 @@
           (progn
             (require 'browse-url)
             (browse-url-interactive-arg "xwidget-webkit URL: ")))
-         (xwidget-webkit-browse-url url t)))
+         (xwidget-webkit-browse-url url t))
+
+       (defun compro/xwidget-webkit/adjust-size ()
+         (when (equal major-mode 'xwidget-webkit-mode)
+           (xwidget-webkit-adjust-size-dispatch))))
    #+end_src
 ** Highlight current line in some modes
    #+begin_src emacs-lisp :tangle init.el
@@ -1114,8 +1109,7 @@
 ** Winner mode for undo
    Undo and redo window configurations.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf winner :require t :leaf-defer nil
-       :config (winner-mode 1))
+     (use-package winner :config (winner-mode 1))
    #+end_src
 ** Handling trailing whitespace
    Delete trailing whitespaces and show them in the buffer.
@@ -1174,12 +1168,12 @@
 * Third party packages and configurations
 ** Restclient Mode
    #+begin_src emacs-lisp :tangle init.el
-     (leaf restclient :ensure t)
+     (use-package restclient :ensure t)
    #+end_src
 ** Hydra
    Keybindings that stick around.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf hydra :ensure t :require t :leaf-defer nil)
+     (use-package hydra :ensure t)
    #+end_src
 *** UI hydra
     #+begin_src emacs-lisp :tangle init.el
@@ -1324,19 +1318,19 @@
    modes as well.
 
    #+begin_src emacs-lisp :tangle init.el
-     (leaf hungry-delete :leaf-defer nil :ensure t :require t
-       :init (global-hungry-delete-mode t))
+     (use-package hungry-delete :ensure t
+       :config (global-hungry-delete-mode t))
    #+end_src
 ** Hide minor modes from modeline using Minions
 
    #+begin_src emacs-lisp :tangle init.el
-     (leaf minions :ensure t
+     (use-package minions :ensure t
        :bind ([S-down-mouse-3] . minions-minor-modes-menu))
    #+end_src
 ** Move transient history to .cache
    #+begin_src emacs-lisp :tangle init.el
-     (leaf transient :ensure t
-       :init
+     (use-package transient :ensure t
+       :config
        (setq transient-history-file (locate-user-emacs-file
                                      (concat cache-d "transient/history.el"))
              transient-values-file (locate-user-emacs-file
@@ -1347,23 +1341,23 @@
 ** Git integration
    *Magit* is an awesome package for doing most *git* related tasks in Emacs.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf magit :ensure t :require t :leaf-defer nil
+     (use-package magit :ensure t
        :bind (("C-x g" . magit-status)
-              (magit-mode-map
-               ([C-tab] . nil)
-               ([C-backtab] . nil)
-               ([M-tab] . nil))
-              (magit-status-mode-map
-               ("q" . compro/kill-magit-buffers)
-               ([C-tab] . nil)
-               ([C-backtab] . nil)
-               ([M-tab] . nil))
-              (magit-log-mode-map
-               ([C-tab] . nil)
-               ([C-backtab] . nil)
-               ([M-tab] . nil)))
-       :preface
-       (leaf forge :disabled is-windows :after magit :ensure t)
+              :map magit-mode-map
+              ([C-tab] . nil)
+              ([C-backtab] . nil)
+              ([M-tab] . nil)
+              :map magit-status-mode-map
+              ("q" . compro/kill-magit-buffers)
+              ([C-tab] . nil)
+              ([C-backtab] . nil)
+              ([M-tab] . nil)
+              :map magit-log-mode-map
+              ([C-tab] . nil)
+              ([C-backtab] . nil)
+              ([M-tab] . nil))
+       :init
+       ;; (use-package forge :unless is-windows :after magit :ensure t)
        :config
        (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
        (remove-hook 'server-switch-hook 'magit-commit-diff)
@@ -1384,14 +1378,14 @@
    #+end_src
    Get commit message for why a line was changed using *git-messenger*.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf git-messenger :ensure t
+     (use-package git-messenger :ensure t
        :bind (("C-x v p" . git-messenger:popup-message)))
    #+end_src
 ** Expand Region
    Expand region is a technique to iteratively select larger or smaller blocks
    of text based on the context using a single keybinding.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf expand-region :ensure t
+     (use-package expand-region :ensure t
        :commands (er/expand-region
                   er/mark-paragraph
                   er/mark-inside-pairs
@@ -1425,8 +1419,8 @@
 
    Until then we can rely on the more powerful =projectile= package.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf projectile :leaf-defer nil :ensure t :require t
-       :disabled (> emacs-major-version 27)  ;; Use project.el for > 27
+     (use-package projectile :ensure t
+       :unless (> emacs-major-version 27)  ;; Use project.el for > 27
        :bind (("C-x p" . projectile-command-map))
        :config
        (setq
@@ -1443,28 +1437,28 @@
      buffers) and try to recreate the window configuration at the time of
      saving.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf project-x :leaf-defer nil :require t
+     (use-package project-x
        :config
        (project-x-mode 1))
    #+end_src
 ** Silver Searcher
    [[https://github.com/ggreer/the_silver_searcher#installing][the_silver_searcher]] is an alternative to =grep= which is faster.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf ag :ensure t :when (executable-find "ag"))
+     (use-package ag :ensure t :when (executable-find "ag"))
    #+end_src
 ** Switch window
    =C-x o= is a longer keybinding and for more number of windows it becomes hard
    to repeatedly press the same keybinding. *switch-window* tends to solve this
    problem.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf switch-window :ensure t
+     (use-package switch-window :ensure t
        :bind ("C-x o" . switch-window))
    #+end_src
 ** Which key
    Look for the next keybinding you can press.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf which-key :ensure t
-       :init
+     (use-package which-key :ensure t
+       :config
        (setq which-key-idle-delay (if is-windows 0.212 1.0))
        (which-key-mode))
    #+end_src
@@ -1472,7 +1466,7 @@
    Make multiple cursors in a buffer to make text editing less repetitive and
    also less boring.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf multiple-cursors :ensure t
+     (use-package multiple-cursors :ensure t
        :bind
        (("C-S-c" . mc/edit-lines)
         ("M-S-<up>" . mc/mark-previous-like-this)
@@ -1484,23 +1478,23 @@
         ("M-S-<mouse-2>" . mc/add-cursor-on-click)
         ("M-S-<mouse-3>" . mc/add-cursor-on-click))
        :init
-       (leaf phi-search-mc :ensure t
-         :hook (isearch-mode . phi-search-from-isearch-mc/setup-keys)
+       (use-package phi-search-mc :ensure t
+         :hook (isearch-mode-hook . phi-search-from-isearch-mc/setup-keys)
          :config
          (phi-search-mc/setup-keys)))
    #+end_src
 ** Vundo
    Replacement for undo-tree.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf vundo :ensure t
+     (use-package vundo :ensure t
        :bind ("C-x u" . vundo)
-       :defer-config
+       :config
        (setq vundo-glyph-alist vundo-unicode-symbols))
    #+end_src
 ** Themes
 *** Doom Themes
     #+begin_src emacs-lisp :tangle init.el
-      (leaf doom-themes :ensure t
+      (use-package doom-themes :ensure t
         :commands (doom-themes-org-config)
         :config
         (doom-themes-org-config)
@@ -1545,11 +1539,11 @@
     #+end_src
 *** Spacemacs Theme
     #+begin_src emacs-lisp :tangle init.el
-      (leaf spacemacs-theme :ensure t)
+      (use-package spacemacs-common :ensure spacemacs-theme)
     #+end_src
 *** Modus operandi theme
     #+begin_src emacs-lisp :tangle init.el
-      (leaf modus-themes :ensure t)
+      (use-package modus-themes :ensure t)
     #+end_src
 *** COMMENT Custom faces
     #+begin_src emacs-lisp :tangle (early-init)
@@ -1566,8 +1560,8 @@
 ** Page break lines
    Convert "^L" characters to single lines for better readability.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf page-break-lines :ensure t
-       :init
+     (use-package page-break-lines :ensure t
+       :config
        (global-page-break-lines-mode t))
    #+end_src
 ** Autocompletion for Emacs
@@ -1579,8 +1573,8 @@
    same author who developed =selectrum= who also claims that =ivy= is complicated
    by design.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf orderless :ensure t :leaf-defer nil :require t
-       :init
+     (use-package orderless :ensure t
+       :config
        (setq completion-styles '(orderless flex substring)
              completion-category-defaults nil
              completion-category-overrides '((file (styles . (partial-completion)))))
@@ -1596,7 +1590,7 @@
              '(read-only t cursor-intangible t face minibuffer-prompt))
        (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-     (leaf consult :ensure t :leaf-defer nil :require t
+     (use-package consult :ensure t
        :bind (("M-y" . consult-yank-pop)
               ("M-v" . consult-yank-pop)
               ("C-v" . consult-yank-pop)
@@ -1604,11 +1598,12 @@
               ("M-g o" . consult-outline)
               ("C-x C-r" . consult-recent-file)
               ("C-x b" . consult-buffer)
-              (:minibuffer-local-map
-               ("C-r" . consult-history))))
-     (leaf consult-dir :ensure t
+              :map minibuffer-local-map
+              ("C-r" . consult-history)))
+
+     (use-package consult-dir :ensure t
        :bind ("C-x d" . consult-dir)
-       :preface
+       :init
        (with-eval-after-load 'eshell
          (defun eshell/z (&optional regexp)
            "Navigate to a previously visited directory in eshell, or to
@@ -1630,12 +1625,14 @@
                              (consult-dir--pick "Switch directory: ")))))
               (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
                               (completing-read "cd: " eshell-dirs)))))))))
-     (leaf marginalia :ensure t :after vertico
+
+     (use-package marginalia :ensure t :after vertico
        :config
        (setq marginalia-annotators
              '(marginalia-annotators-heavy marginalia-annotators-light nil))
        (marginalia-mode +1))
-     (leaf embark :ensure t
+
+     (use-package embark :ensure t
        :bind (("C-S-a" . embark-act)
               ("" . embark-act)
               ("C-S-e" . embark-act-noexit)
@@ -1649,10 +1646,11 @@
                (which-key--show-keymap "Embark" map nil nil 'no-paging)
                #'which-key--hide-popup-ignore-command)
              embark-become-indicator embark-action-indicator))
-     (leaf vertico :ensure t
+
+     (use-package vertico :ensure t :defer nil
 
        ;; More convenient directory navigation commands
-       :bind ((vertico-map
+       :bind (:map vertico-map
                ("RET" . vertico-directory-enter)
                ("DEL" . vertico-directory-delete-char)
                ("M-DEL" . vertico-directory-delete-word)
@@ -1660,22 +1658,20 @@
                ("M-G" . vertico-multiform-grid)
                ("M-F" . vertico-multiform-flat)
                ("M-R" . vertico-multiform-reverse)
-               ("M-U" . vertico-multiform-unobtrusive)))
+               ("M-U" . vertico-multiform-unobtrusive))
 
-       :preface
+       :init
        (setq read-file-name-completion-ignore-case t
              read-buffer-completion-ignore-case t)
 
        ;; Tidy shadowed file names
-       :hook ((rfn-eshadow-update-overlay . vertico-directory-tidy)
-              (after-init-hook . vertico-mode))
-
-       :init
-       (setq vertico-count 18)
+       :hook (rfn-eshadow-update-overlay-hook . vertico-directory-tidy)
 
        :config
+       (setq vertico-count 18)
        (require 'vertico-mouse)
        (require 'vertico-indexed)
+       (vertico-mode 1)
        (vertico-multiform-mode 1)
        (vertico-mouse-mode 1)
        (vertico-indexed-mode 1)
@@ -1699,26 +1695,26 @@
                               (ffap-guesser)
                               (thing-at-point-url-at-point))))))))
 
-     (leaf vertico-directory :after vertico :ensure nil)
+     (use-package vertico-directory :after vertico :ensure nil)
    #+end_src
 ** Isearch alternative
    =ctrlf= is just a simple improvement over isearch.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf ctrlf :ensure t :leaf-defer nil :require t
+     (use-package ctrlf :ensure t
        :config (ctrlf-mode 1))
    #+end_src
 ** Better M-< and M->
    #+begin_src emacs-lisp :tangle init.el
-     (leaf beginend :ensure t :leaf-defer nil :require t
+     (use-package beginend :ensure t
        :config (beginend-global-mode))
    #+end_src
 ** Move text up and down easily
    #+begin_src emacs-lisp :tangle init.el
-     (leaf move-text :ensure t)
+     (use-package move-text :ensure t)
    #+end_src
 ** Zoom in and zoom out text
    #+begin_src emacs-lisp :tangle init.el
-     (leaf default-text-scale :ensure t
+     (use-package default-text-scale :ensure t
        :config (default-text-scale-mode 1))
    #+end_src
 ** TODO iedit
@@ -1728,34 +1724,34 @@
    - smarter
    - more flexible
    #+begin_src emacs-lisp :tangle init.el
-     (leaf iedit :ensure t
+     (use-package iedit :ensure t
        :bind ("C-c i" . iedit-mode))
    #+end_src
 
 ** wgrep
    Edit grep buffers.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf wgrep :ensure t :after grep :require t)
+     (use-package wgrep :ensure t :after grep)
    #+end_src
 
 ** Clang format
    Format C++ buffers on save.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf clang-format+ :ensure t
-       :init
+     (use-package clang-format+ :ensure t
+       :config
        (setq clang-format+-context 'buffer))
    #+end_src
 ** Telegram
    #+begin_src emacs-lisp :tangle init.el
-     (leaf telega :ensure t :when is-linux)
+     (use-package telega :ensure t :when is-linux)
    #+end_src
 ** Org mode
    [[https://orgmode.org][Org mode]] is a note taking system which has other uses too. This configuration
    is written in org mode.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf org :ensure org-contrib :require t :leaf-defer nil
+     (use-package org :ensure org-contrib
        :hook (org-mode-hook . org-superstar-mode)
-       :preface
+       :init
        ;; see https://list.orgmode.org/87r5718ytv.fsf@sputnik.localhost
        (eval-after-load 'org-list
          '(add-hook 'org-checkbox-statistics-hook (function ndk/checkbox-list-complete)))
@@ -1778,27 +1774,27 @@
                        (org-todo 'done)
                      (org-todo 'todo)))))))
 
-       (leaf ob-async :ensure t :require t :after ob)
-       (leaf ob-restclient :ensure t :require t :after ob)
+       (use-package ob-async :ensure t :after ob)
+       (use-package ob-restclient :ensure t :after ob)
 
-       (leaf boxy-headings :ensure t)
+       (use-package boxy-headings :ensure t)
 
-       (leaf org-babel-eval-in-repl :ensure t
+       (use-package org-babel-eval-in-repl :ensure t
          :after ob
          :bind
-         (org-mode-map
-          ("C-c C-<return>" . ober-eval-block-in-repl)))
+         (:map org-mode-map
+               ("C-c C-<return>" . ober-eval-block-in-repl)))
 
-       (leaf ox-hugo :require t :ensure t :after ox :disabled t
+       (use-package ox-hugo :ensure t :after ox :disabled t
          :config
          (dolist (ext '("zip" "ctf"))
            (push ext org-hugo-external-file-extensions-allowed-for-copying)))
 
-       (leaf org-superstar :ensure t
+       (use-package org-superstar :ensure t
          :config
          (setq org-superstar-leading-bullet ?\s))
 
-       (leaf org-re-reveal :ensure t :require t :after ox)
+       (use-package org-re-reveal :ensure t :after ox)
 
        (add-hook 'org-mode-hook
                  #'(lambda () (setq line-spacing 0.2) ;; Add more line padding for readability
@@ -1808,13 +1804,12 @@
        (("C-c l" . org-store-link)
         ("C-c a" . org-agenda)
         ("C-c c" . org-capture)
-        (:org-mode-map
-         :package org
-         ([C-tab] . nil)
-         ([C-backtab] . nil)
-         ("M-n" . outline-next-visible-heading)
-         ("C-c k" . endless/insert-key)
-         ("M-p" . outline-previous-visible-heading)))
+        :map org-mode-map
+        ([C-tab] . nil)
+        ([C-backtab] . nil)
+        ("M-n" . outline-next-visible-heading)
+        ("C-c k" . endless/insert-key)
+        ("M-p" . outline-previous-visible-heading))
        :config
        ;; (define-key org-mode-map "\C-ck" #'endless/insert-key)
        (defun endless/insert-key (key)
@@ -1915,20 +1910,20 @@
          "Return new reference for DATUM that is unique in CACHE."
          (cl-macrolet
              ((inc-suffixf
-               (place)
-               `(progn
-                  (string-match (rx bos
-                                    (minimal-match (group (1+ anything)))
-                                    (optional "--" (group (1+ digit)))
-                                    eos)
-                                ,place)
-                  ;; HACK: `s1' instead of a gensym.
-                  (-let* (((s1 suffix) (list (match-string 1 ,place)
-                                             (match-string 2 ,place)))
-                          (suffix (if suffix
-                                      (string-to-number suffix)
-                                    0)))
-                    (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
+                (place)
+                `(progn
+                   (string-match (rx bos
+                                     (minimal-match (group (1+ anything)))
+                                     (optional "--" (group (1+ digit)))
+                                     eos)
+                                 ,place)
+                   ;; HACK: `s1' instead of a gensym.
+                   (-let* (((s1 suffix) (list (match-string 1 ,place)
+                                              (match-string 2 ,place)))
+                           (suffix (if suffix
+                                       (string-to-number suffix)
+                                     0)))
+                     (setf ,place (format "%s--%s" s1 (cl-incf suffix)))))))
            (let* ((title (org-element-property :raw-value datum))
                   (ref (url-hexify-string (substring-no-properties title)))
                   (parent (org-element-property :parent datum)))
@@ -1952,7 +1947,7 @@
              (while (outline-next-heading)
                (let* ((old-id (plist-get (org-element--get-node-properties) :CUSTOM_ID))
                       (heading (replace-regexp-in-string "[^A-Za-z0-9]" "-" (substring-no-properties (org-get-heading t t t t))))
-                      (new-id (concat "h-" heading))
+                      (new-id heading)  ;; (new-id (concat "h-" heading))
                       (dup (assoc heading hlist))
                       (dup-count (if dup (1+ (cdr dup)) 1)))
                  (setq new-id (concat new-id (if (= dup-count 1) "" (number-to-string dup-count))))
@@ -2173,20 +2168,20 @@
     #+end_src
 ** Rust
    #+begin_src emacs-lisp :tangle init.el
-     (leaf rust-mode :ensure t)
+     (use-package rust-mode :ensure t)
 
-     (leaf cargo :ensure t
+     (use-package cargo :ensure t
        :hook (rust-mode . cargo-minor-mode))
    #+end_src
 ** Web mode
    *web-mode* is a package that provides integration for web related
    major modes together in the same mode.
    #+begin_src emacs-lisp :tangle init.el
-     ;; (leaf company-web :ensure t :after mhtml-mode)
+     ;; (use-package company-web :ensure t :after mhtml-mode)
 
-     ;; (leaf ac-html-csswatcher :ensure t :after mhtml-mode)
+     ;; (use-package ac-html-csswatcher :ensure t :after mhtml-mode)
 
-     (leaf mhtml-mode
+     (use-package mhtml-mode
        :when (>= emacs-major-version 26)
        :mode ("\\.vue\\'" "\\.html\\'" "\\.jsx")
        :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
@@ -2205,35 +2200,35 @@
        ;;                            (company-mode t)))
        )
 
-     (leaf web-mode :ensure t)
+     (use-package web-mode :ensure t)
    #+end_src
 ** Elf mode
    Elf is a binary format commonly used on Linux systems.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf elf-mode :ensure t)
+     (use-package elf-mode :ensure t)
    #+end_src
 ** Cmake mode
    Cmake is a build system for C++ development.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf cmake-mode :ensure t)
+     (use-package cmake-mode :ensure t)
    #+end_src
 ** PlantUML mode
    Mode for plantuml files
    #+begin_src emacs-lisp :tangle init.el
-     (leaf plantuml-mode :ensure t
+     (use-package plantuml-mode :ensure t
        :when (locate-file "plantuml.jar" '("~/Downloads"))
-       :init
+       :config
        (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
    #+end_src
 ** Typescript mode
    #+begin_src emacs-lisp :tangle init.el
-     (leaf typescript-mode :ensure t)
+     (use-package typescript-mode :ensure t)
    #+end_src
 ** Treemacs - Sidebar folder view
    #+begin_src emacs-lisp :tangle init.el
-     (leaf treemacs :ensure t
-       :bind ((treemacs-mode-map
-               ([mouse-1] . treemacs-single-click-expand-action)))
+     (use-package treemacs :ensure t
+       :bind (:map treemacs-mode-map
+              ([mouse-1] . treemacs-single-click-expand-action))
        :config
        (treemacs-resize-icons 17)
        (setq treemacs-read-string-input 'from-minibuffer))
@@ -2241,24 +2236,24 @@
 ** Python
    #+begin_src emacs-lisp :tangle init.el
      (add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
-     (leaf python
-       :bind ((python-mode-map
-               ("TAB" . python-indent-shift-right)
-               ("S-TAB" . python-indent-shift-left)
-               ("<backtab>" . python-indent-shift-left)
-               ("S-<iso-lefttab>" . python-indent-shift-left)))
+     (use-package python
+       :bind (:map python-mode-map
+                   ("TAB" . python-indent-shift-right)
+                   ("S-TAB" . python-indent-shift-left)
+                   ("<backtab>" . python-indent-shift-left)
+                   ("S-<iso-lefttab>" . python-indent-shift-left))
        :config
        (setq python-indent-guess-indent-offset-verbose nil))
    #+end_src
 *** =ruff= integration using flymake
     #+begin_src emacs-lisp :tangle init.el
-      (leaf flymake-ruff :ensure t
+      (use-package flymake-ruff :ensure t
         :hook ((python-mode-hook . flymake-mode)
                (python-mode-hook . flymake-ruff-load)))
     #+end_src
 *** =pyright= integration using eglot
     #+begin_src emacs-lisp :tangle init.el
-      (leaf eglot
+      (use-package eglot
         :when (>= emacs-major-version 29)
         :config
         (defun compro/python-lsp-setup-for-pyright (&rest r)
@@ -2293,9 +2288,9 @@
 *** /virtualenv/ integration
     emacs-PET
     #+begin_src emacs-lisp :tangle init.el
-      (leaf pet :leaf-defer nil :require t
+      (use-package pet :ensure t
         :hook (python-mode-hook . compro/set-python-variables)
-        :preface
+        :init
         (defun compro/get-exe (root name)
           (when-let* ((location (concat root "/bin/" name))
                       (exists (file-exists-p location)))
@@ -2335,7 +2330,7 @@
     #+end_src
 ** Vterm - A better terminal emulator
    #+begin_src emacs-lisp :tangle init.el
-     (leaf vterm :ensure t :when is-linux
+     (use-package vterm :ensure t :when is-linux
        :init
        (defun vterm-directory-sync ()
          "Synchronize current working directory."
@@ -2351,9 +2346,9 @@
    #+end_src
 ** Tree-sitter
    #+begin_src emacs-lisp :tangle init.el
-     (leaf tree-sitter :ensure t :require t :leaf-defer nil :disabled is-windows
-       :preface
-       (leaf tree-sitter-langs :ensure t :require t :leaf-defer nil)
+     (use-package tree-sitter :ensure t :unless is-windows
+       :init
+       (use-package tree-sitter-langs :ensure t)
        :config
        (require 'tree-sitter-hl)
        (require 'tree-sitter-debug)
@@ -2361,12 +2356,12 @@
    #+end_src
 ** Eshell syntax highlighting
    #+begin_src emacs-lisp :tangle init.el
-     (leaf eshell-syntax-highlighting :ensure t :after esh-mode
+     (use-package eshell-syntax-highlighting :ensure t :after esh-mode
        :config (eshell-syntax-highlighting-global-mode +1))
    #+end_src
 ** embrace.el - Like evil-surround
    #+begin_src emacs-lisp :tangle init.el
-     (leaf embrace :ensure t
+     (use-package embrace :ensure t
        :bind
        ("C-," . embrace-commander))
    #+end_src
@@ -2380,9 +2375,9 @@
    #+end_src
 ** Ligatures
    #+begin_src emacs-lisp :tangle init.el
-     (leaf ligature :ensure nil :require t :leaf-defer nil
-       :disabled (or (< emacs-major-version 27) is-windows)
-       :preface
+     (use-package ligature :ensure nil
+       :unless (or (< emacs-major-version 27) is-windows)
+       :init
        (require 'quelpa)
        (when (not (quelpa--package-installed-p 'ligature))
          (quelpa
@@ -2419,7 +2414,7 @@
    #+end_src
 ** Diff in buffers
    #+begin_src emacs-lisp :tangle init.el
-     (leaf diff-hl :ensure t
+     (use-package diff-hl :ensure t
        :config
        (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
        (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
@@ -2432,7 +2427,7 @@
    Emacs has bad default behaviour when there is no region selected for
    keybindings like =C-w=, =M-;=, etc.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf whole-line-or-region :ensure t
+     (use-package whole-line-or-region :ensure t
        :config (whole-line-or-region-global-mode +1))
    #+end_src
 ** cascading-dir-locals.el
@@ -2442,33 +2437,33 @@
    first dir-locals file is found, collect and apply all (!) dir-locals files
    found from the current directory up to the root one.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf cascading-dir-locals :ensure t
+     (use-package cascading-dir-locals :ensure t
        :config
        (cascading-dir-locals-mode 1))
    #+end_src
 ** Just mode
    Alternative to GNU Make.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf just-mode :ensure t)
+     (use-package just-mode :ensure t)
    #+end_src
 ** Numpy doc generator
    #+begin_src emacs-lisp :tangle init.el
-     (leaf numpydoc :ensure t
-       :bind ((python-mode-map
-               ("C-c C-n" . numpydoc-generate))))
+     (use-package numpydoc :ensure t
+       :bind (:map python-mode-map
+                   ("C-c C-n" . numpydoc-generate)))
    #+end_src
 ** Balancing chemical equations
    https://github.com/sergiruiztrepat/chembalance
    #+begin_src emacs-lisp :tangle init.el
-     (leaf chembalance :ensure t)
+     (use-package chembalance :ensure t)
    #+end_src
 ** Ping
    #+begin_src emacs-lisp :tangle init.el
-     (leaf eping :ensure t)
+     (use-package eping :ensure t)
    #+end_src
 ** Golang
    #+begin_src emacs-lisp :tangle init.el
-     (leaf go-mode :ensure t)
+     (use-package go-mode :ensure t)
    #+end_src
    The following packages are good to have:
    - =go get github.com/mdempsky/gocode= (For completions in Go code)
@@ -2478,15 +2473,15 @@
    Use =M-x filetree-show-*= commands to get into filetree view. Watch [[https://www.youtube.com/watch?v=-KrMaLq8Bms][video]] for
    more info.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf filetree :ensure t)
+     (use-package filetree :ensure t)
    #+end_src
 ** Flycheck in Flymake
    #+begin_src emacs-lisp :tangle init.el
-     (leaf flymake-flycheck :ensure t)
+     (use-package flymake-flycheck :ensure t)
    #+end_src
 ** Bash completion
    #+begin_src emacs-lisp :tangle init.el
-     (leaf bash-completion :ensure t :require t :leaf-defer nil
+     (use-package bash-completion :ensure t
        :config
        (bash-completion-setup))
    #+end_src
@@ -2496,7 +2491,7 @@
      pip3 install usort black
    #+end_src
    #+begin_src emacs-lisp :tangle init.el
-     (leaf apheleia :ensure t :leaf-defer nil :require t
+     (use-package apheleia :ensure t
        :config
        ;; (setf (alist-get 'isort apheleia-formatters)
        ;;     '("usort" "format" "-"))
@@ -2514,25 +2509,25 @@
 ** Narrow reindent
    Dedent after narrowing.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf narrow-reindent :ensure t :leaf-defer nil :require t
+     (use-package narrow-reindent :ensure t
        :hook (find-file-hook . narrow-reindent-mode))
    #+end_src
 ** Daemons
    Show all systemd services.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf daemons :ensure t)
+     (use-package daemons :ensure t)
    #+end_src
 ** All the icons in completion candidates
    #+begin_src emacs-lisp :tangle init.el
-     (leaf all-the-icons-completion :ensure t :leaf-defer nil :require t
+     (use-package all-the-icons-completion :ensure t
        :when (display-graphic-p)
        :hook ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
               (after-init-hook . all-the-icons-completion-mode)))
    #+end_src
 ** Managing popup windows
    #+begin_src emacs-lisp :tangle init.el
-     (leaf popper
-       :ensure t :leaf-defer nil :require t
+     (use-package popper
+       :ensure t
        :bind (("C-`"   . popper-toggle-latest)
               ("M-`"   . popper-cycle)
               ("C-M-`" . popper-toggle-type))
@@ -2540,6 +2535,7 @@
        (defun popper-shell-output-empty-p (buf)
          (and (string-match-p "\\*Async Shell Command\\*" (buffer-name buf))
               (= (buffer-size buf) 0)))
+       :config
        (setq
         ; group by project.el project root, with fall back to default-directory
         popper-group-function #'popper-group-by-directory
@@ -2558,7 +2554,7 @@
        (popper-echo-mode +1))                ; For echo area hints
    #+end_src
    #+begin_src emacs-lisp :tangle init.el
-     (leaf shackle :ensure t :leaf-defer nil :require t
+     (use-package shackle :ensure t
        :config
        (setq shackle-rules
              '((compilation-mode :noselect t :align right :size 0.5))
@@ -2567,24 +2563,24 @@
    #+end_src
 ** Flatten imenu
    #+begin_src emacs-lisp :tangle init.el
-     (leaf flimenu :ensure t :leaf-defer nil :require t
+     (use-package flimenu :ensure t
        :config
        (flimenu-global-mode 1))
    #+end_src
 ** Fix pagers in =comint-mode=
    #+begin_src emacs-lisp :tangle init.el
-     (leaf coterm :ensure t :leaf-defer nil :require t
+     (use-package coterm :ensure t
        :config
        (coterm-mode 1))
    #+end_src
 ** Mode for editing git files
    This helps in editing files like =.gitignore= and =.gitattributes=.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf git-modes :ensure t)
+     (use-package git-modes :ensure t)
    #+end_src
 ** Make backups asynchronous on save
    #+begin_src emacs-lisp :tangle init.el
-     (leaf async-backup :ensure t
+     (use-package async-backup :ensure t
        :hook (after-save-hook . async-backup))
    #+end_src
 ** COMMENT Corfu and cape
@@ -2594,19 +2590,18 @@
 
    https://github.com/minad/cape
    #+begin_src emacs-lisp :tangle init.el
-     (leaf corfu :ensure t :leaf-defer nil :require t :disabled t
-       :disabled (not window-system)
+     (use-package corfu :ensure t :disabled t
        :config
        (setq corfu-auto t
              corfu-quit-at-boundary t)
        (corfu-global-mode 1))
-     (leaf corfu-doc
+     (use-package corfu-doc
        :hook (corfu-mode-hook . corfu-doc-mode))
-     (leaf cape :ensure t)
+     (use-package cape :ensure t)
    #+end_src
 ** Edit subtitles
    #+begin_src emacs-lisp :tangle init.el
-     (leaf subed :ensure t
+     (use-package subed :ensure t
        ;; :init
        ;; ;; Disable automatic movement of point by default
        ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)
@@ -2620,26 +2615,26 @@
    #+end_src
 ** Move buffers or Swap windows
    #+begin_src emacs-lisp :tangle init.el
-     (leaf buffer-move :ensure t)
+     (use-package buffer-move :ensure t)
    #+end_src
 ** Redacted mode
    To make buffers unreadable like =rot13= but can't be decrypted.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf redacted :ensure t
-       :preface
+     (use-package redacted :ensure t
+       :init
        (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
    #+end_src
 ** COMMENT Unmodified buffer
    Automatically restore an Emacs buffer's modified state in case its contents
    match the original file it is visiting.
    #+begin_src emacs-lisp :tangle init.el
-     (leaf unmodified-buffer :ensure t
+     (use-package unmodified-buffer :ensure t
        :hook (after-init-hook . unmodified-buffer-global-mode))
    #+end_src
 ** Cycle at point
    https://gitlab.com/ideasman42/emacs-cycle-at-point
    #+begin_src emacs-lisp :tangle init.el
-     (leaf cycle-at-point :ensure t
+     (use-package cycle-at-point :ensure t
        :bind (("M-p" . cycle-at-point)
               ("M-n" . (lambda ()
                          (interactive)
@@ -2648,22 +2643,22 @@
    #+end_src
 ** COMMENT Status bar in echo area
    #+begin_src emacs-lisp :tangle init.el
-     (leaf echo-bar :ensure t :leaf-defer nil :disabled t
+     (use-package echo-bar :ensure t
        :config
        (echo-bar-mode 1))
    #+end_src
 ** Comint mime
    Display images in comint and related buffers:
    #+begin_src emacs-lisp :tangle init.el
-     (leaf comint-mime :ensure t :when (display-graphic-p)
+     (use-package comint-mime :ensure t :when (display-graphic-p)
        :hook
        ((shell-mode-hook . comint-mime-setup)
         (inferior-python-mode-hook . comint-mime-setup)))
    #+end_src
 ** TODO Flymake collection
    #+begin_src emacs-lisp :tangle init.el
-     (leaf flymake-collection :ensure t
-       :hook (after-init . flymake-collection-hook-setup)
+     (use-package flymake-collection :ensure t
+       :hook (after-init-hook . flymake-collection-hook-setup)
        :config
        (push
         '(python-mode
@@ -2674,60 +2669,59 @@
                         (executable-find "pylint"))))
         flymake-collection-config))
    #+end_src
-   #+end_src
 ** Ruby
    #+begin_src emacs-lisp :tangle init.el
-     (leaf ruby-electric :ensure t
+     (use-package ruby-electric :ensure t
        :hook (ruby-mode-hook . ruby-electric-mode))
 
-     (leaf rbenv :ensure t :leaf-defer nil :require t
+     (use-package rbenv :ensure t
        :config
        (global-rbenv-mode)
        (rbenv-use-corresponding))
 
-     (leaf inf-ruby :ensure t
-       :bind ((inf-ruby-minor-mode-map
-               ("C-c C-c" . ruby-send-buffer-and-go))))
+     (use-package inf-ruby :ensure t
+       :bind (:map inf-ruby-minor-mode-map
+                   ("C-c C-c" . ruby-send-buffer-and-go)))
 
-     (leaf ruby-test-mode :ensure t
+     (use-package ruby-test-mode :ensure t
        :hook (ruby-mode-hook . ruby-test-mode))
 
-     (leaf rinari :ensure t :leaf-defer nil :require t
+     (use-package rinari :ensure t
        :config
        (global-rinari-mode))
 
-     (leaf yari :ensure t
+     (use-package yari :ensure t
        :hook (ruby-mode-hook . ri-bind-key)
-       :preface
+       :init
        (defun ri-bind-key ()
          (local-set-key [f1] 'yari)))
    #+end_src
 ** Fancy compilation buffers
    #+begin_src emacs-lisp :tangle init.el
-     (leaf fancy-compilation :ensure t :after compile
-       :init
+     (use-package fancy-compilation :ensure t :after compile
+       :config
        (fancy-compilation-mode))
    #+end_src
 ** repeat-mode help
    #+begin_src emacs-lisp :tangle init.el
-     (leaf repeat-help :ensure t
+     (use-package repeat-help :ensure t
        :hook (repeat-mode-hook . repeat-help-mode))
    #+end_src
 ** yaml-pro-mode
    #+begin_src emacs-lisp :tangle init.el
-     (leaf yaml-pro :ensure t
+     (use-package yaml-pro :ensure t
        :hook (yaml-mode-hook . yaml-pro-mode))
    #+end_src
 ** Clean kill ring
    #+begin_src emacs-lisp :tangle init.el
-     (leaf clean-kill-ring :require t :leaf-defer nil
+     (use-package clean-kill-ring :ensure t
        :config
        (setq clean-kill-ring-prevent-duplicates t)
        (clean-kill-ring-mode 1))
    #+end_src
 ** Eldoc box to show documentation in a popup
    #+begin_src emacs-lisp :tangle init.el
-     (leaf eldoc-box :ensure t
+     (use-package eldoc-box :ensure t
        :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
    #+end_src
 * After init jobs
