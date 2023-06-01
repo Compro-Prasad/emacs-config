@@ -2146,16 +2146,6 @@ buffer boundaries with possible narrowing."
 (remove-hook 'after-init-hook 'after-init-jobs)
 (compro/redownload-empty-pkgs)
 
-(use-package server
-  :config
-  (when (not (server-running-p))
-    (let ((server-file (concat cache-d "server/server")))
-      (when (file-exists-p server-file)
-        (delete-file server-file)
-        (message "Old server file deleted")))
-    (message "Starting server")
-    (server-start)))
-
 ;; Remove text property from text in kill-ring
 (defun unpropertize-kill-ring ()
   (setq kill-ring (mapcar 'substring-no-properties kill-ring)))

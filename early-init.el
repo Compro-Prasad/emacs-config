@@ -25,6 +25,16 @@
 
 ;;; Code:
 
+(use-package server
+  :config
+  (when (not (server-running-p))
+    (let ((server-file (concat cache-d "server/server")))
+      (when (file-exists-p server-file)
+        (delete-file server-file)
+        (message "Old server file deleted")))
+    (message "Starting server")
+    (server-start)))
+
 (menu-bar-mode 0)
 (menu-bar-no-scroll-bar)
 (blink-cursor-mode 0)
@@ -36,7 +46,10 @@
   (xterm-mouse-mode 1))  ; Enable mouse in terminal
 
 ;; start the initial frame maximized
-(add-to-list 'initial-frame-alist '(fullscreen . maximized))
+;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
 ;; start every frame maximized
 ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+;; This modifies both of the above
+(modify-all-frames-parameters '((fullscreen . maximized)))

@@ -85,8 +85,7 @@
   If the above code returns =nil= then the server hasn't been started yet. You can
   start the server manually using =M-x server-start=. Or put the following code in
   =init.el=. This doesn't needs to be done if you are using my init file.
-  #+NAME: start-server-block
-  #+begin_src emacs-lisp
+  #+begin_src emacs-lisp :tangle (early-init)
     (use-package server
       :config
       (when (not (server-running-p))
@@ -874,10 +873,13 @@
    issue. Uncomment if needed. Not tested.
    #+begin_src emacs-lisp :tangle (early-init)
      ;; start the initial frame maximized
-     (add-to-list 'initial-frame-alist '(fullscreen . maximized))
+     ;; (add-to-list 'initial-frame-alist '(fullscreen . maximized))
 
      ;; start every frame maximized
      ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+     ;; This modifies both of the above
+     (modify-all-frames-parameters '((fullscreen . maximized)))
    #+end_src
 ** TODO Disable overlapping keybindings
    Find fix when running in daemon mode
@@ -2737,8 +2739,6 @@
           init-file-debug nil)
     (remove-hook 'after-init-hook 'after-init-jobs)
     (compro/redownload-empty-pkgs)
-
-    <<start-server-block>>
 
     ;; Remove text property from text in kill-ring
     (defun unpropertize-kill-ring ()
