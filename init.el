@@ -2136,26 +2136,27 @@ buffer boundaries with possible narrowing."
 (use-package eldoc-box :ensure t
   :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
 
-(defun after-init-jobs ()
-  "Configurations run after Emacs starts."
-  (set-face-attribute 'mode-line nil :box nil)
-  (set-face-attribute 'mode-line-inactive nil :box nil)
-  (when (> emacs-major-version 27)
-    (set-face-attribute 'tab-bar-tab nil :box nil))
-  (minions-mode 1)
-  (setq debug-on-error  nil
-        init-file-debug nil)
-  (remove-hook 'after-init-hook 'after-init-jobs)
-  (compro/redownload-empty-pkgs)
+(set-face-attribute 'mode-line nil :box nil)
+(set-face-attribute 'mode-line-inactive nil :box nil)
+(when (> emacs-major-version 27)
+  (set-face-attribute 'tab-bar-tab nil :box nil))
+(minions-mode 1)
+(setq debug-on-error  nil
+      init-file-debug nil)
+(remove-hook 'after-init-hook 'after-init-jobs)
+(compro/redownload-empty-pkgs)
+
+(use-package server
+  :config
   (when (not (server-running-p))
     (let ((server-file (concat cache-d "server/server")))
       (when (file-exists-p server-file)
         (delete-file server-file)
         (message "Old server file deleted")))
     (message "Starting server")
-    (server-start))
-  ;; Remove text property from text in kill-ring
-  (defun unpropertize-kill-ring ()
-    (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
-  (add-hook 'kill-emacs-hook 'unpropertize-kill-ring))
-(add-hook 'after-init-hook 'after-init-jobs)
+    (server-start)))
+
+;; Remove text property from text in kill-ring
+(defun unpropertize-kill-ring ()
+  (setq kill-ring (mapcar 'substring-no-properties kill-ring)))
+(add-hook 'kill-emacs-hook 'unpropertize-kill-ring)
