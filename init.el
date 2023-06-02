@@ -2001,8 +2001,9 @@ buffer boundaries with possible narrowing."
 
 (use-package all-the-icons-completion :ensure t
   :when (display-graphic-p)
-  :hook ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
-         (after-init-hook . all-the-icons-completion-mode)))
+  :hook (marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
+  :config
+  (all-the-icons-completion-mode 1))
 
 (use-package popper
   :ensure t
@@ -2082,8 +2083,8 @@ buffer boundaries with possible narrowing."
    (inferior-python-mode-hook . comint-mime-setup)))
 
 (use-package flymake-collection :ensure t
-  :hook (after-init-hook . flymake-collection-hook-setup)
   :config
+  (flymake-collection-hook-setup)
   (push
    '(python-mode
      flymake-collection-mypy                      ; Always added to diagnostic functions.
@@ -2143,7 +2144,6 @@ buffer boundaries with possible narrowing."
 (minions-mode 1)
 (setq debug-on-error  nil
       init-file-debug nil)
-(remove-hook 'after-init-hook 'after-init-jobs)
 (compro/redownload-empty-pkgs)
 
 ;; Remove text property from text in kill-ring

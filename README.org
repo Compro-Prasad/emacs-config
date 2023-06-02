@@ -2525,8 +2525,9 @@
    #+begin_src emacs-lisp :tangle init.el
      (use-package all-the-icons-completion :ensure t
        :when (display-graphic-p)
-       :hook ((marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
-              (after-init-hook . all-the-icons-completion-mode)))
+       :hook (marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
+       :config
+       (all-the-icons-completion-mode 1))
    #+end_src
 ** Managing popup windows
    #+begin_src emacs-lisp :tangle init.el
@@ -2633,7 +2634,8 @@
    match the original file it is visiting.
    #+begin_src emacs-lisp :tangle init.el
      (use-package unmodified-buffer :ensure t
-       :hook (after-init-hook . unmodified-buffer-global-mode))
+       :config
+       (unmodified-buffer-global-mode 1))
    #+end_src
 ** Cycle at point
    https://gitlab.com/ideasman42/emacs-cycle-at-point
@@ -2662,8 +2664,8 @@
 ** TODO Flymake collection
    #+begin_src emacs-lisp :tangle init.el
      (use-package flymake-collection :ensure t
-       :hook (after-init-hook . flymake-collection-hook-setup)
        :config
+       (flymake-collection-hook-setup)
        (push
         '(python-mode
           flymake-collection-mypy                      ; Always added to diagnostic functions.
@@ -2737,7 +2739,6 @@
     (minions-mode 1)
     (setq debug-on-error  nil
           init-file-debug nil)
-    (remove-hook 'after-init-hook 'after-init-jobs)
     (compro/redownload-empty-pkgs)
 
     ;; Remove text property from text in kill-ring
