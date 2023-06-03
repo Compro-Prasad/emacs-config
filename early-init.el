@@ -46,6 +46,8 @@
     (message "Starting server")
     (server-start)))
 
+(setq package-enable-at-startup nil)
+
 (menu-bar-mode 0)
 (menu-bar-no-scroll-bar)
 (blink-cursor-mode 0)
