@@ -77,6 +77,29 @@
     <<GPL-v3>>
   #+end_src
 
+* Enable debugging
+  #+begin_src emacs-lisp :tangle (early-init)
+    (setq debug-on-error  t
+          init-file-debug t)
+  #+end_src
+
+* Aliases
+  Emacs indentifier names are long. Lets shorten the common ones that we will be
+  using.
+
+  #+begin_src emacs-lisp :tangle (early-init)
+    (defalias 'ft 'file-truename)
+    (defvaralias 'emacs-d 'user-emacs-directory)
+  #+end_src
+* Change load-path
+  #+begin_src emacs-lisp :tangle (early-init)
+    (add-to-list 'load-path (concat emacs-d "lisp"))
+  #+end_src
+* Cache directory
+  #+begin_src emacs-lisp :tangle (early-init)
+    (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
+          package-user-dir (concat cache-d "elpa/"))
+  #+end_src
 * Connecting to client
   To connect to client, make sure the following code returns =t=:
   #+begin_src emacs-lisp
@@ -104,29 +127,6 @@
   After doing the necessary setup you can connect using the =emacsclient= binary:
   #+begin_src sh
     emacsclient -c
-  #+end_src
-* Enable debugging
-  #+begin_src emacs-lisp :tangle init.el
-    (setq debug-on-error  t
-          init-file-debug t)
-  #+end_src
-
-* Aliases
-  Emacs indentifier names are long. Lets shorten the common ones that we will be
-  using.
-
-  #+begin_src emacs-lisp :tangle init.el
-    (defalias 'ft 'file-truename)
-    (defvaralias 'emacs-d 'user-emacs-directory)
-  #+end_src
-* Change load-path
-  #+begin_src emacs-lisp :tangle init.el
-    (add-to-list 'load-path (concat emacs-d "lisp"))
-  #+end_src
-* Cache directory
-  #+begin_src emacs-lisp :tangle init.el
-    (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
-          package-user-dir (concat cache-d "elpa/"))
   #+end_src
 * Check Operating System
   #+begin_src emacs-lisp :tangle init.el

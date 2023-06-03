@@ -25,6 +25,17 @@
 
 ;;; Code:
 
+(setq debug-on-error  t
+      init-file-debug t)
+
+(defalias 'ft 'file-truename)
+(defvaralias 'emacs-d 'user-emacs-directory)
+
+(add-to-list 'load-path (concat emacs-d "lisp"))
+
+(setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
+      package-user-dir (concat cache-d "elpa/"))
+
 (use-package server
   :config
   (when (not (server-running-p))
