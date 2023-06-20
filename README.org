@@ -2796,6 +2796,25 @@
      (use-package eldoc-box
        :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
    #+end_src
+** Editorconfig
+   References:
+   1. https://editorconfig.org/
+   2. https://github.com/editorconfig/specification
+   3. https://github.com/editorconfig/editorconfig-emacs
+
+   #+begin_src emacs-lisp :tangle init.el
+     (use-package editorconfig
+       :config
+       (add-to-list 'editorconfig-indentation-alist
+                    '(mhtml-mode js-indent-level
+                                 css-indent-offset
+                                 sgml-basic-offset))
+       (editorconfig-mode 1))
+   #+end_src
+** Yaml mode
+   #+begin_src emacs-lisp :tangle init.el
+     (use-package yaml-mode)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (set-face-attribute 'mode-line nil :box nil)

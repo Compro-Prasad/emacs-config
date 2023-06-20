@@ -2138,6 +2138,16 @@ buffer boundaries with possible narrowing."
 (use-package eldoc-box
   :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
 
+(use-package editorconfig
+  :config
+  (add-to-list 'editorconfig-indentation-alist
+               '(mhtml-mode js-indent-level
+                            css-indent-offset
+                            sgml-basic-offset))
+  (editorconfig-mode 1))
+
+(use-package yaml-mode)
+
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)
