@@ -1029,7 +1029,7 @@ useful if you want to move the file from one directory to another."
 (use-package hungry-delete
   :config (global-hungry-delete-mode t))
 
-(use-package minions
+(use-package minions :demand t
   :bind ([S-down-mouse-3] . minions-minor-modes-menu)
   :config
   (minions-mode 1))

@@ -1388,7 +1388,7 @@
 ** Hide minor modes from modeline using Minions
 
    #+begin_src emacs-lisp :tangle init.el
-     (use-package minions
+     (use-package minions :demand t
        :bind ([S-down-mouse-3] . minions-minor-modes-menu)
        :config
        (minions-mode 1))
