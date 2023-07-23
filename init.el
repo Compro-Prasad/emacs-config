@@ -716,9 +716,9 @@ The return value is nil if no font was found, truthy otherwise."
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
   "Colorize the compilation buffer with ANSI escape sequences."
-  (toggle-read-only)
+  (read-only-mode)
   (ansi-color-apply-on-region (point-min) (point-max))
-  (toggle-read-only))
+  (read-only-mode))
 (add-hook 'compilation-filter-hook 'colorize-compilation-buffer)
 
 (defun compro/rename-file-buffer (&optional arg)
