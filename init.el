@@ -1958,6 +1958,10 @@ buffer boundaries with possible narrowing."
 
 (use-package diff-hl
   :config
+  ;; Disable diff-hl on remote files to prevent slowness
+  (setq diff-hl-disable-on-remote t)
+
+  ;; Sync with git (specifically magit) operations
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   (global-diff-hl-mode t)
