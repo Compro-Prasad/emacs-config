@@ -1956,18 +1956,22 @@ buffer boundaries with possible narrowing."
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(use-package diff-hl
+(use-package diff-hl :demand t
+
+  :hook (;; Sync with git (specifically magit) operations
+         (magit-post-refresh-hook . diff-hl-magit-post-refresh)
+         (magit-pre-refresh-hook . diff-hl-magit-pre-refresh)
+
+         ;; Enable in local dired mode
+         (dired-mode-hook . diff-hl-dired-mode-unless-remote))
+
   :config
   ;; Disable diff-hl on remote files to prevent slowness
   (setq diff-hl-disable-on-remote t)
 
-  ;; Sync with git (specifically magit) operations
-  (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
   (global-diff-hl-mode t)
   (diff-hl-margin-mode t)
-  (diff-hl-flydiff-mode t)
-  (diff-hl-dired-mode t))
+  (diff-hl-flydiff-mode t))
 
 (use-package whole-line-or-region
   :config (whole-line-or-region-global-mode +1))
