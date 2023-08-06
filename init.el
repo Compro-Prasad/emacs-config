@@ -2025,40 +2025,6 @@ buffer boundaries with possible narrowing."
   :config
   (all-the-icons-completion-mode 1))
 
-(use-package popper
-
-  :bind (("C-`"   . popper-toggle-latest)
-         ("M-`"   . popper-cycle)
-         ("C-M-`" . popper-toggle-type))
-  :init
-  (defun popper-shell-output-empty-p (buf)
-    (and (string-match-p "\\*Async Shell Command\\*" (buffer-name buf))
-         (= (buffer-size buf) 0)))
-  :config
-  (setq
-   ; group by project.el project root, with fall back to default-directory
-   popper-group-function #'popper-group-by-directory
-   popper-reference-buffers '((popper-shell-output-empty-p . hide)
-                              "\\*Messages\\*"
-                              "Output\\*$"
-                              "\\*Async Shell Command\\*"
-                              help-mode
-                              compilation-mode
-                              "^\\*.*-eshell\\*$" "^\\*eshell\\*.*$" eshell-mode ;eshell as a popup
-                              "^\\*shell.*\\*$"  shell-mode  ;shell as a popup
-                              "^\\*term.*\\*$"   term-mode   ;term as a popup
-                              "^\\*vterm.*\\*$"  vterm-mode  ;vterm as a popup
-     ))
-  (popper-mode +1)
-  (popper-echo-mode +1))                ; For echo area hints
-
-(use-package shackle
-  :config
-  (setq shackle-rules
-        '((compilation-mode :noselect t :align right :size 0.5))
-        shackle-default-rule
-        '(:select t)))
-
 (use-package flimenu
   :config
   (flimenu-global-mode 1))

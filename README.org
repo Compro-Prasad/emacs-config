@@ -2604,7 +2604,7 @@
        :config
        (all-the-icons-completion-mode 1))
    #+end_src
-** Managing popup windows
+** COMMENT Managing popup windows
    #+begin_src emacs-lisp :tangle init.el
      (use-package popper
 
