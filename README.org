@@ -238,7 +238,6 @@
     (compro/add-package-list "elpa-devel" "elpa.gnu.org/devel/")
     (compro/add-package-list "melpa" "melpa.org/packages/")
     (compro/add-package-list "nongnu" "elpa.nongnu.org/nongnu/")
-    (compro/add-package-list "tree-sitter" "elpa.ubolonton.org/packages/")
 
     (package-initialize)
   #+end_src
@@ -2413,14 +2412,16 @@
              vterm-always-compile-module t))
    #+end_src
 ** Tree-sitter
+   References:
+   1. https://robbmann.io/posts/emacs-treesit-auto/
+   2. https://github.com/renzmann/treesit-auto
    #+begin_src emacs-lisp :tangle init.el
-     (use-package tree-sitter  :unless is-windows
-       :init
-       (use-package tree-sitter-langs )
+     (use-package treesit-auto
+       :when (>= emacs-major-version 29)
+       :demand t
        :config
-       (require 'tree-sitter-hl)
-       (require 'tree-sitter-debug)
-       (require 'tree-sitter-query))
+       (setq treesit-auto-install 'prompt)
+       (global-treesit-auto-mode))
    #+end_src
 ** Eshell syntax highlighting
    #+begin_src emacs-lisp :tangle init.el

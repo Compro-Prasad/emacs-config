@@ -1902,13 +1902,12 @@ buffer boundaries with possible narrowing."
         vterm-buffer-name-string "*vterm-%s*"
         vterm-always-compile-module t))
 
-(use-package tree-sitter  :unless is-windows
-  :init
-  (use-package tree-sitter-langs )
+(use-package treesit-auto
+  :when (>= emacs-major-version 29)
+  :demand t
   :config
-  (require 'tree-sitter-hl)
-  (require 'tree-sitter-debug)
-  (require 'tree-sitter-query))
+  (setq treesit-auto-install 'prompt)
+  (global-treesit-auto-mode))
 
 (use-package eshell-syntax-highlighting  :after esh-mode
   :config (eshell-syntax-highlighting-global-mode +1))
