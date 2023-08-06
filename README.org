@@ -217,7 +217,7 @@
     (elpaca `(,@elpaca-order))
   #+end_src
 * COMMENT Setup package repositories
-  Setup MELPA, Non GNU and tree sitter repositories.
+  Setup MELPA, Non GNU repositories.
 
   #+begin_src emacs-lisp :tangle init.el
     (require 'package)
