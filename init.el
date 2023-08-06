@@ -890,6 +890,115 @@ useful if you want to move the file from one directory to another."
                 (awk-mode . "awk")
                 (other . "mylinux")))
 
+(defun default-ansi-term-opener (dir)
+  (let ((buf-name (funcall terminal-buffer-name-generator dir "ansi-term" nil))
+        (*buf-name* (concat "*" buf-name "*")))
+    (if (get-buffer *buf-name*)
+        `(,*buf-name* . nil)
+      (ansi-term "/bin/bash" buf-name)
+      `(,*buf-name* . t))))
+
+(defun default-eshell-opener (dir)
+  (let ((eshell-buffer-name (funcall terminal-buffer-name-generator dir "eshell" t)))
+    (if (get-buffer eshell-buffer-name)
+        `(,eshell-buffer-name . nil)
+      (eshell)
+      `(,eshell-buffer-name . t))))
+
+(defun default-vterm-opener (dir)
+  (let ((buf-name (funcall terminal-buffer-name-generator dir "vterm" t)))
+    (if (get-buffer buf-name)
+        `(,buf-name . nil)
+      (vterm buf-name)
+      `(,buf-name . t))))
+
+(defun default-terminal-buffer-name-generator (dir terminal-type use-star)
+  (if use-star
+      (concat "*" terminal-type "-" dir "*")
+    (concat terminal-type "-" dir)))
+
+(defun detect-terminal-and-open (dir)
+  (if (featurep 'vterm)
+      (default-vterm-opener dir)
+    (prog1
+        (default-eshell-opener dir)
+      (message "Opened eshell because vterm was not installed"))))
+
+(defun below-window-checker (buffer action)
+  (with-current-buffer buffer
+    (or
+     (s-starts-with? "*eshell" buffer)
+     (s-starts-with? "*vterm" buffer)
+     (s-starts-with? "*ansi-term" buffer))))
+
+(defvar terminal-buffer-name-generator 'default-terminal-buffer-name-generator)
+(defvar terminal-generator 'detect-terminal-and-open)
+
+(defun toggle-terminal ()
+  "Toggles terminal like VS Code does.
+
+TODO:
+
+1. Creating new terminals in the same project for different purposes.
+2. Editing path in which the terminal is opened. Currently best guess it taken.
+3. Allow switching between different terminals in the same path with ease.
+"
+  (interactive)
+  (let* ((prj (project-current))
+         (dir (if prj
+                  (expand-file-name (project-root prj))
+                default-directory))
+         (ret-val (let ((default-directory dir)) (funcall terminal-generator dir)))
+         (created (cdr ret-val))
+         (buf-name (car ret-val))
+         (buf-obj (get-buffer buf-name))
+         (buf-win (get-buffer-window buf-name nil)))
+
+    (if buf-win
+        (if (and (not created) (eq buf-win (selected-window)))
+            (progn (message "Hiding terminal window") (delete-window buf-win))
+
+          (progn (message "Selecting terminal window") (select-window buf-win t)))
+
+      (message "Showing terminal buffer in a window")
+      (display-buffer-in-side-window buf-obj '((side . bottom)))
+      (select-window (get-buffer-window buf-obj) t))))
+
+(defun create-new-terminal ()
+  "WIP"
+  (let* ((prj (project-current))
+         (dir (if prj
+                  (expand-file-name (project-root prj))
+                default-directory))
+         (ret-val (funcall terminal-generator dir))
+         (created (cdr ret-val))
+         (buf-name (car ret-val))
+         (buf-obj (get-buffer buf-name))
+         (buf-win (get-buffer-window buf-name nil)))
+
+    (if buf-win
+        (if (and (not created) (eq buf-win (selected-window)))
+            (progn (message "Hiding terminal window") (delete-window buf-win))
+
+          (progn (message "Selecting terminal window") (select-window buf-win t)))
+
+      (message "Showing terminal buffer in a window")
+      (display-buffer-in-side-window buf-obj '((side . bottom)))
+      (select-window (get-buffer-window buf-obj) t))))
+
+(add-to-list
+ 'display-buffer-alist
+ '(below-window-checker
+   display-buffer-in-side-window
+   (side . bottom)
+   ;; (slot . 1)
+   ;; (window-width . 0.33)
+   ;; (reusable-frames . nil)
+   ))
+
+(global-set-key (kbd "C-`") 'toggle-terminal)
+(global-set-key (kbd "C-c `") 'toggle-terminal)
+
 (use-package restclient )
 
 (use-package hydra )
