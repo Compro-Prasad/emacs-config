@@ -64,55 +64,34 @@ Else it will return `init.el'. Useful for tangling source code."
 
 (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
 
-(defvar elpaca-installer-version 0.4)
-(defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-(defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-(defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-(defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                              :ref nil
-                              :files (:defaults (:exclude "extensions"))
-                              :build (:not elpaca--activate-package)))
-(let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-       (build (expand-file-name "elpaca/" elpaca-builds-directory))
-       (order (cdr elpaca-order))
-       (default-directory repo))
-  (add-to-list 'load-path (if (file-exists-p build) build repo))
-  (unless (file-exists-p repo)
-    (make-directory repo t)
-    (when (< emacs-major-version 28) (require 'subr-x))
-    (condition-case-unless-debug err
-        (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                 ((zerop (call-process "git" nil buffer t "clone"
-                                       (plist-get order :repo) repo)))
-                 ((zerop (call-process "git" nil buffer t "checkout"
-                                       (or (plist-get order :ref) "--"))))
-                 (emacs (concat invocation-directory invocation-name))
-                 ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                       "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                 ((require 'elpaca))
-                 ((elpaca-generate-autoloads "elpaca" repo)))
-            (kill-buffer buffer)
-          (error "%s" (with-current-buffer buffer (buffer-string))))
-      ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-  (unless (require 'elpaca-autoloads nil t)
-    (require 'elpaca)
-    (elpaca-generate-autoloads "elpaca" repo)
-    (load "./elpaca-autoloads")))
-(add-hook 'after-init-hook #'elpaca-process-queues)
-(elpaca `(,@elpaca-order))
+(require 'package)
 
-;; Install use-package support
-(elpaca elpaca-use-package
-  ;; Enable :elpaca use-package keyword.
-  (elpaca-use-package-mode)
-  ;; Assume :elpaca t unless otherwise specified.
-  (setq elpaca-use-package-by-default t))
+(defvar sslp (and (not (memq system-type '(windows-nt ms-dos)))
+                  (gnutls-available-p))
+  "Tells if SSL is enabled or not.")
 
-;; Block until current queue processed.
-(elpaca-wait)
+(defvar protocol (if sslp "https" "http")
+  "Protocol value as string.")
 
-(use-package f :demand t)
-(use-package s :demand t)
+(defun compro/add-package-list (name url)
+  "Add NAME and URL to `package-archives'.
+
+URL should not have http:// or https:// as a prefix."
+  (setf (alist-get name package-archives nil nil 'string=) (concat protocol "://" url)))
+
+(compro/add-package-list "elpa-devel" "elpa.gnu.org/devel/")
+(compro/add-package-list "melpa" "melpa.org/packages/")
+(compro/add-package-list "nongnu" "elpa.nongnu.org/nongnu/")
+
+(package-initialize)
+
+(when (< emacs-major-version 29)
+  (unless (package-installed-p 'use-package)
+    (package-refresh-contents)
+    (package-install 'use-package)))
+
+(use-package f :ensure t)
+(use-package s :ensure t)
 
 (defun mplist-remove (plist prop)
   "Return a copy of a modified PLIST without PROP and its values.
@@ -327,11 +306,11 @@ The return value is nil if no font was found, truthy otherwise."
 
 (setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
 
-(use-package general :defer nil)
+(use-package general :ensure t)
 
 (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
 
-(use-package tab-bar :elpaca nil
+(use-package tab-bar
   :when (> emacs-major-version 27)
   :bind (("C-t" . tab-bar-new-tab-event)
          ([C-f4] . tab-bar-close-tab)
@@ -388,7 +367,7 @@ The return value is nil if no font was found, truthy otherwise."
           tab-bar-format-global))
   (tab-bar-mode))
 
-(use-package dired :elpaca nil
+(use-package dired
   :hook (dired-mode-hook . dired-hide-details-mode)
   :bind (:map dired-mode-map
 	      ("C-c C-c" . dired-collapse-mode)
@@ -402,14 +381,14 @@ The return value is nil if no font was found, truthy otherwise."
 	      ("<left>" . compro/dired-up-dir)
 	      ("C-x <C-j>" . dired-jump))
   :init
-  (use-package dired-collapse )
-  (use-package dired-du  :after dired)
-  (use-package dired-dups  :after dired)
-  (use-package dired-filetype-face  :after dired)
-  (use-package dired-hide-dotfiles
+  (use-package dired-collapse :ensure t)
+  (use-package dired-du :ensure t :after dired)
+  (use-package dired-dups :ensure t :after dired)
+  (use-package dired-filetype-face :ensure t :after dired)
+  (use-package dired-hide-dotfiles :ensure t
     :after dired
     :hook (dired-mode-hook . dired-hide-dotfiles-mode))
-  (use-package dired-subtree  :after dired)
+  (use-package dired-subtree :ensure t :after dired)
   (defun compro/dired-up-dir ()
     (interactive)
     (find-alternate-file ".."))
@@ -652,25 +631,21 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(use-package general
-  :config
-  (general-define-key
-   :keymaps 'input-decode-map
-   [?\C-m] [C-m]
-   [?\C-i] [C-i]
-   ;; [?\C-j] [C-j]
-   [?\C-\[] (kbd "<C-[>")))
+(general-define-key
+ :keymaps 'input-decode-map
+ [?\C-m] [C-m]
+ [?\C-i] [C-i]
+ ;; [?\C-j] [C-j]
+ [?\C-\[] (kbd "<C-[>"))
 
-(use-package general
-  :config
-  (general-define-key
-   "C-z"             'undo
-   "C-x C-o"         'ff-find-other-file
-   [C-m]             'delete-other-windows
-   "<C-S-mouse-1>"   'imenu
-   "C-c r"           'imenu
-   "M-/"             'hippie-expand
-   "M-^"             'compile))
+(general-define-key
+ "C-z"             'undo
+ "C-x C-o"         'ff-find-other-file
+ [C-m]             'delete-other-windows
+ "<C-S-mouse-1>"   'imenu
+ "C-c r"           'imenu
+ "M-/"             'hippie-expand
+ "M-^"             'compile)
 
 (if (< emacs-major-version 28)
     (global-set-key [mouse-3] menu-bar-edit-menu)
@@ -678,7 +653,7 @@ The return value is nil if no font was found, truthy otherwise."
 
 (global-auto-revert-mode t)
 
-(use-package paren :elpaca nil
+(use-package paren
   :config
   (setq show-paren-style 'mixed
         show-paren-when-point-inside-paren t
@@ -748,7 +723,7 @@ useful if you want to move the file from one directory to another."
 
 (global-set-key (kbd "C-c f r") 'compro/rename-file-buffer)
 
-(use-package simple :elpaca nil
+(use-package simple
   :bind (("C-a" . compro/beginning-of-line)
          ("C-o" . compro/open-line-below)
          ("C-S-p" . list-processes)
@@ -809,7 +784,7 @@ useful if you want to move the file from one directory to another."
              (concat (regexp-quote (ft (format cache-d))) ".*"))
 (recentf-mode 1)
 
-(use-package xwidget :elpaca nil :when (fboundp 'xwidget-webkit-browse-url)
+(use-package xwidget :when (fboundp 'xwidget-webkit-browse-url)
   :bind
   (:map xwidget-webkit-mode-map
         ("<mouse-4>" . xwidget-webkit-scroll-down)
@@ -840,7 +815,7 @@ useful if you want to move the file from one directory to another."
 
 (add-hook 'tabulated-list-mode-hook 'hl-line-mode)
 
-(use-package winner :elpaca nil :config (winner-mode 1))
+(use-package winner :config (winner-mode 1))
 
 (defun compro/set-show-whitespace-mode ()
   "Show white space in current buffer"
@@ -998,156 +973,150 @@ TODO:
 (global-set-key (kbd "C-`") 'toggle-terminal)
 (global-set-key (kbd "C-c `") 'toggle-terminal)
 
-(use-package restclient )
+(use-package restclient :ensure t)
 
-(use-package hydra )
+(use-package hydra :ensure t)
 
-(use-package hydra
-:config
-  (global-set-key
-   (kbd "C-c u")
-   (defhydra hydra-ui (:hint nil)
-     "
-    ^Emacs^              ^Move to window^   ^Move window to^   ^Buffer^
-    ^^^^-----------------------------------------------------------------------
-    _M-+_: Inc font      _<left>_           _S-<left>_         _f_: Col indicator
-    _M-=_: Inc font      _<right>_          _S-<right>_        _l_: Line numbers
-    _M--_: Dec font      _<up>_             _S-<up>_           _+_: Inc font
-    _F_: Col indicator   _<down>_           _S-<down>_         _=_: Inc font
-    _L_: Line numbers    ^ ^                ^ ^                _-_: Dec font
-    _t_: Tabs
-    _T_: Toolbar
-    _m_: Menubar
-    _s_: Scrollbar"
-     ("+" text-scale-increase)
-     ("=" text-scale-increase)
-     ("-" text-scale-decrease)
-     ("M-+" default-text-scale-increase)
-     ("M-=" default-text-scale-increase)
-     ("M--" default-text-scale-decrease)
-     ("t" tab-bar-mode)
-     ("m" menu-bar-mode)
-     ("s" scroll-bar-mode)
-     ("f" display-fill-column-indicator-mode)
-     ("l" display-line-numbers-mode)
-     ("F" global-display-fill-column-indicator-mode)
-     ("L" global-display-line-numbers-mode)
-     ("T" tool-bar-mode)
-     ("<left>" windmove-left)
-     ("<right>" windmove-right)
-     ("<up>" windmove-up)
-     ("<down>" windmove-down)
-     ("S-<left>" buf-move-left)
-     ("S-<right>" buf-move-right)
-     ("S-<up>" buf-move-up)
-     ("S-<down>" buf-move-down))))
+(global-set-key
+ (kbd "C-c u")
+ (defhydra hydra-ui (:hint nil)
+   "
+  ^Emacs^              ^Move to window^   ^Move window to^   ^Buffer^
+  ^^^^-----------------------------------------------------------------------
+  _M-+_: Inc font      _<left>_           _S-<left>_         _f_: Col indicator
+  _M-=_: Inc font      _<right>_          _S-<right>_        _l_: Line numbers
+  _M--_: Dec font      _<up>_             _S-<up>_           _+_: Inc font
+  _F_: Col indicator   _<down>_           _S-<down>_         _=_: Inc font
+  _L_: Line numbers    ^ ^                ^ ^                _-_: Dec font
+  _t_: Tabs
+  _T_: Toolbar
+  _m_: Menubar
+  _s_: Scrollbar"
+   ("+" text-scale-increase)
+   ("=" text-scale-increase)
+   ("-" text-scale-decrease)
+   ("M-+" default-text-scale-increase)
+   ("M-=" default-text-scale-increase)
+   ("M--" default-text-scale-decrease)
+   ("t" tab-bar-mode)
+   ("m" menu-bar-mode)
+   ("s" scroll-bar-mode)
+   ("f" display-fill-column-indicator-mode)
+   ("l" display-line-numbers-mode)
+   ("F" global-display-fill-column-indicator-mode)
+   ("L" global-display-line-numbers-mode)
+   ("T" tool-bar-mode)
+   ("<left>" windmove-left)
+   ("<right>" windmove-right)
+   ("<up>" windmove-up)
+   ("<down>" windmove-down)
+   ("S-<left>" buf-move-left)
+   ("S-<right>" buf-move-right)
+   ("S-<up>" buf-move-up)
+   ("S-<down>" buf-move-down)))
 
-(use-package hydra
-:config
-  (global-set-key
-   (kbd "C-c t")
-   (defhydra hydra-text ()
-     ("x" whole-line-or-region-kill-region "Cut")
-     ("c" whole-line-or-region-kill-ring-save "Copy")
-     ("v" yank "Paste")
-     ("C-x" whole-line-or-region-kill-region "Cut")
-     ("C-c" whole-line-or-region-kill-ring-save "Copy")
-     ("C-v" yank "Paste")
-     ("C" consult-yank-pop "Clipboard")
-     ("<up>" previous-line nil)
-     ("C-p" previous-line nil)
-     ("<down>" next-line nil)
-     ("C-n" next-line nil)
-     ("<left>" left-char nil)
-     ("<right>" right-char nil)
-     ("C-<left>" left-word nil)
-     ("M-b" backward-word nil)
-     ("C-<right>" right-word nil)
-     ("M-f" forward-word nil)
-     ("s" avy-goto-char-2 "Goto 2 chars")
-     ("S" avy-goto-symbol-1 "Goto symbol")
-     ("C-s" ctrlf-forward-default "Find Next")
-     ("C-f" ctrlf-forward-default "Find Next")
-     ("C-r" ctrlf-backward-default "Find Previous")
-     ("C-S-f" ctrlf-backward-default "Find Previous")
-     ("<home>" compro/beginning-of-line nil)
-     ("C-a" compro/beginning-of-line "Home")
-     ("<end>" move-end-of-line nil)
-     ("C-e" move-end-of-line "End")
-     ("C-SPC" set-mark-command "Mark/Unmark")
-     ("S-<down>" move-text-down "Move line down")
-     ("S-<up>" move-text-up "Move line up")
-     ("+" er/expand-region "Expand")
-     ("=" er/expand-region "Expand")
-     ("C-+" hydra-er/er/expand-region "Expand")
-     ("C-=" hydra-er/er/expand-region "Expand")
-     ("-" er/contract-region "Contract")
-     ("C--" hydra-er/er/contract-region "Contract"))))
+(global-set-key
+ (kbd "C-c t")
+ (defhydra hydra-text ()
+   ("x" whole-line-or-region-kill-region "Cut")
+   ("c" whole-line-or-region-kill-ring-save "Copy")
+   ("v" yank "Paste")
+   ("C-x" whole-line-or-region-kill-region "Cut")
+   ("C-c" whole-line-or-region-kill-ring-save "Copy")
+   ("C-v" yank "Paste")
+   ("C" consult-yank-pop "Clipboard")
+   ("<up>" previous-line nil)
+   ("C-p" previous-line nil)
+   ("<down>" next-line nil)
+   ("C-n" next-line nil)
+   ("<left>" left-char nil)
+   ("<right>" right-char nil)
+   ("C-<left>" left-word nil)
+   ("M-b" backward-word nil)
+   ("C-<right>" right-word nil)
+   ("M-f" forward-word nil)
+   ("s" avy-goto-char-2 "Goto 2 chars")
+   ("S" avy-goto-symbol-1 "Goto symbol")
+   ("C-s" ctrlf-forward-default "Find Next")
+   ("C-f" ctrlf-forward-default "Find Next")
+   ("C-r" ctrlf-backward-default "Find Previous")
+   ("C-S-f" ctrlf-backward-default "Find Previous")
+   ("<home>" compro/beginning-of-line nil)
+   ("C-a" compro/beginning-of-line "Home")
+   ("<end>" move-end-of-line nil)
+   ("C-e" move-end-of-line "End")
+   ("C-SPC" set-mark-command "Mark/Unmark")
+   ("S-<down>" move-text-down "Move line down")
+   ("S-<up>" move-text-up "Move line up")
+   ("+" er/expand-region "Expand")
+   ("=" er/expand-region "Expand")
+   ("C-+" hydra-er/er/expand-region "Expand")
+   ("C-=" hydra-er/er/expand-region "Expand")
+   ("-" er/contract-region "Contract")
+   ("C--" hydra-er/er/contract-region "Contract")))
 
-(use-package hydra
-:config
-  (global-set-key
-   (kbd "C-c g")
-   (defhydra hydra-gamify (:hint nil)
-     "Game mode"
-     ("w" previous-line)
-     ("s" next-line)
-     ("W" previous-line)
-     ("S" next-line)
-     ("a" left-char)
-     ("d" right-char)
-     ("A" left-word)
-     ("D" right-word)
-     ("C-s" ctrlf-forward-default)
-     ("C-r" ctrlf-backward-default)
-     ("c" whole-line-or-region-kill-ring-save)
-     ("x" whole-line-or-region-kill-region)
-     ("v" yank)
-     ("C-c" whole-line-or-region-kill-ring-save)
-     ("C-x" whole-line-or-region-kill-region)
-     ("C-v" yank)
-     ("V" consult-yank-pop "Clipboard")
-     ("g" set-mark-command "Mark")
-     ("f" avy-goto-char-2 "Goto 2 chars")
-     ("F" avy-goto-symbol-1 "Goto symbol")
-     ("t" treemacs "Treemacs")
-     ("<left>" windmove-left)
-     ("<right>" windmove-right)
-     ("<up>" windmove-up)
-     ("<down>" windmove-down)
-     ("S-<left>" buf-move-left)
-     ("S-<right>" buf-move-right)
-     ("S-<up>" buf-move-up)
-     ("S-<down>" buf-move-down)
-     ("j" windmove-left)
-     ("l" windmove-right)
-     ("i" windmove-up)
-     ("j" windmove-down)
-     ("J" buf-move-left)
-     ("L" buf-move-right)
-     ("I" buf-move-up)
-     ("K" buf-move-down)
-     ("u" undo)
-     ("U" undo-tree-visualize)
-     ("z" undo)
-     ("Z" undo-tree-visualize)
-     ("e" end-of-buffer)
-     ("E" beginning-of-buffer)
-     ("M-c" capitalize-word "Capitalize")
-     ("M-l" downcase-word "Lower")
-     ("M-u" upcase-word "Upper")
-     ("o" compro/beginning-of-line)
-     ("p" move-end-of-line))))
+(global-set-key
+ (kbd "C-c g")
+ (defhydra hydra-gamify (:hint nil)
+   "Game mode"
+   ("w" previous-line)
+   ("s" next-line)
+   ("W" previous-line)
+   ("S" next-line)
+   ("a" left-char)
+   ("d" right-char)
+   ("A" left-word)
+   ("D" right-word)
+   ("C-s" ctrlf-forward-default)
+   ("C-r" ctrlf-backward-default)
+   ("c" whole-line-or-region-kill-ring-save)
+   ("x" whole-line-or-region-kill-region)
+   ("v" yank)
+   ("C-c" whole-line-or-region-kill-ring-save)
+   ("C-x" whole-line-or-region-kill-region)
+   ("C-v" yank)
+   ("V" consult-yank-pop "Clipboard")
+   ("g" set-mark-command "Mark")
+   ("f" avy-goto-char-2 "Goto 2 chars")
+   ("F" avy-goto-symbol-1 "Goto symbol")
+   ("t" treemacs "Treemacs")
+   ("<left>" windmove-left)
+   ("<right>" windmove-right)
+   ("<up>" windmove-up)
+   ("<down>" windmove-down)
+   ("S-<left>" buf-move-left)
+   ("S-<right>" buf-move-right)
+   ("S-<up>" buf-move-up)
+   ("S-<down>" buf-move-down)
+   ("j" windmove-left)
+   ("l" windmove-right)
+   ("i" windmove-up)
+   ("j" windmove-down)
+   ("J" buf-move-left)
+   ("L" buf-move-right)
+   ("I" buf-move-up)
+   ("K" buf-move-down)
+   ("u" undo)
+   ("U" undo-tree-visualize)
+   ("z" undo)
+   ("Z" undo-tree-visualize)
+   ("e" end-of-buffer)
+   ("E" beginning-of-buffer)
+   ("M-c" capitalize-word "Capitalize")
+   ("M-l" downcase-word "Lower")
+   ("M-u" upcase-word "Upper")
+   ("o" compro/beginning-of-line)
+   ("p" move-end-of-line)))
 
-(use-package hungry-delete
+(use-package hungry-delete :ensure t
   :config (global-hungry-delete-mode t))
 
-(use-package minions :demand t
+(use-package minions :ensure t
   :bind ([S-down-mouse-3] . minions-minor-modes-menu)
   :config
   (minions-mode 1))
 
-(use-package transient
+(use-package transient :ensure t
   :config
   (setq transient-history-file (locate-user-emacs-file
                                 (concat cache-d "transient/history.el"))
@@ -1156,7 +1125,7 @@ TODO:
         transient-levels-file (locate-user-emacs-file
                                (concat cache-d "transient/levels.el"))))
 
-(use-package magit
+(use-package magit :ensure t
   :bind (("C-x g" . magit-status)
          :map magit-mode-map
          ([C-tab] . nil)
@@ -1172,7 +1141,7 @@ TODO:
          ([C-backtab] . nil)
          ([M-tab] . nil))
   :init
-  ;; (use-package forge :unless is-windows :after magit )
+  ;; (use-package forge :unless is-windows :after magit :ensure t)
   :config
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
   (remove-hook 'server-switch-hook 'magit-commit-diff)
@@ -1191,10 +1160,10 @@ TODO:
     (define-key magit-file-section-map [M-tab] nil)
     (define-key magit-hunk-section-map [M-tab] nil)))
 
-(use-package git-messenger
+(use-package git-messenger :ensure t
   :bind (("C-x v p" . git-messenger:popup-message)))
 
-(use-package expand-region
+(use-package expand-region :ensure t
   :commands (er/expand-region
              er/mark-paragraph
              er/mark-inside-pairs
@@ -1222,7 +1191,7 @@ _=_       _+_
     ("+" er/contract-region)
     ("-" er/contract-region)))
 
-(use-package projectile
+(use-package projectile :ensure t
   :unless (> emacs-major-version 27)  ;; Use project.el for > 27
   :bind (("C-x p" . projectile-command-map))
   :config
@@ -1232,21 +1201,21 @@ _=_       _+_
    projectile-completion-system 'default)
   (projectile-mode 1))
 
-(use-package project-x :elpaca nil
+(use-package project-x
   :config
   (project-x-mode 1))
 
-(use-package ag  :when (executable-find "ag"))
+(use-package ag :ensure t :when (executable-find "ag"))
 
-(use-package switch-window
+(use-package switch-window :ensure t
   :bind ("C-x o" . switch-window))
 
-(use-package which-key
+(use-package which-key :ensure t
   :config
   (setq which-key-idle-delay (if is-windows 0.212 1.0))
   (which-key-mode))
 
-(use-package multiple-cursors
+(use-package multiple-cursors :ensure t
   :bind
   (("C-S-c" . mc/edit-lines)
    ("M-S-<up>" . mc/mark-previous-like-this)
@@ -1258,17 +1227,17 @@ _=_       _+_
    ("M-S-<mouse-2>" . mc/add-cursor-on-click)
    ("M-S-<mouse-3>" . mc/add-cursor-on-click))
   :init
-  (use-package phi-search-mc
+  (use-package phi-search-mc :ensure t
     :hook (isearch-mode-hook . phi-search-from-isearch-mc/setup-keys)
     :config
     (phi-search-mc/setup-keys)))
 
-(use-package vundo
+(use-package vundo :ensure t
   :bind ("C-x u" . vundo)
   :config
   (setq vundo-glyph-alist vundo-unicode-symbols))
 
-(use-package doom-themes
+(use-package doom-themes :ensure t
   :commands (doom-themes-org-config)
   :config
   (doom-themes-org-config)
@@ -1311,19 +1280,19 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(use-package spacemacs-common :elpaca spacemacs-theme)
+(use-package spacemacs-common :ensure spacemacs-theme)
 
-(use-package modus-themes )
+(use-package modus-themes :ensure t)
 
-(use-package page-break-lines
+(use-package page-break-lines :ensure t
   :config
   (global-page-break-lines-mode t))
 
-(use-package orderless
+(use-package orderless :ensure t
   :config
   (setq completion-styles '(orderless flex substring)
-	completion-category-defaults nil
-	completion-category-overrides '((file (styles . (partial-completion)))))
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion)))))
 
   ;; Add prompt indicator to `completing-read-multiple'.
   ;; Alternatively try `consult-completing-read-multiple'.
@@ -1333,21 +1302,21 @@ _=_       _+_
 
   ;; Do not allow the cursor in the minibuffer prompt
   (setq minibuffer-prompt-properties
-	'(read-only t cursor-intangible t face minibuffer-prompt))
+        '(read-only t cursor-intangible t face minibuffer-prompt))
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
-(use-package consult
+(use-package consult :ensure t
   :bind (("M-y" . consult-yank-pop)
-	 ("M-v" . consult-yank-pop)
-	 ("C-v" . consult-yank-pop)
-	 ("M-g l" . consult-line)
-	 ("M-g o" . consult-outline)
-	 ("C-x C-r" . consult-recent-file)
-	 ("C-x b" . consult-buffer)
-	 :map minibuffer-local-map
-	 ("C-r" . consult-history)))
+         ("M-v" . consult-yank-pop)
+         ("C-v" . consult-yank-pop)
+         ("M-g l" . consult-line)
+         ("M-g o" . consult-outline)
+         ("C-x C-r" . consult-recent-file)
+         ("C-x b" . consult-buffer)
+         :map minibuffer-local-map
+         ("C-r" . consult-history)))
 
-(use-package consult-dir
+(use-package consult-dir :ensure t
   :bind ("C-x d" . consult-dir)
   :init
   (with-eval-after-load 'eshell
@@ -1356,60 +1325,59 @@ _=_       _+_
 any directory proferred by `consult-dir'.
 Source: https://karthinks.com/software/jumping-directories-in-eshell/"
       (let ((eshell-dirs (delete-dups
-			  (mapcar 'abbreviate-file-name
-				  (ring-elements eshell-last-dir-ring)))))
-	(cond
-	 ((and (not regexp) (featurep 'consult-dir))
-	  (let* ((consult-dir--source-eshell `(:name "Eshell"
-						     :narrow ?e
-						     :category file
-						     :face consult-file
-						     :items ,eshell-dirs))
-		 (consult-dir-sources (cons consult-dir--source-eshell
-					    consult-dir-sources)))
-	    (eshell/cd (substring-no-properties
-			(consult-dir--pick "Switch directory: ")))))
-	 (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
-			 (completing-read "cd: " eshell-dirs)))))))))
+                          (mapcar 'abbreviate-file-name
+                                  (ring-elements eshell-last-dir-ring)))))
+        (cond
+         ((and (not regexp) (featurep 'consult-dir))
+          (let* ((consult-dir--source-eshell `(:name "Eshell"
+                                                     :narrow ?e
+                                                     :category file
+                                                     :face consult-file
+                                                     :items ,eshell-dirs))
+                 (consult-dir-sources (cons consult-dir--source-eshell
+                                            consult-dir-sources)))
+            (eshell/cd (substring-no-properties
+                        (consult-dir--pick "Switch directory: ")))))
+         (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
+                         (completing-read "cd: " eshell-dirs)))))))))
 
-(use-package marginalia  :after vertico
+(use-package marginalia :ensure t :after vertico
   :config
   (setq marginalia-annotators
-	'(marginalia-annotators-heavy marginalia-annotators-light nil))
+        '(marginalia-annotators-heavy marginalia-annotators-light nil))
   (marginalia-mode +1))
 
-(use-package embark
+(use-package embark :ensure t
   :bind (("C-S-a" . embark-act)
-	 ("" . embark-act)
-	 ("C-S-e" . embark-act-noexit)
-	 ("" . embark-act-noexit)
-	 ("C-S-b" . embark-become)
-	 ("" . embark-become))
+         ("" . embark-act)
+         ("C-S-e" . embark-act-noexit)
+         ("" . embark-act-noexit)
+         ("C-S-b" . embark-become)
+         ("" . embark-become))
   :config
   ;; which-key support
   (setq embark-action-indicator
-	(lambda (map)
-	  (which-key--show-keymap "Embark" map nil nil 'no-paging)
-	  #'which-key--hide-popup-ignore-command)
-	embark-become-indicator embark-action-indicator))
+        (lambda (map)
+          (which-key--show-keymap "Embark" map nil nil 'no-paging)
+          #'which-key--hide-popup-ignore-command)
+        embark-become-indicator embark-action-indicator))
 
-(use-package vertico  :defer nil
+(use-package vertico :ensure t :defer nil
 
   ;; More convenient directory navigation commands
   :bind (:map vertico-map
-	  ("RET" . vertico-directory-enter)
-	  ("DEL" . vertico-directory-delete-char)
-	  ("M-DEL" . vertico-directory-delete-word)
-	  ("M-V" . vertico-multiform-vertical)
-	  ("M-G" . vertico-multiform-grid)
-	  ("M-F" . vertico-multiform-flat)
-	  ("M-R" . vertico-multiform-reverse)
-	  ("M-U" . vertico-multiform-unobtrusive))
+          ("RET" . vertico-directory-enter)
+          ("DEL" . vertico-directory-delete-char)
+          ("M-DEL" . vertico-directory-delete-word)
+          ("M-V" . vertico-multiform-vertical)
+          ("M-G" . vertico-multiform-grid)
+          ("M-F" . vertico-multiform-flat)
+          ("M-R" . vertico-multiform-reverse)
+          ("M-U" . vertico-multiform-unobtrusive))
 
   :init
-  (add-to-list 'load-path (concat elpaca-builds-directory "vertico/extensions/"))
   (setq read-file-name-completion-ignore-case t
-	read-buffer-completion-ignore-case t)
+        read-buffer-completion-ignore-case t)
 
   ;; Tidy shadowed file names
   :hook (rfn-eshadow-update-overlay-hook . vertico-directory-tidy)
@@ -1418,56 +1386,55 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
   (setq vertico-count 18)
   (require 'vertico-mouse)
   (require 'vertico-indexed)
-  (require 'vertico-multiform)
   (vertico-mode 1)
   (vertico-multiform-mode 1)
   (vertico-mouse-mode 1)
   (vertico-indexed-mode 1)
   (advice-add #'vertico--format-candidate :around
-	    (lambda (orig cand prefix suffix index _start)
-	      (setq cand (funcall orig cand prefix suffix index _start))
-	      (concat
-	       (if (= vertico--index index)
-		   (propertize "» " 'face 'vertico-current)
-		 "  ")
-	       cand)))
+            (lambda (orig cand prefix suffix index _start)
+              (setq cand (funcall orig cand prefix suffix index _start))
+              (concat
+               (if (= vertico--index index)
+                   (propertize "» " 'face 'vertico-current)
+                 "  ")
+               cand)))
   ;; Selectrum Wiki - Minibuffer default add function
   (autoload 'ffap-guesser "ffap")
   (setq minibuffer-default-add-function
-	(defun minibuffer-default-add-function+ ()
-	  (with-selected-window (minibuffer-selected-window)
-	    (delete-dups
-	     (delq nil
-		   (list (thing-at-point 'symbol)
-			 (thing-at-point 'list)
-			 (ffap-guesser)
-			 (thing-at-point-url-at-point))))))))
+        (defun minibuffer-default-add-function+ ()
+          (with-selected-window (minibuffer-selected-window)
+            (delete-dups
+             (delq nil
+                   (list (thing-at-point 'symbol)
+                         (thing-at-point 'list)
+                         (ffap-guesser)
+                         (thing-at-point-url-at-point))))))))
 
-(use-package vertico-directory :after vertico :elpaca vertico)
+(use-package vertico-directory :after vertico :ensure nil)
 
-(use-package ctrlf
+(use-package ctrlf :ensure t
   :config (ctrlf-mode 1))
 
-(use-package beginend
+(use-package beginend :ensure t
   :config (beginend-global-mode))
 
-(use-package move-text )
+(use-package move-text :ensure t)
 
-(use-package default-text-scale
+(use-package default-text-scale :ensure t
   :config (default-text-scale-mode 1))
 
-(use-package iedit
+(use-package iedit :ensure t
   :bind ("C-c i" . iedit-mode))
 
-(use-package wgrep  :after grep)
+(use-package wgrep :ensure t :after grep)
 
-(use-package clang-format+
+(use-package clang-format+ :ensure t
   :config
   (setq clang-format+-context 'buffer))
 
-(use-package telega  :when is-linux)
+(use-package telega :ensure t :when is-linux)
 
-(use-package org :elpaca org-contrib
+(use-package org :ensure org-contrib
   :hook (org-mode-hook . org-superstar-mode)
   :init
   ;; see https://list.orgmode.org/87r5718ytv.fsf@sputnik.localhost
@@ -1492,34 +1459,27 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                   (org-todo 'done)
                 (org-todo 'todo)))))))
 
-  (use-package ob-async  :after ob)
-  (use-package ob-restclient  :after ob
-    :config
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((shell . t)
-       (python . t)
-       (restclient . t)
-       (emacs-lisp . t))))
+  (use-package ob-async :ensure t :after ob)
+  (use-package ob-restclient :ensure t :after ob)
 
-  (use-package boxy-headings )
+  (use-package boxy-headings :ensure t)
 
-  (use-package org-babel-eval-in-repl
+  (use-package org-babel-eval-in-repl :ensure t
     :after ob
     :bind
     (:map org-mode-map
           ("C-c C-<return>" . ober-eval-block-in-repl)))
 
-  (use-package ox-hugo  :after ox :disabled t
+  (use-package ox-hugo :ensure t :after ox :disabled t
     :config
     (dolist (ext '("zip" "ctf"))
       (push ext org-hugo-external-file-extensions-allowed-for-copying)))
 
-  (use-package org-superstar
+  (use-package org-superstar :ensure t
     :config
     (setq org-superstar-leading-bullet ?\s))
 
-  (use-package org-re-reveal  :after ox)
+  (use-package org-re-reveal :ensure t :after ox)
 
   (add-hook 'org-mode-hook
             #'(lambda () (setq line-spacing 0.2) ;; Add more line padding for readability
@@ -1550,6 +1510,13 @@ Will work on both org-mode and any mode that accepts plain html."
            (format tag (help-key-description key nil)))
         (insert (format tag ""))
         (forward-char (if is-org-mode -8 -6)))))
+
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell . t)
+     (python . t)
+     (restclient . t)
+     (emacs-lisp . t)))
 
   (setq org-return-follows-link t
         org-agenda-diary-file "~/.org/diary.org"
@@ -1869,16 +1836,16 @@ buffer boundaries with possible narrowing."
               (match-string 1))))
       (when attr-rot (string-to-number attr-rot)))))
 
-(use-package rust-mode )
+(use-package rust-mode :ensure t)
 
-(use-package cargo
+(use-package cargo :ensure t
   :hook (rust-mode . cargo-minor-mode))
 
-;; (use-package company-web  :after mhtml-mode)
+;; (use-package company-web :ensure t :after mhtml-mode)
 
-;; (use-package ac-html-csswatcher  :after mhtml-mode)
+;; (use-package ac-html-csswatcher :ensure t :after mhtml-mode)
 
-(use-package mhtml-mode :elpaca nil
+(use-package mhtml-mode
   :when (>= emacs-major-version 26)
   :mode ("\\.vue\\'" "\\.html\\'" "\\.jsx")
   :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
@@ -1897,20 +1864,20 @@ buffer boundaries with possible narrowing."
   ;;                            (company-mode t)))
   )
 
-(use-package web-mode )
+(use-package web-mode :ensure t)
 
-(use-package elf-mode )
+(use-package elf-mode :ensure t)
 
-(use-package cmake-mode )
+(use-package cmake-mode :ensure t)
 
-(use-package plantuml-mode
+(use-package plantuml-mode :ensure t
   :when (locate-file "plantuml.jar" '("~/Downloads"))
   :config
   (setq plantuml-jar-path "~/Downloads/plantuml.jar"))
 
-(use-package typescript-mode )
+(use-package typescript-mode :ensure t)
 
-(use-package treemacs
+(use-package treemacs :ensure t
   :bind (:map treemacs-mode-map
          ([mouse-1] . treemacs-single-click-expand-action))
   :config
@@ -1927,7 +1894,7 @@ buffer boundaries with possible narrowing."
   :config
   (setq python-indent-guess-indent-offset-verbose nil))
 
-(use-package flymake-ruff
+(use-package flymake-ruff :ensure t
   :hook ((python-mode-hook . flymake-mode)
          (python-mode-hook . flymake-ruff-load)))
 
@@ -1963,7 +1930,7 @@ buffer boundaries with possible narrowing."
 
   (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright))
 
-(use-package pet
+(use-package pet :ensure t
   :hook (python-mode-hook . compro/set-python-variables)
   :init
   (defun compro/get-exe (root name)
@@ -2003,7 +1970,7 @@ buffer boundaries with possible narrowing."
     ;;   (python-isort-on-save-mode 1))
     ))
 
-(use-package vterm  :when is-linux
+(use-package vterm :ensure t :when is-linux
   :init
   (defun vterm-directory-sync ()
     "Synchronize current working directory."
@@ -2024,20 +1991,20 @@ buffer boundaries with possible narrowing."
   (setq treesit-auto-install 'prompt)
   (global-treesit-auto-mode))
 
-(use-package eshell-syntax-highlighting  :after esh-mode
+(use-package eshell-syntax-highlighting :ensure t :after esh-mode
   :config (eshell-syntax-highlighting-global-mode +1))
 
-(use-package embrace
+(use-package embrace :ensure t
   :bind
   ("C-," . embrace-commander))
 
-(unless (elpaca-installed-p 'quelpa)
+(unless (package-installed-p 'quelpa)
   (with-temp-buffer
     (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
     (eval-buffer)
     (quelpa-self-upgrade)))
 
-(use-package ligature :elpaca nil
+(use-package ligature :ensure nil
   :unless (or (< emacs-major-version 27) is-windows)
   :init
   (require 'quelpa)
@@ -2074,7 +2041,7 @@ buffer boundaries with possible narrowing."
   ;; per mode with `ligature-mode'.
   (global-ligature-mode t))
 
-(use-package diff-hl :demand t
+(use-package diff-hl :ensure t
 
   :hook (;; Sync with git (specifically magit) operations
          (magit-post-refresh-hook . diff-hl-magit-post-refresh)
@@ -2091,34 +2058,34 @@ buffer boundaries with possible narrowing."
   (diff-hl-margin-mode t)
   (diff-hl-flydiff-mode t))
 
-(use-package whole-line-or-region
+(use-package whole-line-or-region :ensure t
   :config (whole-line-or-region-global-mode +1))
 
-(use-package cascading-dir-locals
+(use-package cascading-dir-locals :ensure t
   :config
   (cascading-dir-locals-mode 1))
 
-(use-package just-mode )
+(use-package just-mode :ensure t)
 
-(use-package numpydoc
+(use-package numpydoc :ensure t
   :bind (:map python-mode-map
               ("C-c C-n" . numpydoc-generate)))
 
-(use-package chembalance )
+(use-package chembalance :ensure t)
 
-(use-package eping )
+(use-package eping :ensure t)
 
-(use-package go-mode )
+(use-package go-mode :ensure t)
 
-(use-package filetree )
+(use-package filetree :ensure t)
 
-(use-package flymake-flycheck )
+(use-package flymake-flycheck :ensure t)
 
-(use-package bash-completion
+(use-package bash-completion :ensure t
   :config
   (bash-completion-setup))
 
-(use-package apheleia
+(use-package apheleia :ensure t
   :config
   ;; (setf (alist-get 'isort apheleia-formatters)
   ;;     '("usort" "format" "-"))
@@ -2133,31 +2100,31 @@ buffer boundaries with possible narrowing."
         (alist-get 'rustfmt apheleia-formatters) '("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021"))
   (apheleia-global-mode +1))
 
-(use-package narrow-reindent
+(use-package narrow-reindent :ensure t
   :hook (find-file-hook . narrow-reindent-mode))
 
-(use-package daemons )
+(use-package daemons :ensure t)
 
-(use-package all-the-icons-completion
+(use-package all-the-icons-completion :ensure t
   :when (display-graphic-p)
   :hook (marginalia-mode-hook . all-the-icons-completion-marginalia-setup)
   :config
   (all-the-icons-completion-mode 1))
 
-(use-package flimenu
+(use-package flimenu :ensure t
   :config
   (flimenu-global-mode 1))
 
-(use-package coterm
+(use-package coterm :ensure t
   :config
   (coterm-mode 1))
 
-(use-package git-modes )
+(use-package git-modes :ensure t)
 
-(use-package async-backup
+(use-package async-backup :ensure t
   :hook (after-save-hook . async-backup))
 
-(use-package subed :elpaca nil
+(use-package subed :ensure t
   ;; :init
   ;; ;; Disable automatic movement of point by default
   ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)
@@ -2169,25 +2136,25 @@ buffer boundaries with possible narrowing."
   ;; (add-hook 'subed-mode-hook (lambda () (setq-local fill-column 40)))
   )
 
-(use-package buffer-move )
+(use-package buffer-move :ensure t)
 
-(use-package redacted
+(use-package redacted :ensure t
   :init
   (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1)))))
 
-(use-package cycle-at-point
+(use-package cycle-at-point :ensure t
   :bind (("M-p" . cycle-at-point)
          ("M-n" . (lambda ()
                     (interactive)
                     (let ((current-prefix-arg '(-1)))
                       (call-interactively 'cycle-at-point))))))
 
-(use-package comint-mime  :when (display-graphic-p)
+(use-package comint-mime :ensure t :when (display-graphic-p)
   :hook
   ((shell-mode-hook . comint-mime-setup)
    (inferior-python-mode-hook . comint-mime-setup)))
 
-(use-package flymake-collection
+(use-package flymake-collection :ensure t
   :config
   (flymake-collection-hook-setup)
   (push
@@ -2199,47 +2166,47 @@ buffer boundaries with possible narrowing."
                    (executable-find "pylint"))))
    flymake-collection-config))
 
-(use-package ruby-electric
+(use-package ruby-electric :ensure t
   :hook (ruby-mode-hook . ruby-electric-mode))
 
-(use-package rbenv
+(use-package rbenv :ensure t
   :config
   (global-rbenv-mode)
   (rbenv-use-corresponding))
 
-(use-package inf-ruby
+(use-package inf-ruby :ensure t
   :bind (:map inf-ruby-minor-mode-map
               ("C-c C-c" . ruby-send-buffer-and-go)))
 
-(use-package ruby-test-mode
+(use-package ruby-test-mode :ensure t
   :hook (ruby-mode-hook . ruby-test-mode))
 
-(use-package rinari
+(use-package rinari :ensure t
   :config
   (global-rinari-mode))
 
-(use-package yari
+(use-package yari :ensure t
   :hook (ruby-mode-hook . ri-bind-key)
   :init
   (defun ri-bind-key ()
     (local-set-key [f1] 'yari)))
 
-(use-package fancy-compilation  :after compile
+(use-package fancy-compilation :ensure t :after compile
   :config
   (fancy-compilation-mode))
 
-(use-package repeat-help
+(use-package repeat-help :ensure t
   :hook (repeat-mode-hook . repeat-help-mode))
 
-(use-package yaml-pro
+(use-package yaml-pro :ensure t
   :hook (yaml-mode-hook . yaml-pro-mode))
 
-(use-package clean-kill-ring
+(use-package clean-kill-ring :ensure t
   :config
   (setq clean-kill-ring-prevent-duplicates t)
   (clean-kill-ring-mode 1))
 
-(use-package eldoc-box
+(use-package eldoc-box :ensure t
   :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
 
 (use-package editorconfig
@@ -2256,11 +2223,10 @@ buffer boundaries with possible narrowing."
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)
   (set-face-attribute 'tab-bar-tab nil :box nil))
-;; (setq debug-on-error  nil
-;;       init-file-debug nil)
-;; (use-package s
-;;   :config
-;;   (compro/redownload-empty-pkgs))
+(minions-mode 1)
+(setq debug-on-error  nil
+      init-file-debug nil)
+(compro/redownload-empty-pkgs)
 
 ;; Remove text property from text in kill-ring
 (defun unpropertize-kill-ring ()
