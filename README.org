@@ -1753,94 +1753,94 @@
      (use-package orderless
        :config
        (setq completion-styles '(orderless flex substring)
-             completion-category-defaults nil
-             completion-category-overrides '((file (styles . (partial-completion)))))
+	     completion-category-defaults nil
+	     completion-category-overrides '((file (styles . (partial-completion)))))
 
        ;; Add prompt indicator to `completing-read-multiple'.
        ;; Alternatively try `consult-completing-read-multiple'.
        (defun crm-indicator (args)
-         (cons (concat "[CRM] " (car args)) (cdr args)))
+	 (cons (concat "[CRM] " (car args)) (cdr args)))
        (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
 
        ;; Do not allow the cursor in the minibuffer prompt
        (setq minibuffer-prompt-properties
-             '(read-only t cursor-intangible t face minibuffer-prompt))
+	     '(read-only t cursor-intangible t face minibuffer-prompt))
        (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
 
      (use-package consult
        :bind (("M-y" . consult-yank-pop)
-              ("M-v" . consult-yank-pop)
-              ("C-v" . consult-yank-pop)
-              ("M-g l" . consult-line)
-              ("M-g o" . consult-outline)
-              ("C-x C-r" . consult-recent-file)
-              ("C-x b" . consult-buffer)
-              :map minibuffer-local-map
-              ("C-r" . consult-history)))
+	      ("M-v" . consult-yank-pop)
+	      ("C-v" . consult-yank-pop)
+	      ("M-g l" . consult-line)
+	      ("M-g o" . consult-outline)
+	      ("C-x C-r" . consult-recent-file)
+	      ("C-x b" . consult-buffer)
+	      :map minibuffer-local-map
+	      ("C-r" . consult-history)))
 
      (use-package consult-dir
        :bind ("C-x d" . consult-dir)
        :init
        (with-eval-after-load 'eshell
-         (defun eshell/z (&optional regexp)
-           "Navigate to a previously visited directory in eshell, or to
+	 (defun eshell/z (&optional regexp)
+	   "Navigate to a previously visited directory in eshell, or to
      any directory proferred by `consult-dir'.
      Source: https://karthinks.com/software/jumping-directories-in-eshell/"
-           (let ((eshell-dirs (delete-dups
-                               (mapcar 'abbreviate-file-name
-                                       (ring-elements eshell-last-dir-ring)))))
-             (cond
-              ((and (not regexp) (featurep 'consult-dir))
-               (let* ((consult-dir--source-eshell `(:name "Eshell"
-                                                          :narrow ?e
-                                                          :category file
-                                                          :face consult-file
-                                                          :items ,eshell-dirs))
-                      (consult-dir-sources (cons consult-dir--source-eshell
-                                                 consult-dir-sources)))
-                 (eshell/cd (substring-no-properties
-                             (consult-dir--pick "Switch directory: ")))))
-              (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
-                              (completing-read "cd: " eshell-dirs)))))))))
+	   (let ((eshell-dirs (delete-dups
+			       (mapcar 'abbreviate-file-name
+				       (ring-elements eshell-last-dir-ring)))))
+	     (cond
+	      ((and (not regexp) (featurep 'consult-dir))
+	       (let* ((consult-dir--source-eshell `(:name "Eshell"
+							  :narrow ?e
+							  :category file
+							  :face consult-file
+							  :items ,eshell-dirs))
+		      (consult-dir-sources (cons consult-dir--source-eshell
+						 consult-dir-sources)))
+		 (eshell/cd (substring-no-properties
+			     (consult-dir--pick "Switch directory: ")))))
+	      (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
+			      (completing-read "cd: " eshell-dirs)))))))))
 
      (use-package marginalia  :after vertico
        :config
        (setq marginalia-annotators
-             '(marginalia-annotators-heavy marginalia-annotators-light nil))
+	     '(marginalia-annotators-heavy marginalia-annotators-light nil))
        (marginalia-mode +1))
 
      (use-package embark
        :bind (("C-S-a" . embark-act)
-              ("" . embark-act)
-              ("C-S-e" . embark-act-noexit)
-              ("" . embark-act-noexit)
-              ("C-S-b" . embark-become)
-              ("" . embark-become))
+	      ("" . embark-act)
+	      ("C-S-e" . embark-act-noexit)
+	      ("" . embark-act-noexit)
+	      ("C-S-b" . embark-become)
+	      ("" . embark-become))
        :config
        ;; which-key support
        (setq embark-action-indicator
-             (lambda (map)
-               (which-key--show-keymap "Embark" map nil nil 'no-paging)
-               #'which-key--hide-popup-ignore-command)
-             embark-become-indicator embark-action-indicator))
+	     (lambda (map)
+	       (which-key--show-keymap "Embark" map nil nil 'no-paging)
+	       #'which-key--hide-popup-ignore-command)
+	     embark-become-indicator embark-action-indicator))
 
      (use-package vertico  :defer nil
 
        ;; More convenient directory navigation commands
        :bind (:map vertico-map
-               ("RET" . vertico-directory-enter)
-               ("DEL" . vertico-directory-delete-char)
-               ("M-DEL" . vertico-directory-delete-word)
-               ("M-V" . vertico-multiform-vertical)
-               ("M-G" . vertico-multiform-grid)
-               ("M-F" . vertico-multiform-flat)
-               ("M-R" . vertico-multiform-reverse)
-               ("M-U" . vertico-multiform-unobtrusive))
+	       ("RET" . vertico-directory-enter)
+	       ("DEL" . vertico-directory-delete-char)
+	       ("M-DEL" . vertico-directory-delete-word)
+	       ("M-V" . vertico-multiform-vertical)
+	       ("M-G" . vertico-multiform-grid)
+	       ("M-F" . vertico-multiform-flat)
+	       ("M-R" . vertico-multiform-reverse)
+	       ("M-U" . vertico-multiform-unobtrusive))
 
        :init
        (add-to-list 'load-path (concat elpaca-builds-directory "vertico/extensions/"))
        (setq read-file-name-completion-ignore-case t
-             read-buffer-completion-ignore-case t)
+	     read-buffer-completion-ignore-case t)
 
        ;; Tidy shadowed file names
        :hook (rfn-eshadow-update-overlay-hook . vertico-directory-tidy)
@@ -1855,26 +1855,24 @@
        (vertico-mouse-mode 1)
        (vertico-indexed-mode 1)
        (advice-add #'vertico--format-candidate :around
-                 (lambda (orig cand prefix suffix index _start)
-                   (setq cand (funcall orig cand prefix suffix index _start))
-                   (concat
-                    (if (= vertico--index index)
-                        (propertize "» " 'face 'vertico-current)
-                      "  ")
-                    cand)))
+		 (lambda (orig cand prefix suffix index _start)
+		   (setq cand (funcall orig cand prefix suffix index _start))
+		   (concat
+		    (if (= vertico--index index)
+			(propertize "» " 'face 'vertico-current)
+		      "  ")
+		    cand)))
        ;; Selectrum Wiki - Minibuffer default add function
        (autoload 'ffap-guesser "ffap")
        (setq minibuffer-default-add-function
-             (defun minibuffer-default-add-function+ ()
-               (with-selected-window (minibuffer-selected-window)
-                 (delete-dups
-                  (delq nil
-                        (list (thing-at-point 'symbol)
-                              (thing-at-point 'list)
-                              (ffap-guesser)
-                              (thing-at-point-url-at-point))))))))
-
-     (use-package vertico-directory :after vertico :elpaca nil)
+	     (defun minibuffer-default-add-function+ ()
+	       (with-selected-window (minibuffer-selected-window)
+		 (delete-dups
+		  (delq nil
+			(list (thing-at-point 'symbol)
+			      (thing-at-point 'list)
+			      (ffap-guesser)
+			      (thing-at-point-url-at-point))))))))
    #+end_src
 ** Isearch alternative
    =ctrlf= is just a simple improvement over isearch.
