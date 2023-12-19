@@ -404,6 +404,16 @@ The return value is nil if no font was found, truthy otherwise."
               ("<left>" . compro/dired-up-dir)
               ("C-x <C-j>" . dired-jump))
   :init
+  (use-package dired-collapse )
+  (use-package dired-du  :after dired)
+  (use-package dired-dups  :after dired)
+  (use-package dired-filetype-face  :after dired)
+  (use-package dired-hide-dotfiles
+    :after dired
+    :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+  (use-package dired-subtree  :after dired)
+  (elpaca-wait)
+
   (defun compro/dired-up-dir ()
     (interactive)
     (find-alternate-file ".."))
@@ -448,17 +458,6 @@ The return value is nil if no font was found, truthy otherwise."
       (after dired-after-updating-hook first () activate)
     "Sort dired listings with directories first before adding marks."
     (mydired-sort)))
-
-(use-package dired-collapse )
-(use-package dired-du  :after dired)
-;; (use-package dired-dups  :after dired)
-(use-package dired-filetype-face  :after dired)
-(use-package dired-hide-dotfiles
-  :after dired
-  :hook (dired-mode-hook . dired-hide-dotfiles-mode))
-(use-package dired-subtree  :after dired)
-
-(elpaca-wait)
 
 (when compro/laptop-p
   (setq user-mail-address "comproprasad@gmail.com"
@@ -1307,6 +1306,8 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
+(use-package spacemacs-common :elpaca spacemacs-theme)
+
 (use-package modus-themes )
 
 (use-package page-break-lines
@@ -1436,6 +1437,8 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 			 (thing-at-point 'list)
 			 (ffap-guesser)
 			 (thing-at-point-url-at-point))))))))
+
+(use-package vertico-directory :after vertico :elpaca vertico)
 
 (use-package ctrlf
   :config (ctrlf-mode 1))
@@ -2023,17 +2026,21 @@ buffer boundaries with possible narrowing."
   :bind
   ("C-," . embrace-commander))
 
-(use-package ligature
-  :elpaca (ligature
-           :host github
-           :repo "mickeynp/ligature.el"
-           :local-repo "ligature"
-           :branch "master"
-           ;; :pre-build ((require 'ob-tangle)
-           ;;             (setq org-confirm-babel-evaluate nil)
-           ;;             (org-babel-tangle-file "./miscellany.org"))
-           )
+(unless (elpaca-installed-p 'quelpa)
+  (with-temp-buffer
+    (url-insert-file-contents "https://raw.githubusercontent.com/quelpa/quelpa/master/quelpa.el")
+    (eval-buffer)
+    (quelpa-self-upgrade)))
+
+(use-package ligature :elpaca nil
   :unless (or (< emacs-major-version 27) is-windows)
+  :init
+  (require 'quelpa)
+  (when (not (quelpa--package-installed-p 'ligature))
+    (quelpa
+     '(ligature
+       :fetcher url
+       :url "https://raw.githubusercontent.com/mickeynp/ligature.el/master/ligature.el")))
   :config
   ;; Enable the "www" ligature in every possible major mode
   (ligature-set-ligatures 't '("www"))
@@ -2144,6 +2151,18 @@ buffer boundaries with possible narrowing."
 
 (use-package async-backup
   :hook (after-save-hook . async-backup))
+
+(use-package subed
+  ;; :init
+  ;; ;; Disable automatic movement of point by default
+  ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)
+  ;; ;; Remember cursor position between sessions
+  ;; (add-hook 'subed-mode-hook 'save-place-local-mode)
+  ;; ;; Break lines automatically while typing
+  ;; (add-hook 'subed-mode-hook 'turn-on-auto-fill)
+  ;; ;; Break lines at 40 characters
+  ;; (add-hook 'subed-mode-hook (lambda () (setq-local fill-column 40)))
+  )
 
 (use-package buffer-move )
 

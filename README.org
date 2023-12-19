@@ -643,6 +643,16 @@
                    ("<left>" . compro/dired-up-dir)
                    ("C-x <C-j>" . dired-jump))
        :init
+       (use-package dired-collapse )
+       (use-package dired-du  :after dired)
+       (use-package dired-dups  :after dired)
+       (use-package dired-filetype-face  :after dired)
+       (use-package dired-hide-dotfiles
+         :after dired
+         :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+       (use-package dired-subtree  :after dired)
+       (elpaca-wait)
+
        (defun compro/dired-up-dir ()
          (interactive)
          (find-alternate-file ".."))
@@ -687,17 +697,6 @@
            (after dired-after-updating-hook first () activate)
          "Sort dired listings with directories first before adding marks."
          (mydired-sort)))
-
-     (use-package dired-collapse )
-     (use-package dired-du  :after dired)
-     ;; (use-package dired-dups  :after dired)
-     (use-package dired-filetype-face  :after dired)
-     (use-package dired-hide-dotfiles
-       :after dired
-       :hook (dired-mode-hook . dired-hide-dotfiles-mode))
-     (use-package dired-subtree  :after dired)
-
-     (elpaca-wait)
    #+end_src
 ** Set my details
    #+begin_src emacs-lisp :tangle init.el
@@ -1714,7 +1713,7 @@
                             markdown-pre-face))
               (set-face-attribute face nil :extend t)))))
     #+end_src
-*** COMMENT Spacemacs Theme
+*** Spacemacs Theme
     #+begin_src emacs-lisp :tangle init.el
       (use-package spacemacs-common :elpaca spacemacs-theme)
     #+end_src
@@ -1873,6 +1872,8 @@
 			      (thing-at-point 'list)
 			      (ffap-guesser)
 			      (thing-at-point-url-at-point))))))))
+
+     (use-package vertico-directory :after vertico :elpaca vertico)
    #+end_src
 ** Isearch alternative
    =ctrlf= is just a simple improvement over isearch.
@@ -2544,7 +2545,7 @@
        :bind
        ("C-," . embrace-commander))
    #+end_src
-** COMMENT Quelpa - Install from source
+** Quelpa - Install from source
    #+begin_src emacs-lisp :tangle init.el
      (unless (elpaca-installed-p 'quelpa)
        (with-temp-buffer
@@ -2554,17 +2555,15 @@
    #+end_src
 ** Ligatures
    #+begin_src emacs-lisp :tangle init.el
-     (use-package ligature
-       :elpaca (ligature
-                :host github
-                :repo "mickeynp/ligature.el"
-                :local-repo "ligature"
-                :branch "master"
-                ;; :pre-build ((require 'ob-tangle)
-                ;;             (setq org-confirm-babel-evaluate nil)
-                ;;             (org-babel-tangle-file "./miscellany.org"))
-                )
+     (use-package ligature :elpaca nil
        :unless (or (< emacs-major-version 27) is-windows)
+       :init
+       (require 'quelpa)
+       (when (not (quelpa--package-installed-p 'ligature))
+         (quelpa
+          '(ligature
+            :fetcher url
+            :url "https://raw.githubusercontent.com/mickeynp/ligature.el/master/ligature.el")))
        :config
        ;; Enable the "www" ligature in every possible major mode
        (ligature-set-ligatures 't '("www"))
@@ -2789,7 +2788,7 @@
        :hook (corfu-mode-hook . corfu-doc-mode))
      (use-package cape )
    #+end_src
-** COMMENT Edit subtitles
+** Edit subtitles
    #+begin_src emacs-lisp :tangle init.el
      (use-package subed
        ;; :init
