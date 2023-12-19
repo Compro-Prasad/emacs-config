@@ -113,7 +113,6 @@ Else it will return `init.el'. Useful for tangling source code."
 
 (use-package f :demand t)
 (use-package s :demand t)
-(elpaca-wait)
 
 (defun mplist-remove (plist prop)
   "Return a copy of a modified PLIST without PROP and its values.
@@ -328,8 +327,7 @@ The return value is nil if no font was found, truthy otherwise."
 
 (setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
 
-(use-package general :demand t)
-(elpaca-wait)
+(use-package general :defer nil)
 
 (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
 
@@ -393,16 +391,16 @@ The return value is nil if no font was found, truthy otherwise."
 (use-package dired :elpaca nil
   :hook (dired-mode-hook . dired-hide-details-mode)
   :bind (:map dired-mode-map
-              ("C-c C-c" . dired-collapse-mode)
-              ("C-c C-d C-u" . dired-du-mode)
-              ("." . dired-hide-dotfiles-mode)
-              ("<tab>" . dired-subtree-toggle)
-              ("q"      . kill-current-buffer)
-              ("RET"    . compro/dired-open-dir)
-              ("^"      . compro/dired-up-dir)
-              ("DEL"    . compro/dired-up-dir)
-              ("<left>" . compro/dired-up-dir)
-              ("C-x <C-j>" . dired-jump))
+	      ("C-c C-c" . dired-collapse-mode)
+	      ("C-c C-d C-u" . dired-du-mode)
+	      ("." . dired-hide-dotfiles-mode)
+	      ("<tab>" . dired-subtree-toggle)
+	      ("q"      . kill-current-buffer)
+	      ("RET"    . compro/dired-open-dir)
+	      ("^"      . compro/dired-up-dir)
+	      ("DEL"    . compro/dired-up-dir)
+	      ("<left>" . compro/dired-up-dir)
+	      ("C-x <C-j>" . dired-jump))
   :init
   (use-package dired-collapse )
   (use-package dired-du  :after dired)
@@ -412,8 +410,6 @@ The return value is nil if no font was found, truthy otherwise."
     :after dired
     :hook (dired-mode-hook . dired-hide-dotfiles-mode))
   (use-package dired-subtree  :after dired)
-  (elpaca-wait)
-
   (defun compro/dired-up-dir ()
     (interactive)
     (find-alternate-file ".."))
@@ -423,26 +419,26 @@ The return value is nil if no font was found, truthy otherwise."
     (set-buffer-modified-p nil)
     (let ((file-or-dir (dired-get-file-for-visit)))
       (if (f-dir-p file-or-dir)
-          (find-alternate-file file-or-dir)
-        (find-file file-or-dir))))
+	  (find-alternate-file file-or-dir)
+	(find-file file-or-dir))))
 
   (defun compro/dired/mp3-to-ogg ()
     "Used in dired to convert mp3 files to ogg"
     (interactive)
     (let* ((files (dired-get-marked-files)))
       (dolist (file files)
-        (let* ((basename (file-name-nondirectory file))
-               (file-base (file-name-base file))
-               (dirname (file-name-directory file))
-               (extension (file-name-extension file))
-               (ogg-file (concat dirname file-base ".ogg"))
-               (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
-          (if (string= "mp3" (downcase extension))
-              (progn
-                (shell-command command nil nil)
-                (message command)
-                (if (file-exists-p ogg-file)
-                    (delete-file file))))))))
+	(let* ((basename (file-name-nondirectory file))
+	       (file-base (file-name-base file))
+	       (dirname (file-name-directory file))
+	       (extension (file-name-extension file))
+	       (ogg-file (concat dirname file-base ".ogg"))
+	       (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+	  (if (string= "mp3" (downcase extension))
+	      (progn
+		(shell-command command nil nil)
+		(message command)
+		(if (file-exists-p ogg-file)
+		    (delete-file file))))))))
 
   :config
   (setq dired-dwim-target t)
@@ -450,8 +446,8 @@ The return value is nil if no font was found, truthy otherwise."
     "Sort dired listings with directories first."
     (save-excursion
       (let (buffer-read-only)
-        (forward-line 2) ;; beyond dir. header
-        (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+	(forward-line 2) ;; beyond dir. header
+	(sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
       (set-buffer-modified-p nil)))
 
   (defadvice dired-readin
@@ -656,21 +652,25 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(general-define-key
- :keymaps 'input-decode-map
- [?\C-m] [C-m]
- [?\C-i] [C-i]
- ;; [?\C-j] [C-j]
- [?\C-\[] (kbd "<C-[>"))
+(use-package general
+  :config
+  (general-define-key
+   :keymaps 'input-decode-map
+   [?\C-m] [C-m]
+   [?\C-i] [C-i]
+   ;; [?\C-j] [C-j]
+   [?\C-\[] (kbd "<C-[>")))
 
-(general-define-key
- "C-z"             'undo
- "C-x C-o"         'ff-find-other-file
- [C-m]             'delete-other-windows
- "<C-S-mouse-1>"   'imenu
- "C-c r"           'imenu
- "M-/"             'hippie-expand
- "M-^"             'compile)
+(use-package general
+  :config
+  (general-define-key
+   "C-z"             'undo
+   "C-x C-o"         'ff-find-other-file
+   [C-m]             'delete-other-windows
+   "<C-S-mouse-1>"   'imenu
+   "C-c r"           'imenu
+   "M-/"             'hippie-expand
+   "M-^"             'compile))
 
 (if (< emacs-major-version 28)
     (global-set-key [mouse-3] menu-bar-edit-menu)
@@ -1001,12 +1001,13 @@ TODO:
 (use-package restclient )
 
 (use-package hydra )
-(elpaca-wait)
 
-(global-set-key
- (kbd "C-c u")
- (defhydra hydra-ui (:hint nil)
-   "
+(use-package hydra
+:config
+  (global-set-key
+   (kbd "C-c u")
+   (defhydra hydra-ui (:hint nil)
+     "
     ^Emacs^              ^Move to window^   ^Move window to^   ^Buffer^
     ^^^^-----------------------------------------------------------------------
     _M-+_: Inc font      _<left>_           _S-<left>_         _f_: Col indicator
@@ -1018,121 +1019,125 @@ TODO:
     _T_: Toolbar
     _m_: Menubar
     _s_: Scrollbar"
-   ("+" text-scale-increase)
-   ("=" text-scale-increase)
-   ("-" text-scale-decrease)
-   ("M-+" default-text-scale-increase)
-   ("M-=" default-text-scale-increase)
-   ("M--" default-text-scale-decrease)
-   ("t" tab-bar-mode)
-   ("m" menu-bar-mode)
-   ("s" scroll-bar-mode)
-   ("f" display-fill-column-indicator-mode)
-   ("l" display-line-numbers-mode)
-   ("F" global-display-fill-column-indicator-mode)
-   ("L" global-display-line-numbers-mode)
-   ("T" tool-bar-mode)
-   ("<left>" windmove-left)
-   ("<right>" windmove-right)
-   ("<up>" windmove-up)
-   ("<down>" windmove-down)
-   ("S-<left>" buf-move-left)
-   ("S-<right>" buf-move-right)
-   ("S-<up>" buf-move-up)
-   ("S-<down>" buf-move-down)))
+     ("+" text-scale-increase)
+     ("=" text-scale-increase)
+     ("-" text-scale-decrease)
+     ("M-+" default-text-scale-increase)
+     ("M-=" default-text-scale-increase)
+     ("M--" default-text-scale-decrease)
+     ("t" tab-bar-mode)
+     ("m" menu-bar-mode)
+     ("s" scroll-bar-mode)
+     ("f" display-fill-column-indicator-mode)
+     ("l" display-line-numbers-mode)
+     ("F" global-display-fill-column-indicator-mode)
+     ("L" global-display-line-numbers-mode)
+     ("T" tool-bar-mode)
+     ("<left>" windmove-left)
+     ("<right>" windmove-right)
+     ("<up>" windmove-up)
+     ("<down>" windmove-down)
+     ("S-<left>" buf-move-left)
+     ("S-<right>" buf-move-right)
+     ("S-<up>" buf-move-up)
+     ("S-<down>" buf-move-down))))
 
-(global-set-key
- (kbd "C-c t")
- (defhydra hydra-text ()
-   ("x" whole-line-or-region-kill-region "Cut")
-   ("c" whole-line-or-region-kill-ring-save "Copy")
-   ("v" yank "Paste")
-   ("C-x" whole-line-or-region-kill-region "Cut")
-   ("C-c" whole-line-or-region-kill-ring-save "Copy")
-   ("C-v" yank "Paste")
-   ("C" consult-yank-pop "Clipboard")
-   ("<up>" previous-line nil)
-   ("C-p" previous-line nil)
-   ("<down>" next-line nil)
-   ("C-n" next-line nil)
-   ("<left>" left-char nil)
-   ("<right>" right-char nil)
-   ("C-<left>" left-word nil)
-   ("M-b" backward-word nil)
-   ("C-<right>" right-word nil)
-   ("M-f" forward-word nil)
-   ("s" avy-goto-char-2 "Goto 2 chars")
-   ("S" avy-goto-symbol-1 "Goto symbol")
-   ("C-s" ctrlf-forward-default "Find Next")
-   ("C-f" ctrlf-forward-default "Find Next")
-   ("C-r" ctrlf-backward-default "Find Previous")
-   ("C-S-f" ctrlf-backward-default "Find Previous")
-   ("<home>" compro/beginning-of-line nil)
-   ("C-a" compro/beginning-of-line "Home")
-   ("<end>" move-end-of-line nil)
-   ("C-e" move-end-of-line "End")
-   ("C-SPC" set-mark-command "Mark/Unmark")
-   ("S-<down>" move-text-down "Move line down")
-   ("S-<up>" move-text-up "Move line up")
-   ("+" er/expand-region "Expand")
-   ("=" er/expand-region "Expand")
-   ("C-+" hydra-er/er/expand-region "Expand")
-   ("C-=" hydra-er/er/expand-region "Expand")
-   ("-" er/contract-region "Contract")
-   ("C--" hydra-er/er/contract-region "Contract")))
+(use-package hydra
+:config
+  (global-set-key
+   (kbd "C-c t")
+   (defhydra hydra-text ()
+     ("x" whole-line-or-region-kill-region "Cut")
+     ("c" whole-line-or-region-kill-ring-save "Copy")
+     ("v" yank "Paste")
+     ("C-x" whole-line-or-region-kill-region "Cut")
+     ("C-c" whole-line-or-region-kill-ring-save "Copy")
+     ("C-v" yank "Paste")
+     ("C" consult-yank-pop "Clipboard")
+     ("<up>" previous-line nil)
+     ("C-p" previous-line nil)
+     ("<down>" next-line nil)
+     ("C-n" next-line nil)
+     ("<left>" left-char nil)
+     ("<right>" right-char nil)
+     ("C-<left>" left-word nil)
+     ("M-b" backward-word nil)
+     ("C-<right>" right-word nil)
+     ("M-f" forward-word nil)
+     ("s" avy-goto-char-2 "Goto 2 chars")
+     ("S" avy-goto-symbol-1 "Goto symbol")
+     ("C-s" ctrlf-forward-default "Find Next")
+     ("C-f" ctrlf-forward-default "Find Next")
+     ("C-r" ctrlf-backward-default "Find Previous")
+     ("C-S-f" ctrlf-backward-default "Find Previous")
+     ("<home>" compro/beginning-of-line nil)
+     ("C-a" compro/beginning-of-line "Home")
+     ("<end>" move-end-of-line nil)
+     ("C-e" move-end-of-line "End")
+     ("C-SPC" set-mark-command "Mark/Unmark")
+     ("S-<down>" move-text-down "Move line down")
+     ("S-<up>" move-text-up "Move line up")
+     ("+" er/expand-region "Expand")
+     ("=" er/expand-region "Expand")
+     ("C-+" hydra-er/er/expand-region "Expand")
+     ("C-=" hydra-er/er/expand-region "Expand")
+     ("-" er/contract-region "Contract")
+     ("C--" hydra-er/er/contract-region "Contract"))))
 
-(global-set-key
- (kbd "C-c g")
- (defhydra hydra-gamify (:hint nil)
-   "Game mode"
-   ("w" previous-line)
-   ("s" next-line)
-   ("W" previous-line)
-   ("S" next-line)
-   ("a" left-char)
-   ("d" right-char)
-   ("A" left-word)
-   ("D" right-word)
-   ("C-s" ctrlf-forward-default)
-   ("C-r" ctrlf-backward-default)
-   ("c" whole-line-or-region-kill-ring-save)
-   ("x" whole-line-or-region-kill-region)
-   ("v" yank)
-   ("C-c" whole-line-or-region-kill-ring-save)
-   ("C-x" whole-line-or-region-kill-region)
-   ("C-v" yank)
-   ("V" consult-yank-pop "Clipboard")
-   ("g" set-mark-command "Mark")
-   ("f" avy-goto-char-2 "Goto 2 chars")
-   ("F" avy-goto-symbol-1 "Goto symbol")
-   ("t" treemacs "Treemacs")
-   ("<left>" windmove-left)
-   ("<right>" windmove-right)
-   ("<up>" windmove-up)
-   ("<down>" windmove-down)
-   ("S-<left>" buf-move-left)
-   ("S-<right>" buf-move-right)
-   ("S-<up>" buf-move-up)
-   ("S-<down>" buf-move-down)
-   ("j" windmove-left)
-   ("l" windmove-right)
-   ("i" windmove-up)
-   ("j" windmove-down)
-   ("J" buf-move-left)
-   ("L" buf-move-right)
-   ("I" buf-move-up)
-   ("K" buf-move-down)
-   ("u" undo)
-   ("U" undo-tree-visualize)
-   ("z" undo)
-   ("Z" undo-tree-visualize)
-   ("e" end-of-buffer)
-   ("E" beginning-of-buffer)
-   ("M-c" capitalize-word "Capitalize")
-   ("M-l" downcase-word "Lower")
-   ("M-u" upcase-word "Upper")
-   ("o" compro/beginning-of-line)
-   ("p" move-end-of-line)))
+(use-package hydra
+:config
+  (global-set-key
+   (kbd "C-c g")
+   (defhydra hydra-gamify (:hint nil)
+     "Game mode"
+     ("w" previous-line)
+     ("s" next-line)
+     ("W" previous-line)
+     ("S" next-line)
+     ("a" left-char)
+     ("d" right-char)
+     ("A" left-word)
+     ("D" right-word)
+     ("C-s" ctrlf-forward-default)
+     ("C-r" ctrlf-backward-default)
+     ("c" whole-line-or-region-kill-ring-save)
+     ("x" whole-line-or-region-kill-region)
+     ("v" yank)
+     ("C-c" whole-line-or-region-kill-ring-save)
+     ("C-x" whole-line-or-region-kill-region)
+     ("C-v" yank)
+     ("V" consult-yank-pop "Clipboard")
+     ("g" set-mark-command "Mark")
+     ("f" avy-goto-char-2 "Goto 2 chars")
+     ("F" avy-goto-symbol-1 "Goto symbol")
+     ("t" treemacs "Treemacs")
+     ("<left>" windmove-left)
+     ("<right>" windmove-right)
+     ("<up>" windmove-up)
+     ("<down>" windmove-down)
+     ("S-<left>" buf-move-left)
+     ("S-<right>" buf-move-right)
+     ("S-<up>" buf-move-up)
+     ("S-<down>" buf-move-down)
+     ("j" windmove-left)
+     ("l" windmove-right)
+     ("i" windmove-up)
+     ("j" windmove-down)
+     ("J" buf-move-left)
+     ("L" buf-move-right)
+     ("I" buf-move-up)
+     ("K" buf-move-down)
+     ("u" undo)
+     ("U" undo-tree-visualize)
+     ("z" undo)
+     ("Z" undo-tree-visualize)
+     ("e" end-of-buffer)
+     ("E" beginning-of-buffer)
+     ("M-c" capitalize-word "Capitalize")
+     ("M-l" downcase-word "Lower")
+     ("M-u" upcase-word "Upper")
+     ("o" compro/beginning-of-line)
+     ("p" move-end-of-line))))
 
 (use-package hungry-delete
   :config (global-hungry-delete-mode t))
@@ -2152,7 +2157,7 @@ buffer boundaries with possible narrowing."
 (use-package async-backup
   :hook (after-save-hook . async-backup))
 
-(use-package subed
+(use-package subed :elpaca nil
   ;; :init
   ;; ;; Disable automatic movement of point by default
   ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)

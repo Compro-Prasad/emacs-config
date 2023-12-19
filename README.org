@@ -265,7 +265,6 @@
   #+begin_src emacs-lisp :tangle init.el
     (use-package f :demand t)
     (use-package s :demand t)
-    (elpaca-wait)
   #+end_src
 * Helper functions
 ** mplist-remove
@@ -505,8 +504,7 @@
   *General* is used for setting keybindings in a simpler way as compared to
   *bind-key*.
   #+begin_src emacs-lisp :tangle init.el
-    (use-package general :demand t)
-    (elpaca-wait)
+    (use-package general :defer nil)
   #+end_src
 * Native Emacs configurations
 ** Speedup find-file
@@ -632,71 +630,69 @@
      (use-package dired :elpaca nil
        :hook (dired-mode-hook . dired-hide-details-mode)
        :bind (:map dired-mode-map
-                   ("C-c C-c" . dired-collapse-mode)
-                   ("C-c C-d C-u" . dired-du-mode)
-                   ("." . dired-hide-dotfiles-mode)
-                   ("<tab>" . dired-subtree-toggle)
-                   ("q"      . kill-current-buffer)
-                   ("RET"    . compro/dired-open-dir)
-                   ("^"      . compro/dired-up-dir)
-                   ("DEL"    . compro/dired-up-dir)
-                   ("<left>" . compro/dired-up-dir)
-                   ("C-x <C-j>" . dired-jump))
+		   ("C-c C-c" . dired-collapse-mode)
+		   ("C-c C-d C-u" . dired-du-mode)
+		   ("." . dired-hide-dotfiles-mode)
+		   ("<tab>" . dired-subtree-toggle)
+		   ("q"      . kill-current-buffer)
+		   ("RET"    . compro/dired-open-dir)
+		   ("^"      . compro/dired-up-dir)
+		   ("DEL"    . compro/dired-up-dir)
+		   ("<left>" . compro/dired-up-dir)
+		   ("C-x <C-j>" . dired-jump))
        :init
        (use-package dired-collapse )
        (use-package dired-du  :after dired)
        (use-package dired-dups  :after dired)
        (use-package dired-filetype-face  :after dired)
        (use-package dired-hide-dotfiles
-         :after dired
-         :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+	 :after dired
+	 :hook (dired-mode-hook . dired-hide-dotfiles-mode))
        (use-package dired-subtree  :after dired)
-       (elpaca-wait)
-
        (defun compro/dired-up-dir ()
-         (interactive)
-         (find-alternate-file ".."))
+	 (interactive)
+	 (find-alternate-file ".."))
 
        (defun compro/dired-open-dir ()
-         (interactive)
-         (set-buffer-modified-p nil)
-         (let ((file-or-dir (dired-get-file-for-visit)))
-           (if (f-dir-p file-or-dir)
-               (find-alternate-file file-or-dir)
-             (find-file file-or-dir))))
+	 (interactive)
+	 (set-buffer-modified-p nil)
+	 (let ((file-or-dir (dired-get-file-for-visit)))
+	   (if (f-dir-p file-or-dir)
+	       (find-alternate-file file-or-dir)
+	     (find-file file-or-dir))))
 
        (defun compro/dired/mp3-to-ogg ()
-         "Used in dired to convert mp3 files to ogg"
-         (interactive)
-         (let* ((files (dired-get-marked-files)))
-           (dolist (file files)
-             (let* ((basename (file-name-nondirectory file))
-                    (file-base (file-name-base file))
-                    (dirname (file-name-directory file))
-                    (extension (file-name-extension file))
-                    (ogg-file (concat dirname file-base ".ogg"))
-                    (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
-               (if (string= "mp3" (downcase extension))
-                   (progn
-                     (shell-command command nil nil)
-                     (message command)
-                     (if (file-exists-p ogg-file)
-                         (delete-file file))))))))
+	 "Used in dired to convert mp3 files to ogg"
+	 (interactive)
+	 (let* ((files (dired-get-marked-files)))
+	   (dolist (file files)
+	     (let* ((basename (file-name-nondirectory file))
+		    (file-base (file-name-base file))
+		    (dirname (file-name-directory file))
+		    (extension (file-name-extension file))
+		    (ogg-file (concat dirname file-base ".ogg"))
+		    (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+	       (if (string= "mp3" (downcase extension))
+		   (progn
+		     (shell-command command nil nil)
+		     (message command)
+		     (if (file-exists-p ogg-file)
+			 (delete-file file))))))))
 
        :config
        (setq dired-dwim-target t)
        (defun mydired-sort ()
-         "Sort dired listings with directories first."
-         (save-excursion
-           (let (buffer-read-only)
-             (forward-line 2) ;; beyond dir. header
-             (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
-           (set-buffer-modified-p nil)))
+	 "Sort dired listings with directories first."
+	 (save-excursion
+	   (let (buffer-read-only)
+	     (forward-line 2) ;; beyond dir. header
+	     (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+	   (set-buffer-modified-p nil)))
 
        (defadvice dired-readin
-           (after dired-after-updating-hook first () activate)
-         "Sort dired listings with directories first before adding marks."
-         (mydired-sort)))
+	   (after dired-after-updating-hook first () activate)
+	 "Sort dired listings with directories first before adding marks."
+	 (mydired-sort)))
    #+end_src
 ** Set my details
    #+begin_src emacs-lisp :tangle init.el
@@ -941,23 +937,27 @@
 ** TODO Disable overlapping keybindings
    Find fix when running in daemon mode
    #+begin_src emacs-lisp :tangle init.el
-     (general-define-key
-      :keymaps 'input-decode-map
-      [?\C-m] [C-m]
-      [?\C-i] [C-i]
-      ;; [?\C-j] [C-j]
-      [?\C-\[] (kbd "<C-[>"))
+     (use-package general
+       :config
+       (general-define-key
+        :keymaps 'input-decode-map
+        [?\C-m] [C-m]
+        [?\C-i] [C-i]
+        ;; [?\C-j] [C-j]
+        [?\C-\[] (kbd "<C-[>")))
    #+end_src
 ** Some common keybindings
    #+begin_src emacs-lisp :tangle init.el
-     (general-define-key
-      "C-z"             'undo
-      "C-x C-o"         'ff-find-other-file
-      [C-m]             'delete-other-windows
-      "<C-S-mouse-1>"   'imenu
-      "C-c r"           'imenu
-      "M-/"             'hippie-expand
-      "M-^"             'compile)
+     (use-package general
+       :config
+       (general-define-key
+        "C-z"             'undo
+        "C-x C-o"         'ff-find-other-file
+        [C-m]             'delete-other-windows
+        "<C-S-mouse-1>"   'imenu
+        "C-c r"           'imenu
+        "M-/"             'hippie-expand
+        "M-^"             'compile))
    #+end_src
 ** Context menu on right click
    #+begin_src emacs-lisp :tangle init.el
@@ -1347,25 +1347,26 @@
    Keybindings that stick around.
    #+begin_src emacs-lisp :tangle init.el
      (use-package hydra )
-     (elpaca-wait)
    #+end_src
 *** UI hydra
     #+begin_src emacs-lisp :tangle init.el
+    (use-package hydra
+    :config
       (global-set-key
        (kbd "C-c u")
        (defhydra hydra-ui (:hint nil)
          "
-          ^Emacs^              ^Move to window^   ^Move window to^   ^Buffer^
-          ^^^^-----------------------------------------------------------------------
-          _M-+_: Inc font      _<left>_           _S-<left>_         _f_: Col indicator
-          _M-=_: Inc font      _<right>_          _S-<right>_        _l_: Line numbers
-          _M--_: Dec font      _<up>_             _S-<up>_           _+_: Inc font
-          _F_: Col indicator   _<down>_           _S-<down>_         _=_: Inc font
-          _L_: Line numbers    ^ ^                ^ ^                _-_: Dec font
-          _t_: Tabs
-          _T_: Toolbar
-          _m_: Menubar
-          _s_: Scrollbar"
+        ^Emacs^              ^Move to window^   ^Move window to^   ^Buffer^
+        ^^^^-----------------------------------------------------------------------
+        _M-+_: Inc font      _<left>_           _S-<left>_         _f_: Col indicator
+        _M-=_: Inc font      _<right>_          _S-<right>_        _l_: Line numbers
+        _M--_: Dec font      _<up>_             _S-<up>_           _+_: Inc font
+        _F_: Col indicator   _<down>_           _S-<down>_         _=_: Inc font
+        _L_: Line numbers    ^ ^                ^ ^                _-_: Dec font
+        _t_: Tabs
+        _T_: Toolbar
+        _m_: Menubar
+        _s_: Scrollbar"
          ("+" text-scale-increase)
          ("=" text-scale-increase)
          ("-" text-scale-decrease)
@@ -1387,10 +1388,12 @@
          ("S-<left>" buf-move-left)
          ("S-<right>" buf-move-right)
          ("S-<up>" buf-move-up)
-         ("S-<down>" buf-move-down)))
+         ("S-<down>" buf-move-down))))
     #+end_src
 *** Text navigation hydra
     #+begin_src emacs-lisp :tangle init.el
+    (use-package hydra
+    :config
       (global-set-key
        (kbd "C-c t")
        (defhydra hydra-text ()
@@ -1429,10 +1432,12 @@
          ("C-+" hydra-er/er/expand-region "Expand")
          ("C-=" hydra-er/er/expand-region "Expand")
          ("-" er/contract-region "Contract")
-         ("C--" hydra-er/er/contract-region "Contract")))
+         ("C--" hydra-er/er/contract-region "Contract"))))
     #+end_src
 *** Gamified navigation
     #+begin_src emacs-lisp :tangle init.el
+    (use-package hydra
+    :config
       (global-set-key
        (kbd "C-c g")
        (defhydra hydra-gamify (:hint nil)
@@ -1484,7 +1489,7 @@
          ("M-l" downcase-word "Lower")
          ("M-u" upcase-word "Upper")
          ("o" compro/beginning-of-line)
-         ("p" move-end-of-line)))
+         ("p" move-end-of-line))))
     #+end_src
 ** Hungry delete everywhere
    There is a native function =c-hungry-delete= which is only for =cc-mode=. This
@@ -2790,7 +2795,7 @@
    #+end_src
 ** Edit subtitles
    #+begin_src emacs-lisp :tangle init.el
-     (use-package subed
+     (use-package subed :elpaca nil
        ;; :init
        ;; ;; Disable automatic movement of point by default
        ;; (add-hook 'subed-mode-hook 'subed-disable-sync-point-to-player)
