@@ -1280,7 +1280,7 @@ _=_       _+_
                       markdown-pre-face))
         (set-face-attribute face nil :extend t)))))
 
-(use-package spacemacs-common :ensure spacemacs-theme)
+(use-package spacemacs-theme :ensure t)
 
 (use-package modus-themes :ensure t)
 
@@ -1984,9 +1984,8 @@ buffer boundaries with possible narrowing."
         vterm-buffer-name-string "*vterm-%s*"
         vterm-always-compile-module t))
 
-(use-package treesit-auto
+(use-package treesit-auto :ensure t
   :when (>= emacs-major-version 29)
-  :demand t
   :config
   (setq treesit-auto-install 'prompt)
   (global-treesit-auto-mode))
@@ -2209,7 +2208,7 @@ buffer boundaries with possible narrowing."
 (use-package eldoc-box :ensure t
   :hook (prog-mode-hook . eldoc-box-hover-at-point-mode))
 
-(use-package editorconfig
+(use-package editorconfig :ensure t
   :config
   (add-to-list 'editorconfig-indentation-alist
                '(mhtml-mode js-indent-level
@@ -2217,7 +2216,7 @@ buffer boundaries with possible narrowing."
                             sgml-basic-offset))
   (editorconfig-mode 1))
 
-(use-package yaml-mode)
+(use-package yaml-mode :ensure t)
 
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)

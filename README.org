@@ -1657,7 +1657,7 @@
     #+end_src
 *** Spacemacs Theme
     #+begin_src emacs-lisp :tangle init.el
-      (use-package spacemacs-common :ensure spacemacs-theme)
+      (use-package spacemacs-theme :ensure t)
     #+end_src
 *** Modus operandi theme
     #+begin_src emacs-lisp :tangle init.el
@@ -2467,9 +2467,8 @@
    1. https://robbmann.io/posts/emacs-treesit-auto/
    2. https://github.com/renzmann/treesit-auto
    #+begin_src emacs-lisp :tangle init.el
-     (use-package treesit-auto
+     (use-package treesit-auto :ensure t
        :when (>= emacs-major-version 29)
-       :demand t
        :config
        (setq treesit-auto-install 'prompt)
        (global-treesit-auto-mode))
@@ -2861,7 +2860,7 @@
    3. https://github.com/editorconfig/editorconfig-emacs
 
    #+begin_src emacs-lisp :tangle init.el
-     (use-package editorconfig
+     (use-package editorconfig :ensure t
        :config
        (add-to-list 'editorconfig-indentation-alist
                     '(mhtml-mode js-indent-level
@@ -2871,7 +2870,7 @@
    #+end_src
 ** Yaml mode
    #+begin_src emacs-lisp :tangle init.el
-     (use-package yaml-mode)
+     (use-package yaml-mode :ensure t)
    #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
