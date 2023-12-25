@@ -1931,7 +1931,8 @@ buffer boundaries with possible narrowing."
   (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright))
 
 (use-package pet :ensure t
-  :hook (python-mode-hook . compro/set-python-variables)
+  :hook ((python-mode . compro/set-python-variables)
+         (python-ts-mode . compro/set-python-variables))
   :init
   (defun compro/get-exe (root name)
     (when-let* ((location (concat root "/bin/" name))

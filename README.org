@@ -2404,10 +2404,11 @@
         (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright))
     #+end_src
 *** /virtualenv/ integration
-    emacs-PET
+    Install [[https://github.com/TomWright/dasel][dasel]] for =pet= package integration. Its available in [[https://aur.archlinux.org/packages/dasel][AUR]].
     #+begin_src emacs-lisp :tangle init.el
       (use-package pet :ensure t
-        :hook (python-mode-hook . compro/set-python-variables)
+        :hook ((python-mode . compro/set-python-variables)
+               (python-ts-mode . compro/set-python-variables))
         :init
         (defun compro/get-exe (root name)
           (when-let* ((location (concat root "/bin/" name))
