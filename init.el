@@ -1884,15 +1884,27 @@ buffer boundaries with possible narrowing."
   (treemacs-resize-icons 17)
   (setq treemacs-read-string-input 'from-minibuffer))
 
-(add-hook 'python-mode-hook (lambda () (setq-local fill-column 85)))
 (use-package python
-  :bind (:map python-mode-map
-              ("TAB" . python-indent-shift-right)
-              ("S-TAB" . python-indent-shift-left)
-              ("<backtab>" . python-indent-shift-left)
-              ("S-<iso-lefttab>" . python-indent-shift-left))
+  :bind (:map
+         python-mode-map
+         ("TAB" . python-indent-shift-right)
+         ("S-TAB" . python-indent-shift-left)
+         ("<backtab>" . python-indent-shift-left)
+         ("S-<iso-lefttab>" . python-indent-shift-left)
+
+         :map
+         python-ts-mode-map
+         ("TAB" . python-indent-shift-right)
+         ("S-TAB" . python-indent-shift-left)
+         ("<backtab>" . python-indent-shift-left)
+         ("S-<iso-lefttab>" . python-indent-shift-left))
+  :hook (((python-mode python-ts-mode)
+          . (lambda ()
+                          (setq-local fill-column 85
+                                      forward-sexp-function nil))))
   :config
-  (setq python-indent-guess-indent-offset-verbose nil))
+  (setq python-indent-guess-indent-offset-verbose nil
+        python-shell-dedicated 'project))
 
 (use-package flymake-ruff :ensure t
   :hook ((python-mode-hook . flymake-mode)
