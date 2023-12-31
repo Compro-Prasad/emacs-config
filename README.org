@@ -2353,6 +2353,25 @@
    #+end_src
 ** Python
    #+begin_src emacs-lisp :tangle init.el
+     (defun mapc-buffers (fn)
+       (mapc (lambda (buffer)
+               (with-current-buffer buffer
+                 (funcall fn)))
+             (buffer-list)))
+
+     (defun comint-write-history-on-exit ()
+       "Save history
+     https://github.com/manzyuk/dotfiles/blob/130f86385f645f0a3a7ee6b31a479c6de2c5ce82/.emacs.d/init.el#L183C1-L188C62"
+       (message "In write")
+       (when comint-input-ring-file-name
+         (unless (file-exists-p (file-name-directory comint-input-ring-file-name))
+           (make-directory (file-name-directory comint-input-ring-file-name) t))
+         (message (concat "Writing " comint-input-ring-file-name))
+         (comint-write-input-ring)))
+
+     (add-hook 'kill-buffer-hook 'comint-write-input-ring)
+     (add-hook 'kill-emacs-hook (lambda () (mapc-buffers 'comint-write-input-ring)))
+
      (use-package python
        :bind (:map
               python-mode-map
@@ -2370,7 +2389,25 @@
        :hook (((python-mode python-ts-mode)
                . (lambda ()
                    (setq-local fill-column 85
-                               forward-sexp-function nil))))
+                               forward-sexp-function nil)))
+              (inferior-python-mode
+               .
+               (lambda ()
+                 (setq-local
+                  comint-input-ring-file-name
+                  (concat
+                   cache-d
+                   (file-name-as-directory "python-history")
+                   (s-replace
+                    "/" "!"
+                    (or
+                     (pet-project-root)
+                     (buffer-file-name)
+                     (s-replace "*" "+" (buffer-name))))))
+                 (message (concat "Set " comint-input-ring-file-name))
+                 (when (file-exists-p comint-input-ring-file-name)
+                   (message (concat "Reading " comint-input-ring-file-name))
+                   (comint-read-input-ring)))))
        :config
        (setq python-indent-guess-indent-offset-verbose nil
              python-shell-dedicated 'project))
