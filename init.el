@@ -1900,8 +1900,8 @@ buffer boundaries with possible narrowing."
          ("S-<iso-lefttab>" . python-indent-shift-left))
   :hook (((python-mode python-ts-mode)
           . (lambda ()
-                          (setq-local fill-column 85
-                                      forward-sexp-function nil))))
+              (setq-local fill-column 85
+                          forward-sexp-function nil))))
   :config
   (setq python-indent-guess-indent-offset-verbose nil
         python-shell-dedicated 'project))
@@ -1952,11 +1952,33 @@ buffer boundaries with possible narrowing."
       location))
   (defun compro/set-python-variables ()
     (let* ((env-root (or (pet-virtualenv-root) "/usr"))
+           (default-directory (if env-root (pet-project-root) default-directory))
            (ipython3 (compro/get-exe env-root "ipython3"))
            (python (or
                     (compro/get-exe env-root "python3")
                     (compro/get-exe env-root "python2")
-                    (compro/get-exe env-root "python"))))
+                    (compro/get-exe env-root "python")))
+           (dj-root (locate-dominating-file default-directory "manage.py"))
+           (manage.py (when dj-root (expand-file-name "manage.py" dj-root)))
+           (default-directory (if dj-root (pet-project-root) default-directory))
+           (dj-shell-plus (when dj-root (= 0 (call-process python nil nil nil manage.py "help" "shell_plus")))))
+      (when manage.py
+        (setq-local
+         python-shell-interpreter-args
+         (concat
+          " "
+          manage.py
+          " "
+          (cond
+           ((and ipython3 dj-shell-plus)
+            "shell_plus --ipython -- -i --simple-prompt --classic")
+           (ipython3
+            "shell --command \"from IPython import start_ipython; start_ipython(argv=[\'-i\', \'--simple-prompt\',\'--classic\'])\"")
+           (dj-shell-plus
+            "shell_plus --plain -- -i")
+           (t
+            "shell -i python"))))
+        (setq ipython3 nil))
       (cond
        (ipython3 (setq-local
                   py-use-local-default t
@@ -1967,6 +1989,7 @@ buffer boundaries with possible narrowing."
                 py-use-local-default t
                 py-shell-local-path python
                 python-shell-interpreter python)))
+
       (setq-local python-shell-virtualenv-root env-root
                   lsp-pyright-venv-path env-root
                   lsp-pyright-python-executable-cmd python
