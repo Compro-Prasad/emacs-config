@@ -304,7 +304,7 @@ The return value is nil if no font was found, truthy otherwise."
 
 (global-set-key (kbd "C-x C-b") 'switch-to-buffer-current-major-mode)
 
-(setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
+(setq compro/laptop-p (equal system-name "hp-archlinux"))
 
 (use-package general :ensure t)
 

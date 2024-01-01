@@ -107,7 +107,7 @@
   #+end_src
   If the above code returns =nil= then the server hasn't been started yet. You can
   start the server manually using =M-x server-start=. Or put the following code in
-  =init.el=. This doesn't needs to be done if you are using my init file.
+  =init.el=. This is already taken care of if you are using my init file.
   #+begin_src emacs-lisp :tangle (early-init)
     (use-package server
       :config
@@ -444,7 +444,7 @@
    #+end_src
 * Check if its my laptop
   #+begin_src emacs-lisp :tangle init.el
-  (setq compro/laptop-p (equal system-name "compro-hplaptop15seq2xxx"))
+  (setq compro/laptop-p (equal system-name "hp-archlinux"))
   #+end_src
 * Install =general=
   *General* is used for setting keybindings in a simpler way as compared to
