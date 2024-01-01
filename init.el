@@ -631,12 +631,20 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(general-define-key
- :keymaps 'input-decode-map
- [?\C-m] [C-m]
- [?\C-i] [C-i]
- ;; [?\C-j] [C-j]
- [?\C-\[] (kbd "<C-[>"))
+(defun compro/unset-keys ()
+  (general-define-key
+   :keymaps 'input-decode-map
+   [?\C-m] [C-m]
+   [?\C-i] [C-i]
+   [?\C-j] [C-j]
+   [?\C-\[] (kbd "<C-[>"))
+  (remove-hook 'server-after-make-frame-hook 'compro/unset-keys))
+
+;; For daemon / server sessions
+(add-hook 'server-after-make-frame-hook 'compro/unset-keys)
+
+;; For non daemon / server sessions
+(compro/unset-keys)
 
 (general-define-key
  "C-z"             'undo

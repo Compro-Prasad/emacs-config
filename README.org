@@ -880,15 +880,24 @@
      ;; This modifies both of the above
      (modify-all-frames-parameters '((fullscreen . maximized)))
    #+end_src
-** TODO Disable overlapping keybindings
-   Find fix when running in daemon mode
+** Disable overlapping keybindings
+   =server-after-make-frame-hook= is triggered when an =emacsclient= frame is
+   launched.
    #+begin_src emacs-lisp :tangle init.el
-     (general-define-key
-      :keymaps 'input-decode-map
-      [?\C-m] [C-m]
-      [?\C-i] [C-i]
-      ;; [?\C-j] [C-j]
-      [?\C-\[] (kbd "<C-[>"))
+     (defun compro/unset-keys ()
+       (general-define-key
+        :keymaps 'input-decode-map
+        [?\C-m] [C-m]
+        [?\C-i] [C-i]
+        [?\C-j] [C-j]
+        [?\C-\[] (kbd "<C-[>"))
+       (remove-hook 'server-after-make-frame-hook 'compro/unset-keys))
+
+     ;; For daemon / server sessions
+     (add-hook 'server-after-make-frame-hook 'compro/unset-keys)
+
+     ;; For non daemon / server sessions
+     (compro/unset-keys)
    #+end_src
 ** Some common keybindings
    #+begin_src emacs-lisp :tangle init.el
