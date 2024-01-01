@@ -1902,8 +1902,11 @@ buffer boundaries with possible narrowing."
         (buffer-list)))
 
 (defun comint-write-history-on-exit ()
-  "Save history
-https://github.com/manzyuk/dotfiles/blob/130f86385f645f0a3a7ee6b31a479c6de2c5ce82/.emacs.d/init.el#L183C1-L188C62"
+  "Save comint history
+
+References:
+1. https://github.com/manzyuk/dotfiles/blob/130f86385f645f0a3a7ee6b31a479c6de2c5ce82/.emacs.d/init.el#L183C1-L188C62
+2. https://emacs.stackexchange.com/questions/9720/savehist-the-comint-input-ring"
   (message "In write")
   (when comint-input-ring-file-name
     (unless (file-exists-p (file-name-directory comint-input-ring-file-name))
