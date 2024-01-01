@@ -338,8 +338,10 @@ The return value is nil if no font was found, truthy otherwise."
     "Return a prompt for the project swithing dispatch menu."
     (mapconcat
      (pcase-lambda (`(,key ,label))
-       (format "[%s] %s"
-               (propertize (key-description `(,key)) 'face 'bold)
+       (format "%s %s"
+               (propertize
+                (key-description `(,(concat " " (char-to-string key) " ")))
+                'face '(:foreground "black" :background "cyan" :weight bold))
                label))
      tab-bar-new-commands
      "  "))
