@@ -659,7 +659,10 @@ The return value is nil if no font was found, truthy otherwise."
     (global-set-key [mouse-3] menu-bar-edit-menu)
   (context-menu-mode 1))
 
-(global-auto-revert-mode t)
+(use-package autorevert
+  :config
+  (setq auto-revert-remote-files nil)
+  (global-auto-revert-mode t))
 
 (use-package paren
   :config

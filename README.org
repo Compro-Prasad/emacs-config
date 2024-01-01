@@ -918,7 +918,10 @@
    #+end_src
 ** Auto revert files
    #+begin_src emacs-lisp :tangle init.el
-     (global-auto-revert-mode t)
+     (use-package autorevert
+       :config
+       (setq auto-revert-remote-files nil)
+       (global-auto-revert-mode t))
    #+end_src
 ** Highlight matching brackets
    #+begin_src emacs-lisp :tangle init.el
