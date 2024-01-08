@@ -578,69 +578,69 @@
      (use-package dired
        :hook (dired-mode-hook . dired-hide-details-mode)
        :bind (:map dired-mode-map
-		   ("C-c C-c" . dired-collapse-mode)
-		   ("C-c C-d C-u" . dired-du-mode)
-		   ("." . dired-hide-dotfiles-mode)
-		   ("<tab>" . dired-subtree-toggle)
-		   ("q"      . kill-current-buffer)
-		   ("RET"    . compro/dired-open-dir)
-		   ("^"      . compro/dired-up-dir)
-		   ("DEL"    . compro/dired-up-dir)
-		   ("<left>" . compro/dired-up-dir)
-		   ("C-x <C-j>" . dired-jump))
+                   ("C-c C-c" . dired-collapse-mode)
+                   ("C-c C-d C-u" . dired-du-mode)
+                   ("." . dired-hide-dotfiles-mode)
+                   ("<tab>" . dired-subtree-toggle)
+                   ("q"      . kill-current-buffer)
+                   ("RET"    . compro/dired-open-dir)
+                   ("^"      . compro/dired-up-dir)
+                   ("DEL"    . compro/dired-up-dir)
+                   ("<left>" . compro/dired-up-dir)
+                   ("C-x <C-j>" . dired-jump))
        :init
        (use-package dired-collapse :ensure t)
        (use-package dired-du :ensure t :after dired)
        (use-package dired-dups :ensure t :after dired)
        (use-package dired-filetype-face :ensure t :after dired)
        (use-package dired-hide-dotfiles :ensure t
-	 :after dired
-	 :hook (dired-mode-hook . dired-hide-dotfiles-mode))
+         :after dired
+         :hook (dired-mode-hook . dired-hide-dotfiles-mode))
        (use-package dired-subtree :ensure t :after dired)
        (defun compro/dired-up-dir ()
-	 (interactive)
-	 (find-alternate-file ".."))
+         (interactive)
+         (find-alternate-file ".."))
 
        (defun compro/dired-open-dir ()
-	 (interactive)
-	 (set-buffer-modified-p nil)
-	 (let ((file-or-dir (dired-get-file-for-visit)))
-	   (if (f-dir-p file-or-dir)
-	       (find-alternate-file file-or-dir)
-	     (find-file file-or-dir))))
+         (interactive)
+         (set-buffer-modified-p nil)
+         (let ((file-or-dir (dired-get-file-for-visit)))
+           (if (f-dir-p file-or-dir)
+               (find-alternate-file file-or-dir)
+             (find-file file-or-dir))))
 
        (defun compro/dired/mp3-to-ogg ()
-	 "Used in dired to convert mp3 files to ogg"
-	 (interactive)
-	 (let* ((files (dired-get-marked-files)))
-	   (dolist (file files)
-	     (let* ((basename (file-name-nondirectory file))
-		    (file-base (file-name-base file))
-		    (dirname (file-name-directory file))
-		    (extension (file-name-extension file))
-		    (ogg-file (concat dirname file-base ".ogg"))
-		    (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
-	       (if (string= "mp3" (downcase extension))
-		   (progn
-		     (shell-command command nil nil)
-		     (message command)
-		     (if (file-exists-p ogg-file)
-			 (delete-file file))))))))
+         "Used in dired to convert mp3 files to ogg"
+         (interactive)
+         (let* ((files (dired-get-marked-files)))
+           (dolist (file files)
+             (let* ((basename (file-name-nondirectory file))
+                    (file-base (file-name-base file))
+                    (dirname (file-name-directory file))
+                    (extension (file-name-extension file))
+                    (ogg-file (concat dirname file-base ".ogg"))
+                    (command (format "mpg123 -s -v \"%s\" | oggenc --raw -o \"%s\" -" file ogg-file)))
+               (if (string= "mp3" (downcase extension))
+                   (progn
+                     (shell-command command nil nil)
+                     (message command)
+                     (if (file-exists-p ogg-file)
+                         (delete-file file))))))))
 
        :config
        (setq dired-dwim-target t)
        (defun mydired-sort ()
-	 "Sort dired listings with directories first."
-	 (save-excursion
-	   (let (buffer-read-only)
-	     (forward-line 2) ;; beyond dir. header
-	     (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
-	   (set-buffer-modified-p nil)))
+         "Sort dired listings with directories first."
+         (save-excursion
+           (let (buffer-read-only)
+             (forward-line 2) ;; beyond dir. header
+             (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
+           (set-buffer-modified-p nil)))
 
        (defadvice dired-readin
-	   (after dired-after-updating-hook first () activate)
-	 "Sort dired listings with directories first before adding marks."
-	 (mydired-sort)))
+           (after dired-after-updating-hook first () activate)
+         "Sort dired listings with directories first before adding marks."
+         (mydired-sort)))
    #+end_src
 ** Set my details
    #+begin_src emacs-lisp :tangle init.el
