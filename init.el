@@ -2013,7 +2013,7 @@ References:
       location))
   (defun compro/set-python-variables ()
     (let* ((env-root (or (pet-virtualenv-root) "/usr"))
-           (default-directory (if env-root (pet-project-root) default-directory))
+           (default-directory (or (when env-root (pet-project-root)) default-directory))
            (ipython3 (compro/get-exe env-root "ipython3"))
            (python (or
                     (compro/get-exe env-root "python3")
