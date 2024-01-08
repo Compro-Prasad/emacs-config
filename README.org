@@ -1901,6 +1901,8 @@
 ** Org mode
    [[https://orgmode.org][Org mode]] is a note taking system which has other uses too. This configuration
    is written in org mode.
+
+   For syntax highlighting in PDF exports =pygments= python package is required.
    #+begin_src emacs-lisp :tangle init.el
      (use-package org :ensure org-contrib
        :hook (org-mode-hook . org-superstar-mode)
@@ -1964,6 +1966,14 @@
         ("C-c k" . endless/insert-key)
         ("M-p" . outline-previous-visible-heading))
        :config
+       (add-to-list 'org-latex-packages-alist '("" "minted"))
+       (setq org-latex-listings 'minted)
+
+       (setq org-latex-pdf-process
+             '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+               "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+               "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
        ;; (define-key org-mode-map "\C-ck" #'endless/insert-key)
        (defun endless/insert-key (key)
          "Ask for a key then insert its description.

@@ -1509,6 +1509,14 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
    ("C-c k" . endless/insert-key)
    ("M-p" . outline-previous-visible-heading))
   :config
+  (add-to-list 'org-latex-packages-alist '("" "minted"))
+  (setq org-latex-listings 'minted)
+
+  (setq org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
   ;; (define-key org-mode-map "\C-ck" #'endless/insert-key)
   (defun endless/insert-key (key)
     "Ask for a key then insert its description.
