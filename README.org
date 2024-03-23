@@ -2824,8 +2824,10 @@
        (flimenu-global-mode 1))
    #+end_src
 ** Fix pagers in =comint-mode=
+   Disabled for now because =M-x run-python= doesn't seem to handle newlines
+   when this is switched on.
    #+begin_src emacs-lisp :tangle init.el
-     (use-package coterm :ensure t
+     (use-package coterm :ensure t :disabled t
        :config
        (coterm-mode 1))
    #+end_src

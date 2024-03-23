@@ -2218,7 +2218,7 @@ References:
   :config
   (flimenu-global-mode 1))
 
-(use-package coterm :ensure t
+(use-package coterm :ensure t :disabled t
   :config
   (coterm-mode 1))
 
