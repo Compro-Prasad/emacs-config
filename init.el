@@ -1509,6 +1509,30 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
    ("C-c k" . endless/insert-key)
    ("M-p" . outline-previous-visible-heading))
   :config
+  (defun compro/right-angled-triangle-with-theta ()
+    (interactive)
+    (insert "
+\\begin{center}
+\\begin{tikzpicture}
+% Define the triangle vertices
+\\coordinate [label=below:$A$] (A) at (0,0);
+\\coordinate [label=above:$B$] (B) at (0,2);
+\\coordinate [label=below:$C$] (C) at (3,0);
+
+% Draw the triangle
+\\draw (A) -- (B) -- (C) -- cycle;
+
+% Label the sides
+\\node at ($(A)!0.5!(B)$) [left] {$p$};
+\\node at ($(B)!0.5!(C)$) [above] {$h$};
+\\node at ($(C)!0.5!(A)$) [below] {$b$};
+
+% Mark the right angle at B
+\\draw pic[draw, angle radius=3mm, angle eccentricity=1.5] {right angle = B--A--C};
+\\draw pic[draw, angle radius=5mm, \"$\\theta$\", angle eccentricity=1.5] {angle = B--C--A};
+\\end{tikzpicture}
+\\end{center}
+"))
   (add-to-list 'org-latex-packages-alist '("" "minted"))
   (setq org-latex-listings 'minted)
 
