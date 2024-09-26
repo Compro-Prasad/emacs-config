@@ -84,7 +84,7 @@
   #+end_src
 
 * Aliases
-  Emacs indentifier names are long. Lets shorten the common ones that we will be
+  Emacs identifier names are long. Lets shorten the common ones that we will be
   using.
 
   #+begin_src emacs-lisp :tangle (early-init)
@@ -1020,11 +1020,8 @@
    #+begin_src emacs-lisp :tangle init.el
      (use-package simple
        :bind (("C-a" . compro/beginning-of-line)
-              ("C-o" . compro/open-line-below)
               ("C-S-p" . list-processes)
-              ("" . list-processes)
-              ("C-S-o" . compro/open-line-above)
-              ("" . compro/open-line-above))
+              ("" . list-processes))
        :init
        (defun compro/beginning-of-line ()
          (interactive)
@@ -1037,17 +1034,7 @@
                (setq npos (point)))
              (if (= pos npos)
                  (beginning-of-line)
-               (back-to-indentation)))))
-       (defun compro/open-line-below ()
-         (interactive)
-         (end-of-line)
-         (newline-and-indent))
-       (defun compro/open-line-above ()
-         (interactive)
-         (back-to-indentation)
-         (newline-and-indent)
-         (previous-line 1)
-         (indent-according-to-mode)))
+               (back-to-indentation))))))
    #+end_src
 ** comint keybindings
    #+begin_src emacs-lisp :tangle init.el

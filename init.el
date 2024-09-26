@@ -738,11 +738,8 @@ useful if you want to move the file from one directory to another."
 
 (use-package simple
   :bind (("C-a" . compro/beginning-of-line)
-         ("C-o" . compro/open-line-below)
          ("C-S-p" . list-processes)
-         ("" . list-processes)
-         ("C-S-o" . compro/open-line-above)
-         ("" . compro/open-line-above))
+         ("" . list-processes))
   :init
   (defun compro/beginning-of-line ()
     (interactive)
@@ -755,17 +752,7 @@ useful if you want to move the file from one directory to another."
           (setq npos (point)))
         (if (= pos npos)
             (beginning-of-line)
-          (back-to-indentation)))))
-  (defun compro/open-line-below ()
-    (interactive)
-    (end-of-line)
-    (newline-and-indent))
-  (defun compro/open-line-above ()
-    (interactive)
-    (back-to-indentation)
-    (newline-and-indent)
-    (previous-line 1)
-    (indent-according-to-mode)))
+          (back-to-indentation))))))
 
 (with-eval-after-load 'comint
   (general-define-key
