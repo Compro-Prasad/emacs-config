@@ -3054,6 +3054,11 @@
               symbol-overlay-map
               ("C-o" . casual-symbol-overlay-tmenu)))
    #+end_src
+** Show fonts in emacs
+   https://github.com/protesilaos/show-font
+   #+begin_src emacs-lisp :tangle init.el
+     (use-package show-font :ensure t)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (set-face-attribute 'mode-line nil :box nil)
