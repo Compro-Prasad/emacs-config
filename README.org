@@ -3059,6 +3059,25 @@
    #+begin_src emacs-lisp :tangle init.el
      (use-package show-font :ensure t)
    #+end_src
+** COMMENT Auto open terminals when switching to a project
+   TODO:
+   - [ ] Automatically open terminal and run commands on switching to a project
+   - [ ] Create data structure to configure in =.dir-locals.el=
+   - [ ] set =:tangle init.el=
+   #+begin_src emacs-lisp
+     (with-current-buffer "*shell-india-events-rails-server*"
+       (insert "ls")
+       (comint-send-input))
+     (with-current-buffer "*vterm-india-events*"
+       (vterm-send "l")
+       (vterm-send "s")
+       (vterm-send-return))
+     (progn
+       (vterm "*test*")
+       (with-current-buffer "*test*"
+         (vterm-send-string "ls")
+         (vterm-send-return)))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (set-face-attribute 'mode-line nil :box nil)
