@@ -698,7 +698,7 @@ The return value is nil if no font was found, truthy otherwise."
  ((find-font (font-spec :name "DejaVu Sans Mono"))
   (set-default-font '("Dejavu Sans Mono" :size 12 :weight normal :width normal)))
  ((find-font (font-spec :name "Monospace"))
-  (set-default-font '("Monospace" :size 12 :weight normal :width normal))))
+  (set-default-font '("Monospace" :size 16 :weight normal :width normal))))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
