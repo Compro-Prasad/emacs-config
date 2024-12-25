@@ -1665,7 +1665,7 @@
       (use-package modus-themes :ensure t)
     #+end_src
 *** Custom faces
-**** Common
+**** COMMENT Common
      #+begin_src emacs-lisp :tangle (early-init)
        ;; (dolist (el '("test" "test1")) (message el))
        ;; (custom-theme-set-faces

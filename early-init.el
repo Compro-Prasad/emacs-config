@@ -64,33 +64,3 @@
 
 ;; This modifies both of the above
 (modify-all-frames-parameters '((fullscreen . maximized)))
-
-;; (dolist (el '("test" "test1")) (message el))
-;; (custom-theme-set-faces
-;;  'compro-light
-;;  )
-(custom-set-faces
- '(org-level-1 ((t (:inherit outline-1 :extend t :height 3.0))))
- '(org-level-2 ((t (:inherit outline-2 :extend t :height 2.5))))
- '(org-level-3 ((t (:inherit outline-3 :extend t :height 2.0))))
- '(org-level-4 ((t (:inherit outline-4 :extend t :height 1.5)))))
-;; light
-(custom-set-faces
- '(dired-subtree-depth-1-face ((t (:background "white smoke"))))
- '(dired-subtree-depth-2-face ((t (:background "gainsboro"))))
- '(dired-subtree-depth-3-face ((t (:background "white smoke"))))
- '(dired-subtree-depth-4-face ((t (:background "gainsboro"))))
- '(dired-subtree-depth-5-face ((t (:background "white smoke"))))
- '(dired-subtree-depth-6-face ((t (:background "gainsboro"))))
- '(org-block ((t (:inherit shadow :extend t :background "white smoke"))))
- '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gainsboro" :foreground "dark slate gray")))))
-;; dark
-;; (custom-set-faces
-;;  '(default ((t (:inherit nil :extend nil :stipple nil :background "gray10" :foreground "#bbc0ca" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight regular :height 98 :width normal :foundry "ADBO" :family "Source Code Pro"))))
-;;  '(mode-line ((t (:background "blue" :foreground "white" :box nil))))
-;;  '(org-block-begin-line ((t (:inherit org-meta-line :extend t :background "gray13" :foreground "tan4"))))
-;;  '(region ((t (:extend t :background "gray25"))))
-;;  '(shadow ((t (:foreground "SlateBlue1"))))
-;;  '(tab-bar ((t (:inherit variable-pitch :background "gray26" :foreground "white" :height 1.2))))
-;;  '(tab-bar-tab ((t (:inherit tab-bar :background "gray10" :box nil))))
-;;  '(tab-bar-tab-inactive ((t (:inherit tab-bar-tab :background "gray20")))))
