@@ -62,5 +62,16 @@
 ;; start every frame maximized
 ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+;; TODO: This variable doesn't work when Emacs starts
+(setq compro/font-name (cond
+                        ((find-font (font-spec :name "Source Code Pro")) "Source Code Pro-16")
+                        ((find-font (font-spec :name "Fira Code")) "Fira Code-16")
+                        ((find-font (font-spec :name "Ubuntu Mono")) "Ubuntu Mono-16")
+                        ((find-font (font-spec :name "Noto Mono")) "Noto Mono-16")
+                        ((find-font (font-spec :name "Input Mono")) "Input Mono-16")
+                        ((find-font (font-spec :name "DejaVu Sans Mono")) "Dejavu Sans Mono-16")
+                        ((find-font (font-spec :name "Monospace")) "Monospace-16")))
+
 ;; This modifies both of the above
-(modify-all-frames-parameters '((fullscreen . maximized)))
+(modify-all-frames-parameters `((fullscreen . maximized)
+                                (font . "Source Code Pro-14")))

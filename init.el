@@ -684,22 +684,6 @@ The return value is nil if no font was found, truthy otherwise."
 (when (>= emacs-major-version 27)
   (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode))
 
-(cond
- ((find-font (font-spec :name "Source Code Pro"))
-  (set-default-font '("Source Code Mono" :size 12 :weight normal :width normal)))
- ((find-font (font-spec :name "Fira Code"))
-  (set-default-font '("Fira Code" :size 12 :weight normal :width normal)))
- ((find-font (font-spec :name "Ubuntu Mono"))
-  (set-default-font '("Ubuntu Mono" :size 12 :weight normal :width normal)))
- ((find-font (font-spec :name "Noto Mono"))
-  (set-default-font '("Noto Mono" :size 12 :weight normal :width normal)))
- ((find-font (font-spec :name "Input Mono"))
-  (set-default-font '("Input Mono" :size 12 :weight normal :width normal)))
- ((find-font (font-spec :name "DejaVu Sans Mono"))
-  (set-default-font '("Dejavu Sans Mono" :size 12 :weight normal :width normal)))
- ((find-font (font-spec :name "Monospace"))
-  (set-default-font '("Monospace" :size 16 :weight normal :width normal))))
-
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
   "Colorize the compilation buffer with ANSI escape sequences."
