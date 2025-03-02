@@ -2354,6 +2354,16 @@ References:
 
 (use-package show-font :ensure t)
 
+(use-package stillness-mode :ensure t :demand t
+  :config
+  (stillness-mode 1))
+
+(use-package treesit-fold :ensure t)
+
+(use-package breadcrumb :ensure t
+  :init
+  (breadcrumb-mode 1))
+
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)
