@@ -3114,6 +3114,16 @@
      (require 'ultra-scroll)
      (ultra-scroll-mode 1)
    #+end_src
+** PGmacs
+   Postgresql UI in Emacs
+   #+begin_src emacs-lisp :tangle init.el
+     (unless (package-installed-p 'pg)
+        (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
+     (unless (package-installed-p 'pgmacs)
+        (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
+
+     (require 'pgmacs)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (set-face-attribute 'mode-line nil :box nil)

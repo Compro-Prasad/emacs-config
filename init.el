@@ -2368,6 +2368,13 @@ References:
 (require 'ultra-scroll)
 (ultra-scroll-mode 1)
 
+(unless (package-installed-p 'pg)
+   (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
+(unless (package-installed-p 'pgmacs)
+   (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
+
+(require 'pgmacs)
+
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)
