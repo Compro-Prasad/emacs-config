@@ -1830,11 +1830,11 @@
 
      (use-package vertico-directory :after vertico :ensure nil)
    #+end_src
-** Isearch alternative
-   =ctrlf= is just a simple improvement over isearch.
+** Isearch menu
    #+begin_src emacs-lisp :tangle init.el
-     (use-package ctrlf :ensure t
-       :config (ctrlf-mode 1))
+     (use-package cc-isearch-menu :ensure t
+       :config
+       (define-key isearch-mode-map (kbd "<f2>") 'cc-isearch-menu-transient))
    #+end_src
 ** Better M-< and M->
    #+begin_src emacs-lisp :tangle init.el
