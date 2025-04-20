@@ -2365,6 +2365,9 @@ References:
   :init
   (breadcrumb-mode 1))
 
+(require 'ultra-scroll)
+(ultra-scroll-mode 1)
+
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)

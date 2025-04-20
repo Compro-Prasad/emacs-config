@@ -3109,6 +3109,11 @@
        :init
        (breadcrumb-mode 1))
    #+end_src
+** Ultra scroll mode
+   #+begin_src emacs-lisp :tangle init.el
+     (require 'ultra-scroll)
+     (ultra-scroll-mode 1)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (set-face-attribute 'mode-line nil :box nil)
