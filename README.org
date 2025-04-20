@@ -3124,6 +3124,12 @@
 
      (require 'pgmacs)
    #+end_src
+** p-search
+   search engine in Emacs
+   #+begin_src emacs-lisp :tangle init.el
+     (quelpa '(p-search :repo "zkry/p-search" :fetcher github))
+     (require 'p-search)
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (set-face-attribute 'mode-line nil :box nil)

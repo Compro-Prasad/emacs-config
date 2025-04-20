@@ -2375,6 +2375,9 @@ References:
 
 (require 'pgmacs)
 
+(quelpa '(p-search :repo "zkry/p-search" :fetcher github))
+(require 'p-search)
+
 (set-face-attribute 'mode-line nil :box nil)
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)
