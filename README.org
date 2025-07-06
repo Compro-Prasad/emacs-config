@@ -2167,8 +2167,8 @@
                ("inPROGRESS" . (:foreground "orange" :inverse-video t)))))
    #+end_src
    To export to pdf the following packages need to be installed:
-*** Arch Linux
     #+begin_src sh
+      # arch linux
       sudo pacman -Sy texlive-core texlive-latexextra texlive-fontsextra --noconfirm
     #+end_src
 *** Image rotation functionality
@@ -2564,7 +2564,8 @@
              (python (setq-local
                       py-use-local-default t
                       py-shell-local-path python
-                      python-shell-interpreter python)))
+                      python-shell-interpreter python
+                      python-shell-interpreter-args "-i -m asyncio")))
 
             (setq-local python-shell-virtualenv-root env-root
                         lsp-pyright-venv-path env-root

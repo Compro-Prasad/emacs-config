@@ -2057,7 +2057,8 @@ References:
        (python (setq-local
                 py-use-local-default t
                 py-shell-local-path python
-                python-shell-interpreter python)))
+                python-shell-interpreter python
+                python-shell-interpreter-args "-i -m asyncio")))
 
       (setq-local python-shell-virtualenv-root env-root
                   lsp-pyright-venv-path env-root
