@@ -657,6 +657,18 @@ The return value is nil if no font was found, truthy otherwise."
  "M-/"             'hippie-expand
  "M-^"             'compile)
 
+(setq hippie-expand-try-functions-list
+      '(try-expand-dabbrev-visible
+        try-expand-dabbrev
+        try-expand-dabbrev-all-buffers
+        try-complete-file-name-partially
+        try-complete-file-name
+        try-expand-all-abbrevs
+        try-expand-list
+        try-expand-line
+        try-complete-lisp-symbol-partially
+        try-complete-lisp-symbol))
+
 (if (< emacs-major-version 28)
     (global-set-key [mouse-3] menu-bar-edit-menu)
   (context-menu-mode 1))

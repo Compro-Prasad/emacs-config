@@ -924,6 +924,20 @@
       "M-/"             'hippie-expand
       "M-^"             'compile)
    #+end_src
+** Hippie expand functions
+   #+begin_src emacs-lisp :tangle init.el
+     (setq hippie-expand-try-functions-list
+           '(try-expand-dabbrev-visible
+             try-expand-dabbrev
+             try-expand-dabbrev-all-buffers
+             try-complete-file-name-partially
+             try-complete-file-name
+             try-expand-all-abbrevs
+             try-expand-list
+             try-expand-line
+             try-complete-lisp-symbol-partially
+             try-complete-lisp-symbol))
+   #+end_src
 ** Context menu on right click
    #+begin_src emacs-lisp :tangle init.el
      (if (< emacs-major-version 28)
