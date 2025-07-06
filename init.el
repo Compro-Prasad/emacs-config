@@ -673,16 +673,9 @@ The return value is nil if no font was found, truthy otherwise."
         show-paren-when-point-in-periphery t)
   (show-paren-mode t))
 
-(if (>= emacs-major-version 26)
-    (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-  (add-hook 'prog-mode-hook 'linum-mode))
-
 (add-hook 'prog-mode-hook 'which-function-mode)
 
 (add-hook 'prog-mode-hook 'electric-pair-mode)
-
-(when (>= emacs-major-version 27)
-  (add-hook 'prog-mode-hook 'display-fill-column-indicator-mode))
 
 (require 'ansi-color)
 (defun colorize-compilation-buffer ()
