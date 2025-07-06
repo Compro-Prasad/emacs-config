@@ -1095,10 +1095,12 @@ TODO:
 (use-package hungry-delete :ensure t
   :config (global-hungry-delete-mode t))
 
-(use-package minions :ensure t
-  :bind ([S-down-mouse-3] . minions-minor-modes-menu)
-  :config
-  (minions-mode 1))
+(if (>= emacs-major-version 31)
+    (setq mode-line-collapse-minor-modes t)
+  (use-package minions :ensure t
+    :bind ([S-down-mouse-3] . minions-minor-modes-menu)
+    :config
+    (minions-mode 1)))
 
 (use-package transient :ensure t
   :config
@@ -2382,7 +2384,8 @@ References:
 (set-face-attribute 'mode-line-inactive nil :box nil)
 (when (> emacs-major-version 27)
   (set-face-attribute 'tab-bar-tab nil :box nil))
-(minions-mode 1)
+(when (< emacs-major-version 31)
+  (minions-mode 1))
 (setq debug-on-error  nil
       init-file-debug nil)
 (compro/redownload-empty-pkgs)
