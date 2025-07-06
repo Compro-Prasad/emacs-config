@@ -1833,7 +1833,7 @@
    #+end_src
 ** Isearch menu
    #+begin_src emacs-lisp :tangle init.el
-     (use-package cc-isearch-menu :ensure t
+     (use-package cc-isearch-menu :ensure casual
        :config
        (define-key isearch-mode-map (kbd "<f2>") 'cc-isearch-menu-transient))
    #+end_src

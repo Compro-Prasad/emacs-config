@@ -1391,7 +1391,7 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 
 (use-package vertico-directory :after vertico :ensure nil)
 
-(use-package cc-isearch-menu :ensure t
+(use-package cc-isearch-menu :ensure casual
   :config
   (define-key isearch-mode-map (kbd "<f2>") 'cc-isearch-menu-transient))
 
