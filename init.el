@@ -381,7 +381,7 @@ The return value is nil if no font was found, truthy otherwise."
               ("^"      . compro/dired-up-dir)
               ("DEL"    . compro/dired-up-dir)
               ("<left>" . compro/dired-up-dir)
-              ("C-x <C-j>" . dired-jump))
+              )
   :init
   (use-package dired-collapse :ensure t)
   (use-package dired-du :ensure t :after dired)
@@ -630,20 +630,20 @@ The return value is nil if no font was found, truthy otherwise."
 (set-keyboard-coding-system 'utf-8)
 (prefer-coding-system 'utf-8)
 
-(defun compro/unset-keys ()
-  (general-define-key
-   :keymaps 'input-decode-map
-   [?\C-m] [C-m]
-   [?\C-i] [C-i]
-   [?\C-j] [C-j]
-   [?\C-\[] (kbd "<C-[>"))
-  (remove-hook 'server-after-make-frame-hook 'compro/unset-keys))
+;; (defun compro/unset-keys ()
+;;   (general-define-key
+;;    :keymaps 'input-decode-map
+;;    [?\C-m] [C-m]
+;;    [?\C-i] [C-i]
+;;    [?\C-j] [C-j]
+;;    [?\C-\[] (kbd "<C-[>"))
+;;   (remove-hook 'server-after-make-frame-hook 'compro/unset-keys))
 
 ;; For daemon / server sessions
-(add-hook 'server-after-make-frame-hook 'compro/unset-keys)
+;; (add-hook 'server-after-make-frame-hook 'compro/unset-keys)
 
 ;; For non daemon / server sessions
-(compro/unset-keys)
+;; (compro/unset-keys)
 
 (general-define-key
  "C-z"             'undo
