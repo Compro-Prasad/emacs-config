@@ -549,9 +549,6 @@ The return value is nil if no font was found, truthy otherwise."
  ;;;   Better unique names of similar filenames and buffer-names
  uniquify-buffer-name-style 'forward
 
- ;;;   We can use TCP connection to connect to remote Emacs instance
- server-use-tcp t
-
  ;;;   Server location
  server-auth-dir (concat cache-d "server/")
 
