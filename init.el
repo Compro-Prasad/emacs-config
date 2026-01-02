@@ -1225,51 +1225,6 @@ _=_       _+_
   :config
   (setq vundo-glyph-alist vundo-unicode-symbols))
 
-(use-package doom-themes :ensure t
-  :commands (doom-themes-org-config)
-  :config
-  (doom-themes-org-config)
-  ;; (setq doom-themes-enable-bold t     ;; Causes font-lock to slow down
-  ;;       doom-themes-enable-italic t)
-  (when (>= emacs-major-version 27)
-    (with-eval-after-load 'org
-      (dolist (face '(org-block
-                      org-block-begin-line
-                      org-block-end-line
-                      org-level-1
-                      org-quote))
-        (set-face-attribute face nil :extend t)))
-    (with-eval-after-load 'ediff
-      (dolist (face '(ediff-current-diff-A
-                      ediff-current-diff-Ancestor
-                      ediff-current-diff-B
-                      ediff-current-diff-C
-                      ediff-even-diff-A
-                      ediff-even-diff-Ancestor
-                      ediff-even-diff-B
-                      ediff-even-diff-C
-                      ediff-fine-diff-A
-                      ediff-fine-diff-Ancestor
-                      ediff-fine-diff-B
-                      ediff-fine-diff-C
-                      ediff-odd-diff-A
-                      ediff-odd-diff-Ancestor
-                      ediff-odd-diff-B
-                      ediff-odd-diff-C))
-        (set-face-attribute face nil :extend t)))
-    (with-eval-after-load 'hl-line
-      (set-face-attribute 'hl-line nil :extend t))
-    (with-eval-after-load 'faces
-      (dolist (face '(region
-                      secondary-selection))
-        (set-face-attribute face nil :extend t)))
-    (with-eval-after-load 'markdown-mode
-      (dolist (face '(markdown-code-face
-                      markdown-pre-face))
-        (set-face-attribute face nil :extend t)))))
-
-(use-package spacemacs-theme :ensure t)
-
 (use-package page-break-lines :ensure t
   :config
   (global-page-break-lines-mode t))
