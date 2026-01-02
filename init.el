@@ -1270,8 +1270,6 @@ _=_       _+_
 
 (use-package spacemacs-theme :ensure t)
 
-(use-package modus-themes :ensure t)
-
 (use-package page-break-lines :ensure t
   :config
   (global-page-break-lines-mode t))

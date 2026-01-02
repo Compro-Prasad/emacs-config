@@ -1665,10 +1665,6 @@
     #+begin_src emacs-lisp :tangle init.el
       (use-package spacemacs-theme :ensure t)
     #+end_src
-*** Modus operandi theme
-    #+begin_src emacs-lisp :tangle init.el
-      (use-package modus-themes :ensure t)
-    #+end_src
 *** Custom faces
 **** COMMENT Common
      #+begin_src emacs-lisp :tangle (early-init)
