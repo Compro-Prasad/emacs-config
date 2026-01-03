@@ -568,6 +568,23 @@
        (tab-bar-mode))
    #+end_src
 
+** TODO dirvish
+   https://github.com/alexluigit/dirvish
+
+** TODO System task bar mode
+   >= 31.0.50
+   New mode 'system-taskbar-mode'.
+   This is a global minor mode and companion functions that integrate Emacs
+   with system GUI taskbars (also called docks or launchers or something
+   similar) to display a taskbar icon "badge" overlay, a progress bar
+   report overlay, alert the user that an Emacs session needs attention,
+   often by flashing or bouncing the Emacs application icon.  Supported
+   capable systems are GNU/Linux via D-Bus, macOS/GNUstep 10.5+, MS-Windows
+   7+.
+
+   On GNU/Linux systems, shell extensions or similar helpers such as
+   "dash-to-dock" may be required.  See
+   <https://extensions.gnome.org/extension/307/dash-to-dock/> and
 ** Dired - File manager
    Dired is a good file manager but we can make it better by adding some more
    functionality on top using:
