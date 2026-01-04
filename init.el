@@ -347,9 +347,9 @@ The return value is nil if no font was found, truthy otherwise."
      "  "))
   (defun tab-bar-new-tab-event ()
     (interactive)
-    (when-let ((choice (assq (read-event (tab-bar-new--keymap-prompt))
-                             tab-bar-new-commands))
-               (inhibit-quit t))
+    (when-let* ((choice (assq (read-event (tab-bar-new--keymap-prompt))
+                              tab-bar-new-commands))
+                (inhibit-quit t))
       (tab-bar-new-tab)
       (when (not (char-equal (nth 0 choice) ?q))
         (switch-to-buffer "waiting...")
@@ -1925,11 +1925,11 @@ References:
                 (config-data "")
                 (break-apart
                  (lambda (cmd)
-                   (when-let ((virtualenv-root-1 (string-split (shell-command-to-string cmd) "\n"))
-                              (virtualenv-root-exists (= (length virtualenv-root-1) 2))
-                              (virtualenv-root (car virtualenv-root-1))
-                              (part1 (file-name-parent-directory virtualenv-root))
-                              (part2 (car (last (file-name-split virtualenv-root)))))
+                   (when-let* ((virtualenv-root-1 (string-split (shell-command-to-string cmd) "\n"))
+                               (virtualenv-root-exists (= (length virtualenv-root-1) 2))
+                               (virtualenv-root (car virtualenv-root-1))
+                               (part1 (file-name-parent-directory virtualenv-root))
+                               (part2 (car (last (file-name-split virtualenv-root)))))
                      `(,part1 . ,part2)))))
       (progn
         (if-let* ((poetry-exe (executable-find "poetry"))
@@ -1999,16 +1999,7 @@ References:
                   lsp-pyright-python-executable-cmd python
                   dap-python-executable python
                   python-pytest-executable (pet-executable-find "pytest")
-                  exec-path (append `(,(concat env-root "/bin")) exec-path)))
-
-    ;; (when-let ((black-executable (pet-executable-find "black")))
-    ;;   (setq-local python-black-command black-executable)
-    ;;   (python-black-on-save-mode 1))
-
-    ;; (when-let ((isort-executable (pet-executable-find "isort")))
-    ;;   (setq-local python-isort-command isort-executable)
-    ;;   (python-isort-on-save-mode 1))
-    ))
+                  exec-path (append `(,(concat env-root "/bin")) exec-path)))))
 
 (use-package vterm :ensure t :when is-linux
   :init
