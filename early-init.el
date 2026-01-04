@@ -74,4 +74,4 @@
 
 ;; This modifies both of the above
 (modify-all-frames-parameters `((fullscreen . maximized)
-                                (font . "Source Code Pro-14")))
+                                (font . "Source Code Pro-11")))
