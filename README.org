@@ -2294,28 +2294,9 @@
    #+begin_src emacs-lisp :tangle init.el
      ;; (use-package company-web :ensure t :after mhtml-mode)
 
-     ;; (use-package ac-html-csswatcher :ensure t :after mhtml-mode)
-
-     (use-package mhtml-mode
-       :when (>= emacs-major-version 26)
-       :mode ("\\.vue\\'" "\\.html\\'" "\\.jsx")
-       :hook (mhtml-mode-hook . sgml-electric-tag-pair-mode)
-       :config
-       (setq mhtml-tag-relative-indent nil)
-       ;; (require 'company)                                   ; load company mode
-       ;; (require 'company-web-html)                          ; load company mode html backend
-       ;; ;; and/or
-       ;; (require 'company-web-jade)                          ; load company mode jade backend
-       ;; (require 'company-web-slim)                          ; load company mode slim backend
-       ;; (require 'ac-html-csswatcher)
-       ;; (company-web-csswatcher-setup)
-       ;; (define-key mhtml-mode-map (kbd "C-'") 'company-web-html)
-       ;; (add-hook 'mhtml-mode-hook (lambda ()
-       ;;                            (set (make-local-variable 'company-backends) '(company-web-html company-files))
-       ;;                            (company-mode t)))
-       )
-
-     (use-package web-mode :ensure t)
+     (use-package web-mode
+       :ensure t
+       :mode ("\\.vue\\'" "\\.html\\'" "\\.jsx"))
    #+end_src
 ** Elf mode
    Elf is a binary format commonly used on Linux systems.
