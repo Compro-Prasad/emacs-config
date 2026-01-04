@@ -1365,10 +1365,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 
 (use-package vertico-directory :after vertico :ensure nil)
 
-(use-package cc-isearch-menu :ensure casual
-  :config
-  (define-key isearch-mode-map (kbd "<f2>") 'cc-isearch-menu-transient))
-
 (use-package beginend :ensure t
   :config (beginend-global-mode))
 
@@ -1412,16 +1408,6 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
                        (equal (match-string 2) (match-string 3)))
                   (org-todo 'done)
                 (org-todo 'todo)))))))
-
-  (use-package casual-agenda
-    ;; https://github.com/kickingvegas/casual-agenda
-    :ensure t
-    :bind (:map
-           org-agenda-mode-map
-           ("C-o" . casual-agenda-tmenu)
-           ("M-j" . org-agenda-clock-goto) ; optional
-           ("J" . bookmark-jump))
-    :after (org-agenda))
 
   (use-package ob-async :ensure t :after ob)
   (use-package ob-restclient :ensure t :after ob)
@@ -2274,15 +2260,7 @@ References:
   ;; to be run in the current's tab (so, current project's) root directory
   (otpp-override-mode 1))
 
-(use-package casual-editkit
-  :ensure t
-  :bind (("C-o" . casual-editkit-main-tmenu)))
-
-(use-package casual-symbol-overlay
-  :ensure nil
-  :bind (:map
-         symbol-overlay-map
-         ("C-o" . casual-symbol-overlay-tmenu)))
+(use-package casual :ensure t)
 
 (use-package show-font :ensure t)
 

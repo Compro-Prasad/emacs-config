@@ -1784,12 +1784,6 @@
 
      (use-package vertico-directory :after vertico :ensure nil)
    #+end_src
-** Isearch menu
-   #+begin_src emacs-lisp :tangle init.el
-     (use-package cc-isearch-menu :ensure casual
-       :config
-       (define-key isearch-mode-map (kbd "<f2>") 'cc-isearch-menu-transient))
-   #+end_src
 ** Better M-< and M->
    #+begin_src emacs-lisp :tangle init.el
      (use-package beginend :ensure t
@@ -1862,16 +1856,6 @@
                             (equal (match-string 2) (match-string 3)))
                        (org-todo 'done)
                      (org-todo 'todo)))))))
-
-       (use-package casual-agenda
-         ;; https://github.com/kickingvegas/casual-agenda
-         :ensure t
-         :bind (:map
-                org-agenda-mode-map
-                ("C-o" . casual-agenda-tmenu)
-                ("M-j" . org-agenda-clock-goto) ; optional
-                ("J" . bookmark-jump))
-         :after (org-agenda))
 
        (use-package ob-async :ensure t :after ob)
        (use-package ob-restclient :ensure t :after ob)
@@ -2951,16 +2935,9 @@
        (otpp-override-mode 1))
    #+end_src
 ** Casual shortcuts
+   Casual brings in transient like menu to lot of Emacs functionality.
    #+begin_src emacs-lisp :tangle init.el
-     (use-package casual-editkit
-       :ensure t
-       :bind (("C-o" . casual-editkit-main-tmenu)))
-
-     (use-package casual-symbol-overlay
-       :ensure nil
-       :bind (:map
-              symbol-overlay-map
-              ("C-o" . casual-symbol-overlay-tmenu)))
+     (use-package casual :ensure t)
    #+end_src
 ** Show fonts in emacs
    https://github.com/protesilaos/show-font
