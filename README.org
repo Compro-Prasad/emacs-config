@@ -595,28 +595,40 @@
      (use-package dired
        :hook (dired-mode-hook . dired-hide-details-mode)
        :bind (:map dired-mode-map
-                   ("C-c C-c" . dired-collapse-mode)
-                   ("C-c C-d C-u" . dired-du-mode)
-                   ("." . dired-hide-dotfiles-mode)
-                   ("<tab>" . dired-subtree-toggle)
-                   ("q"      . kill-current-buffer)
-                   ("RET"    . compro/dired-open-dir)
-                   ("^"      . compro/dired-up-dir)
-                   ("DEL"    . compro/dired-up-dir)
-                   ("<left>" . compro/dired-up-dir)
-                   )
+                   ("DEL"    . dired-up-directory)
+                   ("<left>" . dired-up-directory)
+                   ("h" . dired-up-directory)
+                   ("j" . dired-next-line)
+                   ("k" . dired-previous-line)
+                   ("l" . dired-find-file)
+                   ("<right>" . dired-find-file))
        :init
-       (use-package dired-collapse :ensure t)
-       (use-package dired-du :ensure t :after dired)
+
+       (use-package dirvish :ensure t
+         :bind (:map dired-mode-map
+                     ("?" . dirvish-dispatch))
+         :init (dirvish-override-dired-mode 1))
+
+       (use-package dired-collapse :ensure t
+         :bind (:map dired-mode-map
+                     ("C-c C-c" . dired-collapse-mode)))
+
+       (use-package dired-du :ensure t :after dired
+         :bind (:map dired-mode-map
+                     ("C-c C-d C-u" . dired-du-mode)))
+
        (use-package dired-dups :ensure t :after dired)
        (use-package dired-filetype-face :ensure t :after dired)
+
        (use-package dired-hide-dotfiles :ensure t
          :after dired
-         :hook (dired-mode-hook . dired-hide-dotfiles-mode))
-       (use-package dired-subtree :ensure t :after dired)
-       (defun compro/dired-up-dir ()
-         (interactive)
-         (find-alternate-file ".."))
+         :hook (dired-mode-hook . dired-hide-dotfiles-mode)
+         :bind (:map dired-mode-map
+                     ("." . dired-hide-dotfiles-mode)))
+
+       (use-package dired-subtree :ensure t :after dired
+         :bind (:map dired-mode-map
+                     ("<tab>" . dired-subtree-toggle)))
 
        (defun compro/dired-open-dir ()
          (interactive)
