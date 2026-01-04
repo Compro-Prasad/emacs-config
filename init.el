@@ -443,10 +443,11 @@ The return value is nil if no font was found, truthy otherwise."
         (sort-regexp-fields t "^.*$" "[ ]*." (point) (point-max)))
       (set-buffer-modified-p nil)))
 
-  (defadvice dired-readin
-      (after dired-after-updating-hook first () activate)
+  (defun mydired--after-readin (&rest _args)
     "Sort dired listings with directories first before adding marks."
-    (mydired-sort)))
+    (mydired-sort))
+
+  (advice-add 'dired-readin :after #'mydired--after-readin))
 
 (when compro/laptop-p
   (setq user-mail-address "comproprasad@gmail.com"
@@ -1192,7 +1193,7 @@ _=_       _+_
     ("-" er/contract-region)))
 
 (use-package projectile :ensure t
-  :unless (> emacs-major-version 27)  ;; Use project.el for > 27
+  :when (<= emacs-major-version 27)  ;; Use project.el for > 27
   :bind (("C-x p" . projectile-command-map))
   :config
   (setq
