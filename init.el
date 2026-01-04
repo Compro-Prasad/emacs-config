@@ -2087,23 +2087,9 @@ References:
 
 (use-package apheleia :ensure t
   :config
-  ;; (setf (alist-get 'isort apheleia-formatters)
-  ;;     '("usort" "format" "-"))
-  (defun compro/black ()
-    (if-let* ((root (pet-virtualenv-root))
-              (executable (concat root "/bin/black"))
-              (exists (file-exists-p executable)))
-        `(,executable "-")
-      "cat"))
-  (defun compro/djhtml ()
-         (if-let* ((root (pet-virtualenv-root))
-                   (executable (concat root "/bin/djhtml"))
-                   (exists (file-exists-p executable)))
-             `(,executable "-")
-           "cat"))
-  (setf (alist-get 'python-mode apheleia-mode-alist) '(black-custom)
-        (alist-get 'black-custom apheleia-formatters) '((compro/black))
-        (alist-get 'djhtml apheleia-formatters) '((compro/djhtml))
+  (setf (alist-get 'python-mode apheleia-mode-alist) '(ruff)
+        (alist-get 'python-ts-mode apheleia-mode-alist) '(ruff)
+        ;; (alist-get 'djhtml apheleia-formatters) '((compro/djhtml))
         (alist-get 'rustfmt apheleia-formatters) '("rustfmt" "--quiet" "--emit" "stdout" "--edition" "2021"))
   (apheleia-global-mode +1))
 
