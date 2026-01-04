@@ -2235,12 +2235,7 @@ References:
 (require 'ultra-scroll)
 (ultra-scroll-mode 1)
 
-(unless (package-installed-p 'pg)
-   (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
-(unless (package-installed-p 'pgmacs)
-   (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
-
-(require 'pgmacs)
+(use-package pg :ensure t)
 
 (quelpa '(p-search :repo "zkry/p-search" :fetcher github))
 (require 'p-search)

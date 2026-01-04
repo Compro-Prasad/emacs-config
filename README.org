@@ -2967,12 +2967,7 @@
 ** PGmacs
    Postgresql UI in Emacs
    #+begin_src emacs-lisp :tangle init.el
-     (unless (package-installed-p 'pg)
-        (package-vc-install "https://github.com/emarsden/pg-el" nil nil 'pg))
-     (unless (package-installed-p 'pgmacs)
-        (package-vc-install "https://github.com/emarsden/pgmacs" nil nil 'pgmacs))
-
-     (require 'pgmacs)
+     (use-package pg :ensure t)
    #+end_src
 ** p-search
    search engine in Emacs
