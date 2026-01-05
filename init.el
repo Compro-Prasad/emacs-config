@@ -384,7 +384,9 @@ The return value is nil if no font was found, truthy otherwise."
   (use-package dirvish :ensure t
     :bind (:map dired-mode-map
                 ("?" . dirvish-dispatch))
-    :init (dirvish-override-dired-mode 1))
+    :init
+    (setq dirvish-cache-dir (locate-user-emacs-file (concat cache-d "dirvish")))
+    (dirvish-override-dired-mode 1))
 
   (use-package dired-collapse :ensure t
     :bind (:map dired-mode-map
@@ -2031,7 +2033,8 @@ References:
 
 (use-package quelpa :ensure t
   :init
-  (setq quelpa-update-melpa-p nil))
+  (setq quelpa-update-melpa-p nil
+        quelpa-dir (locate-user-emacs-file (concat cache-d "quelpa"))))
 
 (use-package diff-hl :ensure t
 
@@ -2107,7 +2110,9 @@ References:
 (use-package git-modes :ensure t)
 
 (use-package async-backup :ensure t
-  :hook (after-save-hook . async-backup))
+  :hook (after-save-hook . async-backup)
+  :init
+  (setq async-backup-location (locate-user-emacs-file (concat cache-d "async-backup"))))
 
 (use-package subed :ensure t
   ;; :init
