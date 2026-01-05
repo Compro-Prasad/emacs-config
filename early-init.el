@@ -1,6 +1,6 @@
 ;;; early-init.el ---                                -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2022  Abhishek(Compro) Prasad
+;; Copyright (C) 2018-2026  Abhishek(Compro) Prasad
 
 ;; Author: Abhishek(Compro) Prasad
 ;; Keywords: emacs, configuration, elisp
@@ -37,15 +37,15 @@
 (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
       package-user-dir (concat cache-d "elpa/"))
 
-(use-package server
-  :config
-  (when (not (server-running-p))
-    (let ((server-file (concat cache-d "server/server")))
-      (when (file-exists-p server-file)
-        (delete-file server-file)
-        (message "Old server file deleted")))
-    (message "Starting server")
-    (server-start)))
+;; (use-package server
+;;   :config
+;;   (when (not (server-running-p))
+;;     (let ((server-file (concat cache-d "server/server")))
+;;       (when (file-exists-p server-file)
+;;         (delete-file server-file)
+;;         (message "Old server file deleted")))
+;;     (message "Starting server")
+;;     (server-start)))
 
 (menu-bar-mode 0)
 (menu-bar-no-scroll-bar)

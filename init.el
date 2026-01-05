@@ -1,6 +1,6 @@
 ;;; init.el ---                                      -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2022  Abhishek(Compro) Prasad
+;; Copyright (C) 2018-2026  Abhishek(Compro) Prasad
 
 ;; Author: Abhishek(Compro) Prasad
 ;; Keywords: emacs, configuration, elisp

@@ -33,13 +33,13 @@
    #+end_src
 * The tutorial
   After Emacs has been installed I would recommend you to go through the
-  tutorial accessible from the startup screen of Emacs. This will help you to
+  tutorial accessible from the startup screen of Emacs. This will help you
   understand the terms used in Emacs.
 * Copyright notice
   TL; DR -> License is GNU GPL v3
   #+NAME: GPL-v3
   #+begin_src emacs-lisp
-    ;; Copyright (C) 2018-2022  Abhishek(Compro) Prasad
+    ;; Copyright (C) 2018-2026  Abhishek(Compro) Prasad
 
     ;; Author: Abhishek(Compro) Prasad
     ;; Keywords: emacs, configuration, elisp
@@ -78,6 +78,10 @@
   #+end_src
 
 * Enable debugging
+  The following will enable stacktrace / backtrace in Emacs so that I can debug
+  the solution right away. Disabling this (/i.e./ setting it to =nil=) will only
+  show error in the =*Messages*= buffer with no hint on the exact function(s)
+  failing.
   #+begin_src emacs-lisp :tangle (early-init)
     (setq debug-on-error  t
           init-file-debug t)
@@ -85,23 +89,28 @@
 
 * Aliases
   Emacs identifier names are long. Lets shorten the common ones that we will be
-  using.
+  using in this config.
 
   #+begin_src emacs-lisp :tangle (early-init)
     (defalias 'ft 'file-truename)
     (defvaralias 'emacs-d 'user-emacs-directory)
   #+end_src
 * Change load-path
+  In Emacs 29 and above =user-lisp= is the default location for custom lisp files.
+  =load-path= is a list that needs to be modified if you are planning to load
+  Emacs Lisp files from other filepath locations in your system.
   #+begin_src emacs-lisp :tangle (early-init)
     (when (<= emacs-major-version 29)
       (add-to-list 'load-path (expand-file-name "user-lisp" emacs-d)))
   #+end_src
 * Cache directory
+  =cache-d= will be used numerous times in this config to move cache files from
+  installed packages in this directory.
   #+begin_src emacs-lisp :tangle (early-init)
     (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
           package-user-dir (concat cache-d "elpa/"))
   #+end_src
-* Connecting to client
+* TODO Connecting to client
   To connect to client, make sure the following code returns =t=:
   #+begin_src emacs-lisp
     (server-running-p)
@@ -110,26 +119,35 @@
   start the server manually using =M-x server-start=. Or put the following code in
   =init.el=. This is already taken care of if you are using my init file.
   #+begin_src emacs-lisp :tangle (early-init)
-    (use-package server
-      :config
-      (when (not (server-running-p))
-        (let ((server-file (concat cache-d "server/server")))
-          (when (file-exists-p server-file)
-            (delete-file server-file)
-            (message "Old server file deleted")))
-        (message "Starting server")
-        (server-start)))
+    ;; (use-package server
+    ;;   :config
+    ;;   (when (not (server-running-p))
+    ;;     (let ((server-file (concat cache-d "server/server")))
+    ;;       (when (file-exists-p server-file)
+    ;;         (delete-file server-file)
+    ;;         (message "Old server file deleted")))
+    ;;     (message "Starting server")
+    ;;     (server-start)))
   #+end_src
   Then make sure =EMACS_SERVER_FILE= environment variable is set. In this case it
   should be like the following:
   #+begin_src sh
-    export EMACS_SERVER_FILE="$HOME/.emacs.d/.cache/server/server"
+    export EMACS_SERVER_FILE="$HOME/.config/emacs/.cache/server/server"
   #+end_src
   After doing the necessary setup you can connect using the =emacsclient= binary:
   #+begin_src sh
     emacsclient -c
   #+end_src
 * Check Operating System
+  The following variables can be used to check and execute platform specific
+  code:
+  1. =is-windows=
+  2. =is-unix=
+  3. =is-gnu=
+  4. =is-linux=
+  5. =is-mac=
+  6. =is-bsd=
+  It isn't fully accurate so make changes as per your needs.
   #+begin_src emacs-lisp :tangle init.el
     (require 'seq)
     (setq is-windows
@@ -155,8 +173,8 @@
            (string= system-type "darwin")))
   #+end_src
 * Tangle =README.org= to =init.el=
-  Automatically tangle / export code blocks from =README.org= to =init.el= when
-  saving =README.org= inside of Emacs.
+  The following code enables tangling / exporting code blocks from =README.org= to
+  =init.el= when saving =README.org= from inside Emacs.
 
   #+begin_src emacs-lisp :tangle init.el
     (defun tangle-README.org-to-init.el ()
@@ -176,7 +194,11 @@
     (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
   #+end_src
 * Setup package repositories
-  Setup MELPA and Non GNU repositories.
+  Setup MELPA and Non GNU repositories using =package.el=.
+
+  *NOTE*: We use =(require lib)= when the filename is =lib.el= which can be any file
+  saved on your system. Make sure to set the =load-path= as given in the previous
+  sections for =require= to work properly.
 
   #+begin_src emacs-lisp :tangle init.el
     (require 'package)
@@ -201,6 +223,8 @@
     (package-initialize)
   #+end_src
 * Install =use-package=
+  =use-package= is a convenience function for package definitions in Emacs Lisp.
+  Since Emacs 29 =use-package= is distributed as a builtin Emacs function.
   #+begin_src emacs-lisp :tangle init.el
     (when (< emacs-major-version 29)
       (unless (package-installed-p 'use-package)
@@ -209,6 +233,10 @@
   #+end_src
 * Install =f= and =s=
   *f* is a package that makes it easier to interact with the filesytem.
+
+  *NOTE*: =:ensure= is a =use-package= specific term which when =t= (true) means that
+  the corresponding package will be fetched using =package.el= if not already
+  installed on the system.
   #+begin_src emacs-lisp :tangle init.el
     (use-package f :ensure t)
     (use-package s :ensure t)
