@@ -2163,10 +2163,10 @@ References:
 (use-package ruby-electric :ensure t
   :hook (ruby-mode-hook . ruby-electric-mode))
 
-(use-package rbenv :ensure t
-  :config
-  (global-rbenv-mode)
-  (rbenv-use-corresponding))
+;; (use-package rbenv :ensure t
+;;   :config
+;;   (global-rbenv-mode)
+;;   (rbenv-use-corresponding))
 
 (use-package inf-ruby :ensure t
   :bind (:map inf-ruby-minor-mode-map
