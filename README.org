@@ -1574,6 +1574,12 @@
    Now Emacs comes with native project support since 25.1. Investigate and set
    up =project.el=.
 
+   #+begin_src emacs-lisp :tangle init.el
+     (use-package project
+       :init
+       (setq project-list-file (locate-user-emacs-file (concat cache-d "projects"))))
+   #+end_src
+
    Until then we can rely on the more powerful =projectile= package.
    #+begin_src emacs-lisp :tangle init.el
      (use-package projectile :ensure t

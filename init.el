@@ -1194,6 +1194,10 @@ _=_       _+_
     ("+" er/contract-region)
     ("-" er/contract-region)))
 
+(use-package project
+  :init
+  (setq project-list-file (locate-user-emacs-file (concat cache-d "projects"))))
+
 (use-package projectile :ensure t
   :when (<= emacs-major-version 27)  ;; Use project.el for > 27
   :bind (("C-x p" . projectile-command-map))
