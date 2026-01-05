@@ -385,7 +385,7 @@ The return value is nil if no font was found, truthy otherwise."
     :bind (:map dired-mode-map
                 ("?" . dirvish-dispatch))
     :init
-    (setq dirvish-cache-dir (locate-user-emacs-file (concat cache-d "dirvish")))
+    (setq dirvish-cache-dir (concat cache-d "dirvish/"))
     (dirvish-override-dired-mode 1))
 
   (use-package dired-collapse :ensure t
@@ -1121,12 +1121,9 @@ TODO:
 
 (use-package transient :ensure t
   :config
-  (setq transient-history-file (locate-user-emacs-file
-                                (concat cache-d "transient/history.el"))
-        transient-values-file (locate-user-emacs-file
-                               (concat cache-d "transient/values.el"))
-        transient-levels-file (locate-user-emacs-file
-                               (concat cache-d "transient/levels.el"))))
+  (setq transient-history-file (concat cache-d "transient/history.el")
+        transient-values-file (concat cache-d "transient/values.el")
+        transient-levels-file (concat cache-d "transient/levels.el")))
 
 (use-package magit :ensure t
   :bind (("C-x g" . magit-status)
@@ -1196,7 +1193,7 @@ _=_       _+_
 
 (use-package project
   :init
-  (setq project-list-file (locate-user-emacs-file (concat cache-d "projects"))))
+  (setq project-list-file (concat cache-d "projects")))
 
 (use-package projectile :ensure t
   :when (<= emacs-major-version 27)  ;; Use project.el for > 27
@@ -1391,6 +1388,9 @@ Source: https://karthinks.com/software/jumping-directories-in-eshell/"
 
 (use-package telega :ensure t :when is-linux)
 
+(use-package org
+  :init
+  (setq org-id-locations-file (concat cache-d ".org-id-locations")))
 (use-package org :ensure org-contrib
   :hook (org-mode-hook . org-superstar-mode)
   :init
@@ -2038,7 +2038,7 @@ References:
 (use-package quelpa :ensure t
   :init
   (setq quelpa-update-melpa-p nil
-        quelpa-dir (locate-user-emacs-file (concat cache-d "quelpa"))))
+        quelpa-dir (concat cache-d "quelpa/")))
 
 (use-package diff-hl :ensure t
 
@@ -2116,7 +2116,7 @@ References:
 (use-package async-backup :ensure t
   :hook (after-save-hook . async-backup)
   :init
-  (setq async-backup-location (locate-user-emacs-file (concat cache-d "async-backup"))))
+  (setq async-backup-location (concat cache-d "async-backup/")))
 
 (use-package subed :ensure t
   ;; :init
