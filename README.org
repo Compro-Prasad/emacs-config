@@ -34,7 +34,7 @@
 * The tutorial
   After Emacs has been installed I would recommend you to go through the
   tutorial accessible from the startup screen of Emacs. This will help you to
-  understand the basic terminologies used in Emacs.
+  understand the terms used in Emacs.
 * Copyright notice
   TL; DR -> License is GNU GPL v3
   #+NAME: GPL-v3
