@@ -93,7 +93,8 @@
   #+end_src
 * Change load-path
   #+begin_src emacs-lisp :tangle (early-init)
-    (add-to-list 'load-path (expand-file-name "lisp" emacs-d))
+    (when (<= emacs-major-version 29)
+      (add-to-list 'load-path (expand-file-name "user-lisp" emacs-d)))
   #+end_src
 * Cache directory
   #+begin_src emacs-lisp :tangle (early-init)

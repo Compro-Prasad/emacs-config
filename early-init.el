@@ -31,7 +31,8 @@
 (defalias 'ft 'file-truename)
 (defvaralias 'emacs-d 'user-emacs-directory)
 
-(add-to-list 'load-path (expand-file-name "lisp" emacs-d))
+(when (<= emacs-major-version 29)
+  (add-to-list 'load-path (expand-file-name "user-lisp" emacs-d)))
 
 (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
       package-user-dir (concat cache-d "elpa/"))
