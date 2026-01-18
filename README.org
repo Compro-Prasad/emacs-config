@@ -199,7 +199,8 @@
     (add-hook 'after-save-hook 'tangle-README.org-to-init.el)
   #+end_src
 * Setup package repositories
-  Setup MELPA and Non GNU repositories using =package.el=.
+  Setup MELPA and Non GNU repositories using =package.el= which is Emacs' builtin
+  package manager.
 
   *NOTE*: We use =(require lib)= when the filename is =lib.el= which can be any file
   saved on your system. Make sure to set the =load-path= as given in the previous
@@ -602,9 +603,6 @@
        (tab-bar-mode))
    #+end_src
 
-** TODO dirvish
-   https://github.com/alexluigit/dirvish
-
 ** TODO System task bar mode
    >= 31.0.50
    New mode 'system-taskbar-mode'.
@@ -625,6 +623,7 @@
    - =dired-collapse-mode= to show long paths having single directories
    - =dired-du-mode= to show file and dir size
    - =dired-subtree-toggle= to show tree like structure under the dir
+   - [[https://github.com/alexluigit/dirvish][dirvish]] - [[https://github.com/ranger/ranger][ranger]] alternative
    #+begin_src emacs-lisp :tangle init.el
      (use-package dired
        :hook (dired-mode-hook . dired-hide-details-mode)
