@@ -25,6 +25,9 @@
 
 ;;; Code:
 
+(defalias 'open-file 'find-file)
+(defalias 'save-file 'save-buffer)
+
 (require 'seq)
 (setq is-windows
       (seq-find
@@ -385,6 +388,7 @@ The return value is nil if no font was found, truthy otherwise."
     :bind (:map dired-mode-map
                 ("?" . dirvish-dispatch))
     :init
+    (defalias 'ranger 'dirvish)
     (setq dirvish-cache-dir (concat cache-d "dirvish/"))
     (dirvish-override-dired-mode 1))
 
@@ -1142,6 +1146,7 @@ TODO:
          ([M-tab] . nil))
   :init
   ;; (use-package forge :unless is-windows :after magit :ensure t)
+  (defalias 'git 'magit-status)
   :config
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
   (remove-hook 'server-switch-hook 'magit-commit-diff)

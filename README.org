@@ -95,6 +95,11 @@
     (defalias 'ft 'file-truename)
     (defvaralias 'emacs-d 'user-emacs-directory)
   #+end_src
+  Some other useful aliases:
+  #+begin_src emacs-lisp :tangle init.el
+    (defalias 'open-file 'find-file)
+    (defalias 'save-file 'save-buffer)
+  #+end_src
 * Change load-path
   In Emacs 29 and above =user-lisp= is the default location for custom lisp files.
   =load-path= is a list that needs to be modified if you are planning to load
@@ -637,6 +642,7 @@
          :bind (:map dired-mode-map
                      ("?" . dirvish-dispatch))
          :init
+         (defalias 'ranger 'dirvish)
          (setq dirvish-cache-dir (concat cache-d "dirvish/"))
          (dirvish-override-dired-mode 1))
 
@@ -1540,6 +1546,7 @@
               ([M-tab] . nil))
        :init
        ;; (use-package forge :unless is-windows :after magit :ensure t)
+       (defalias 'git 'magit-status)
        :config
        (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
        (remove-hook 'server-switch-hook 'magit-commit-diff)
