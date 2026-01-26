@@ -1948,9 +1948,27 @@ References:
          (python-ts-mode . compro/set-python-variables))
   :init
   (defun compro/get-exe (root name)
-    (when-let* ((location (concat root "/bin/" name))
+    (when-let* ((location (concat (string-trim-right root "/+") "/bin/" name))
                 (exists (file-exists-p location)))
       location))
+  (defun compro/set-python-variables-through-manage.py (manage.py ipython3 dj-shell-plus)
+    (when manage.py
+      (setq-local
+       python-shell-interpreter-args
+       (concat
+        " "
+        manage.py
+        " "
+        (cond
+         ((and ipython3 dj-shell-plus)
+          "shell_plus --ipython -- -i --simple-prompt --classic")
+         (ipython3
+          "shell --command \"from IPython import start_ipython; start_ipython(argv=[\'-i\', \'--simple-prompt\',\'--classic\'])\"")
+          ;; "shell")
+         (dj-shell-plus
+          "shell_plus --plain -- -i")
+         (t
+          "shell -i python"))))))
   (defun compro/set-python-variables ()
     (let* ((env-root (or (pet-virtualenv-root) "/usr"))
            (default-directory (or (when env-root (pet-project-root)) default-directory))
@@ -1963,24 +1981,8 @@ References:
            (manage.py (when dj-root (expand-file-name "manage.py" dj-root)))
            (default-directory (if dj-root (pet-project-root) default-directory))
            (dj-shell-plus (when dj-root (= 0 (call-process python nil nil nil manage.py "help" "shell_plus")))))
-      (when manage.py
-        (setq-local
-         python-shell-interpreter-args
-         (concat
-          " "
-          manage.py
-          " "
-          (cond
-           ((and ipython3 dj-shell-plus)
-            "shell_plus --ipython -- -i --simple-prompt --classic")
-           (ipython3
-            "shell --command \"from IPython import start_ipython; start_ipython(argv=[\'-i\', \'--simple-prompt\',\'--classic\'])\"")
-           (dj-shell-plus
-            "shell_plus --plain -- -i")
-           (t
-            "shell -i python"))))
-        (setq ipython3 nil))
       (cond
+       (manage.py (compro/set-python-variables-through-manage.py manage.py ipython3 dj-shell-plus))
        (ipython3 (setq-local
                   py-use-local-default t
                   py-shell-local-path ipython3
