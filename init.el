@@ -2015,6 +2015,8 @@ References:
         vterm-buffer-name-string "*vterm-%s*"
         vterm-always-compile-module t))
 
+(use-package vterm-editor :ensure t)
+
 (use-package treesit-auto :ensure t
   :when (>= emacs-major-version 29)
   :config

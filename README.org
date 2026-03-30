@@ -2539,6 +2539,8 @@
        (setq vterm-kill-buffer-on-exit t
              vterm-buffer-name-string "*vterm-%s*"
              vterm-always-compile-module t))
+
+     (use-package vterm-editor :ensure t)
    #+end_src
 ** Tree-sitter
    References:
