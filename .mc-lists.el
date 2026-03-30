@@ -4,11 +4,15 @@
 
 (setq mc/cmds-to-run-for-all
       '(
+        backward-sexp
+        compro/beginning-of-line
         compro/comint/kill-word
+        down-list
         forward-sexp
         hungry-delete-backward
         hungry-delete-forward
         kill-sexp
+        python-indent-shift-right
         whole-line-or-region-kill-ring-save
         ))
 
