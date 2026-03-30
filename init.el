@@ -687,7 +687,11 @@ The return value is nil if no font was found, truthy otherwise."
 
 (if (< emacs-major-version 28)
     (global-set-key [mouse-3] menu-bar-edit-menu)
-  (context-menu-mode 1))
+  (context-menu-mode 1)
+  (use-package anju :ensure t
+    :after (casual)
+    :init
+    (anju-init)))
 
 (use-package autorevert
   :config
