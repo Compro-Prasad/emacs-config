@@ -488,6 +488,13 @@
     (use-package general :ensure t)
   #+end_src
 * Native Emacs configurations
+** Enable Ctrl+click
+   Emacs supports =Ctrl+click= to jump to a function starting from version 31. The
+   functionality already existed on =M-.= though.
+   #+begin_src emacs-lisp :tangle init.el
+     (when (>= emacs-major-version 31)
+       (global-xref-mouse-mode 1))
+   #+end_src
 ** Speedup find-file
    #+begin_src emacs-listp :tangle init.el
      (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)

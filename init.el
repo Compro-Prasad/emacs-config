@@ -311,6 +311,9 @@ The return value is nil if no font was found, truthy otherwise."
 
 (use-package general :ensure t)
 
+(when (>= emacs-major-version 31)
+  (global-xref-mouse-mode 1))
+
 (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
 
 (use-package tab-bar
