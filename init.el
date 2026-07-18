@@ -1503,7 +1503,8 @@ Will work on both org-mode and any mode that accepts plain html."
    '((shell . t)
      (python . t)
      (restclient . t)
-     (emacs-lisp . t)))
+     (emacs-lisp . t)
+     (java . t)))
 
   (setq org-return-follows-link t
         org-agenda-diary-file "~/.org/diary.org"
