@@ -2119,6 +2119,41 @@
                      ?\C-b ?\C-b ?\C-b ?\C-b ?\C-b
                      134217848 ?k ?i ?l ?l ?- ?r ?e ?c ?t ?a ?n ?g ?l ?e return] 0 "%d"))
        (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp :tangle init.el"))
+       (defun my/org-babel-java-with-stdin (orig-fun body params)
+         "Inject :stdin support into org-babel-execute:java."
+         (let* ((stdin-name (cdr (assq :stdin params)))
+                (stdin-val (when stdin-name
+                             (org-babel-ref-resolve stdin-name)))
+                (stdin-delay (or (cdr (assq :stdin-delay params)) 1))
+                (stdin-subsequent-delay (or (cdr (assq :stdin-subsequent-delay params))
+                                            stdin-delay))
+                (temp-stdin (when stdin-val
+                              (let ((f (org-babel-temp-file "java-stdin-")))
+                                (with-temp-file f (insert stdin-val))
+                                f)))
+                (orig-eval (symbol-function 'org-babel-java-evaluate)))
+           (if temp-stdin
+               (cl-letf (((symbol-function 'org-babel-java-evaluate)
+                          (lambda (cmd result-type result-params result-file)
+                            (let* ((parts (split-string cmd " && "))
+                                   (compile-cmd (car parts))
+                                   (run-cmd (cadr parts))
+                                   (new-cmd (concat compile-cmd
+                                                    " && (first=1; while IFS= read -r line; do "
+                                                    "if [ \"$first\" = \"1\" ]; then sleep "
+                                                    (number-to-string stdin-delay)
+                                                    " && first=0; else sleep "
+                                                    (number-to-string stdin-subsequent-delay)
+                                                    "; fi && echo \"$line\"; done < "
+                                                    temp-stdin
+                                                    " | tee /dev/stderr | "
+                                                    run-cmd
+                                                    ") 2>&1")))
+                              (funcall orig-eval new-cmd result-type result-params result-file)))))
+                 (funcall orig-fun body params))
+             (funcall orig-fun body params))))
+
+       (advice-add 'org-babel-execute:java :around #'my/org-babel-java-with-stdin)
 
        (setq org-pretty-entities t
              org-bullets-bullet-list '(" ") ;; no bullets, needs org-bullets package
