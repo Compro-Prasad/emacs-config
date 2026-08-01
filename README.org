@@ -124,20 +124,23 @@
   start the server manually using =M-x server-start=. Or put the following code in
   =init.el=. This is already taken care of if you are using my init file.
   #+begin_src emacs-lisp :tangle (early-init)
-    ;; (use-package server
-    ;;   :config
-    ;;   (when (not (server-running-p))
-    ;;     (let ((server-file (concat cache-d "server/server")))
-    ;;       (when (file-exists-p server-file)
-    ;;         (delete-file server-file)
-    ;;         (message "Old server file deleted")))
-    ;;     (message "Starting server")
-    ;;     (server-start)))
+    (use-package server
+      :config
+      (setq server-socket-dir (concat cache-d "server/"))
+      (when (not (server-running-p))
+        (let ((server-file (concat cache-d "server/server")))
+          (when (file-exists-p server-file)
+            (delete-file server-file)
+            (message "Old server file deleted")))
+        (message "Starting server")
+        (server-start)))
   #+end_src
-  Then make sure =EMACS_SERVER_FILE= environment variable is set. In this case it
-  should be like the following:
+  This config uses a local Unix socket (not TCP), so the relevant environment
+  variable for =emacsclient= is =EMACS_SOCKET_NAME=, not =EMACS_SERVER_FILE=
+  (which is only read for TCP connections). Make sure it is set like the
+  following:
   #+begin_src sh
-    export EMACS_SERVER_FILE="$HOME/.config/emacs/.cache/server/server"
+    export EMACS_SOCKET_NAME="$HOME/.config/emacs/.cache/server/server"
   #+end_src
   After doing the necessary setup you can connect using the =emacsclient= binary:
   #+begin_src sh

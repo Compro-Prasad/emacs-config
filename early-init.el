@@ -37,15 +37,16 @@
 (setq cache-d (locate-user-emacs-file (concat emacs-d ".cache/"))
       package-user-dir (concat cache-d "elpa/"))
 
-;; (use-package server
-;;   :config
-;;   (when (not (server-running-p))
-;;     (let ((server-file (concat cache-d "server/server")))
-;;       (when (file-exists-p server-file)
-;;         (delete-file server-file)
-;;         (message "Old server file deleted")))
-;;     (message "Starting server")
-;;     (server-start)))
+(use-package server
+  :config
+  (setq server-socket-dir (concat cache-d "server/"))
+  (when (not (server-running-p))
+    (let ((server-file (concat cache-d "server/server")))
+      (when (file-exists-p server-file)
+        (delete-file server-file)
+        (message "Old server file deleted")))
+    (message "Starting server")
+    (server-start)))
 
 (menu-bar-mode 0)
 (menu-bar-no-scroll-bar)
