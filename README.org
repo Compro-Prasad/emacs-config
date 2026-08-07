@@ -135,6 +135,29 @@
         (message "Starting server")
         (server-start)))
   #+end_src
+  A daemon has no initial frame.  Create a graphical frame after startup when
+  an X11 or Wayland display is available.  Emacs started normally in a GUI or
+  TTY already has an initial frame, while a headless daemon needs
+  =emacsclient -t= to attach a terminal.
+  #+begin_src emacs-lisp :tangle (early-init)
+    (defun compro/create-initial-daemon-frame ()
+      "Create a graphical frame for a daemon when a display is available."
+      (when (and (daemonp)
+                 (not (seq-some #'display-graphic-p (frame-list))))
+        (let ((display (if (featurep 'pgtk)
+                           (or (getenv "WAYLAND_DISPLAY")
+                               (getenv "DISPLAY"))
+                         (or (getenv "DISPLAY")
+                             (getenv "WAYLAND_DISPLAY")))))
+          (when display
+            (condition-case error-data
+                (make-frame-on-display display)
+              (error
+               (message "Could not create daemon frame on %s: %s"
+                        display (error-message-string error-data))))))))
+
+    (add-hook 'emacs-startup-hook #'compro/create-initial-daemon-frame)
+  #+end_src
   This config uses a local Unix socket (not TCP), so the relevant environment
   variable for =emacsclient= is =EMACS_SOCKET_NAME=, not =EMACS_SERVER_FILE=
   (which is only read for TCP connections). Make sure it is set like the

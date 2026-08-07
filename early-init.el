@@ -48,6 +48,24 @@
     (message "Starting server")
     (server-start)))
 
+(defun compro/create-initial-daemon-frame ()
+  "Create a graphical frame for a daemon when a display is available."
+  (when (and (daemonp)
+             (not (seq-some #'display-graphic-p (frame-list))))
+    (let ((display (if (featurep 'pgtk)
+                       (or (getenv "WAYLAND_DISPLAY")
+                           (getenv "DISPLAY"))
+                     (or (getenv "DISPLAY")
+                         (getenv "WAYLAND_DISPLAY")))))
+      (when display
+        (condition-case error-data
+            (make-frame-on-display display)
+          (error
+           (message "Could not create daemon frame on %s: %s"
+                    display (error-message-string error-data))))))))
+
+(add-hook 'emacs-startup-hook #'compro/create-initial-daemon-frame)
+
 (menu-bar-mode 0)
 (menu-bar-no-scroll-bar)
 (blink-cursor-mode 0)
