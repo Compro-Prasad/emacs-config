@@ -294,18 +294,95 @@ The return value is nil if no font was found, truthy otherwise."
       (ignore-errors (package-reinstall pkg)))))
 (advice-add 'package-install :after 're-download)
 
-(defun switch-to-buffer-current-major-mode ()
-  "Switch to buffer like functionality based on current major mode."
-  (interactive)
-  (let* ((m-mode major-mode)
-         (prompt (concat (symbol-name m-mode) " buffers: ")))
-    (read-buffer
-     prompt nil (confirm-nonexistent-file-or-buffer)
-     (lambda (buf)
-       (with-current-buffer (cdr buf)
-         (eq m-mode major-mode))))))
+;; (defun switch-to-buffer-current-major-mode ()
+;;   "Switch to buffer like functionality based on current major mode."
+;;   (interactive)
+;;   (let* ((m-mode major-mode)
+;;          (prompt (concat (symbol-name m-mode) " buffers: ")))
+;;     (read-buffer
+;;      prompt nil (confirm-nonexistent-file-or-buffer)
+;;      (lambda (buf)
+;;        (with-current-buffer (cdr buf)
+;;          (eq m-mode major-mode))))))
+(require 'project)
+(require 'seq)
 
-(global-set-key (kbd "C-x C-b") 'switch-to-buffer-current-major-mode)
+(defun switch-to-buffer-smart ()
+  "Switch buffers using the following priority:
+
+1. Intersection of project and major-mode buffers (P*M).
+2. Project buffers (P).
+3. Major-mode buffers (M).
+4. Union of project and major-mode buffers (P+M).
+5. All buffers (A).
+
+Remove the current buffer and internal buffers whose names begin with a
+space before applying these priorities.  A set is valid when at least one
+buffer remains.  Project-dependent priorities are skipped outside a
+project."
+
+  (interactive)
+
+  (let* ((mode major-mode)
+         (current (current-buffer))
+         (project (project-current))
+         (switchable-buffer-p
+          (lambda (buf)
+            (and (not (eq buf current))
+                 (not (string-prefix-p " " (buffer-name buf))))))
+         (all-buffers
+          (seq-filter switchable-buffer-p (buffer-list)))
+         (project-buffers
+          (if project
+              (seq-filter switchable-buffer-p
+                          (project-buffers project))
+            nil))
+         (mode-buffers
+          (seq-filter
+           (lambda (buf)
+             (with-current-buffer buf
+               (eq major-mode mode)))
+           all-buffers))
+         (project-mode-buffers
+          (seq-filter
+           (lambda (buf)
+             (with-current-buffer buf
+               (eq major-mode mode)))
+           project-buffers))
+         (project-or-mode-buffers
+          (seq-union project-buffers mode-buffers #'eq))
+         (selection
+          (cond
+           ((and project project-mode-buffers)
+            (cons 'project-mode project-mode-buffers))
+           ((and project project-buffers)
+            (cons 'project project-buffers))
+           (mode-buffers
+            (cons 'mode mode-buffers))
+           ((and project project-or-mode-buffers)
+            (cons 'project-or-mode project-or-mode-buffers))
+           (t
+            (cons 'all all-buffers))))
+         (candidates (cdr selection))
+         (prompt
+          (pcase (car selection)
+            ('project-mode (format "%s project buffers: " mode))
+            ('project "Project buffers: ")
+            ('mode (format "%s buffers: " mode))
+            ('project-or-mode
+             (format "Project or %s buffers: " mode))
+            ('all "Buffers: "))))
+
+    (switch-to-buffer
+     (read-buffer
+      prompt
+      nil
+      (confirm-nonexistent-file-or-buffer)
+      (lambda (buf)
+        (memq (cdr buf) candidates))))))
+
+(global-set-key (kbd "C-x b") 'switch-to-buffer-smart)
+(global-set-key (kbd "C-x C-b") 'switch-to-buffer)
 
 (setq compro/laptop-p (equal system-name "hp-archlinux"))
 
@@ -1267,7 +1344,6 @@ _=_       _+_
          ("M-g l" . consult-line)
          ("M-g o" . consult-outline)
          ("C-x C-r" . consult-recent-file)
-         ("C-x b" . consult-buffer)
          :map minibuffer-local-map
          ("C-r" . consult-history)))
 
