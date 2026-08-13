@@ -1912,13 +1912,14 @@ buffer boundaries with possible narrowing."
                         other)
                nil))))
       (when file-or-data
-        (create-image file-or-data
-                      (and (image-type-available-p 'imagemagick)
-                           width
-                           'imagemagick)
-                      remote?
-                      :width width
-                      :rotation rotation))))
+        (apply #'create-image
+               file-or-data
+               (and (image-type-available-p 'imagemagick)
+                    width
+                    'imagemagick)
+               remote?
+               :width width
+               (when rotation (list :rotation rotation))))))
 
   ;; New function
   (defun org-display-inline-image--rotation (link)
