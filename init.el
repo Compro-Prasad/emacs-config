@@ -1890,9 +1890,10 @@ buffer boundaries with possible narrowing."
                                 (push ov org-inline-image-overlays))))))))))))))))
 
   ;; Function redefinition
-  (defun org--create-inline-image (file width rotation)
+  (defun org--create-inline-image (file width &optional rotation)
     "Create image located at FILE, or return nil.
- WIDTH is the width of the image.  The image may not be created
+ WIDTH is the width and ROTATION is the optional rotation of the image.
+ The image may not be created
  according to the value of `org-display-remote-inline-images'."
     (let* ((remote? (file-remote-p file))
            (file-or-data
