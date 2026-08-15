@@ -1217,6 +1217,10 @@ TODO:
   :init
   ;; (use-package forge :unless is-windows :after magit :ensure t)
   (defalias 'git 'magit-status)
+  (with-eval-after-load 'project
+    (keymap-set project-prefix-map "m" #'magit-project-status)
+    (add-to-list 'project-switch-commands
+                 '(magit-project-status "Magit status") t))
   :config
   (remove-hook 'magit-refs-sections-hook 'magit-insert-tags)
   (remove-hook 'server-switch-hook 'magit-commit-diff)
