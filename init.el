@@ -236,64 +236,6 @@ The return value is nil if no font was found, truthy otherwise."
        '()))
      '())))
 
-(defun compro/redownload-empty-pkgs ()
-  "Redownload empty packages."
-  (interactive)
-  (let* ((pkgs (compro/get-empty-pkgs))
-         (default-directory package-user-dir)
-         (choice-list (list
-                       (cons (intern "Delete and re-download all") 1)
-                       (cons (intern "Manually select for re-downloading") 2)
-                       (cons (intern "Fix everything manually") 3)))
-         (choice (if pkgs
-                     (alist-get
-                      (intern
-                       (completing-read
-                        (concat
-                         "Some files were not properly downloaded namely "
-                         (s-join ", " pkgs)
-                         ". What action do you want to take?  ")
-                        choice-list))
-                      choice-list)
-                   3)))
-    (if (= choice 3)
-        (when (null pkgs)
-          (message "No empty packages were found"))
-      (package-refresh-contents)
-      (seq-each
-       (lambda (file)
-         (let* ((values (s-split "/" file))
-                (dir-name (car values))
-                (pkg-values (s-split "-" dir-name))
-                (pkg-name (s-join "-" (butlast pkg-values 1)))
-                (each-choice
-                 (if (= choice 1)
-                     t
-                   (yes-or-no-p
-                    (concat "Delete and re-download " dir-name "? ")))))
-           (when each-choice
-             (delete-directory dir-name t)
-             (ignore-errors
-               (package-reinstall (intern pkg-name))))))
-       pkgs))))
-
-(defun re-download (pkg &optional arg)
-  "Advice for package-install."
-  (let* ((pkg-name (symbol-name (if (package-desc-p pkg)
-                                    (package-desc-name pkg)
-                                  pkg)))
-         (file-name (car
-                     (sort
-                      (seq-filter
-                       (apply-partially #'s-prefix-p pkg-name)
-                       (compro/get-empty-pkgs))
-                      #'string-greaterp)))
-         (dir (when file-name (car (s-split "/" file-name)))))
-    (when dir
-      (delete-directory dir)
-      (ignore-errors (package-reinstall pkg)))))
-(advice-add 'package-install :after 're-download)
-
 ;; (defun switch-to-buffer-current-major-mode ()
 ;;   "Switch to buffer like functionality based on current major mode."
 ;;   (interactive)
@@ -2384,7 +2326,6 @@ References:
   (minions-mode 1))
 (setq debug-on-error  nil
       init-file-debug nil)
-(compro/redownload-empty-pkgs)
 
 ;; Remove text property from text in kill-ring
 (defun unpropertize-kill-ring ()
