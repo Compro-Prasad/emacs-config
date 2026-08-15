@@ -135,10 +135,16 @@
         (message "Starting server")
         (server-start)))
   #+end_src
-  A daemon has no initial frame.  Create a graphical frame after startup when
-  an X11 or Wayland display is available.  Emacs started normally in a GUI or
-  TTY already has an initial frame, while a headless daemon needs
-  =emacsclient -t= to attach a terminal.
+  A daemon has no initial frame.  Shortly after startup, create a graphical
+  frame when an X11 or Wayland display is available.  The delay gives an
+  =emacsclient --create-frame= invocation that started the daemon time to make
+  its requested frame first, avoiding two frames.  A daemon started directly
+  still gets a graphical frame, while a headless daemon needs =emacsclient -t=
+  to attach a terminal.
+
+  Themes loaded during daemon initialization may select terminal colors because
+  no graphical frame exists yet.  Reload the enabled themes once on the first
+  graphical frame so GUI clients use the intended color palette.
   #+begin_src emacs-lisp :tangle (early-init)
     (defun compro/create-initial-daemon-frame ()
       "Create a graphical frame for a daemon when a display is available."
@@ -156,7 +162,34 @@
                (message "Could not create daemon frame on %s: %s"
                         display (error-message-string error-data))))))))
 
-    (add-hook 'emacs-startup-hook #'compro/create-initial-daemon-frame)
+    (defun compro/schedule-initial-daemon-frame ()
+      "Create a graphical daemon frame unless a client creates one first."
+      (when (daemonp)
+        (run-with-idle-timer 1 nil #'compro/create-initial-daemon-frame)))
+
+    (defun compro/apply-face-overrides ()
+      "Apply face overrides that should take precedence over themes."
+      (set-face-attribute 'mode-line nil :box nil)
+      (set-face-attribute 'mode-line-inactive nil :box nil)
+      (when (> emacs-major-version 27)
+        (set-face-attribute 'tab-bar-tab nil :box nil)))
+
+    (defun compro/reload-themes-on-first-graphical-frame (frame)
+      "Reload enabled themes using the first graphical daemon FRAME."
+      (when (and (daemonp) (display-graphic-p frame))
+        (with-selected-frame frame
+          (let ((themes (copy-sequence custom-enabled-themes)))
+            (mapc #'disable-theme themes)
+            ;; Themes are stored in decreasing order of precedence.
+            (mapc (lambda (theme) (load-theme theme t)) (reverse themes)))
+          (compro/apply-face-overrides))
+        (remove-hook 'after-make-frame-functions
+                     #'compro/reload-themes-on-first-graphical-frame)))
+
+    (add-hook 'emacs-startup-hook #'compro/schedule-initial-daemon-frame)
+    (when (daemonp)
+      (add-hook 'after-make-frame-functions
+                #'compro/reload-themes-on-first-graphical-frame))
   #+end_src
   This config uses a local Unix socket (not TCP), so the relevant environment
   variable for =emacsclient= is =EMACS_SOCKET_NAME=, not =EMACS_SERVER_FILE=
@@ -3174,10 +3207,7 @@
    #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
-    (set-face-attribute 'mode-line nil :box nil)
-    (set-face-attribute 'mode-line-inactive nil :box nil)
-    (when (> emacs-major-version 27)
-      (set-face-attribute 'tab-bar-tab nil :box nil))
+    (compro/apply-face-overrides)
     (when (< emacs-major-version 31)
       (minions-mode 1))
     (setq debug-on-error  nil

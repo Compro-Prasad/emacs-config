@@ -64,7 +64,34 @@
            (message "Could not create daemon frame on %s: %s"
                     display (error-message-string error-data))))))))
 
-(add-hook 'emacs-startup-hook #'compro/create-initial-daemon-frame)
+(defun compro/schedule-initial-daemon-frame ()
+  "Create a graphical daemon frame unless a client creates one first."
+  (when (daemonp)
+    (run-with-idle-timer 1 nil #'compro/create-initial-daemon-frame)))
+
+(defun compro/apply-face-overrides ()
+  "Apply face overrides that should take precedence over themes."
+  (set-face-attribute 'mode-line nil :box nil)
+  (set-face-attribute 'mode-line-inactive nil :box nil)
+  (when (> emacs-major-version 27)
+    (set-face-attribute 'tab-bar-tab nil :box nil)))
+
+(defun compro/reload-themes-on-first-graphical-frame (frame)
+  "Reload enabled themes using the first graphical daemon FRAME."
+  (when (and (daemonp) (display-graphic-p frame))
+    (with-selected-frame frame
+      (let ((themes (copy-sequence custom-enabled-themes)))
+        (mapc #'disable-theme themes)
+        ;; Themes are stored in decreasing order of precedence.
+        (mapc (lambda (theme) (load-theme theme t)) (reverse themes)))
+      (compro/apply-face-overrides))
+    (remove-hook 'after-make-frame-functions
+                 #'compro/reload-themes-on-first-graphical-frame)))
+
+(add-hook 'emacs-startup-hook #'compro/schedule-initial-daemon-frame)
+(when (daemonp)
+  (add-hook 'after-make-frame-functions
+            #'compro/reload-themes-on-first-graphical-frame))
 
 (menu-bar-mode 0)
 (menu-bar-no-scroll-bar)

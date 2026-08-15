@@ -2375,10 +2375,7 @@ References:
 (quelpa '(p-search :repo "zkry/p-search" :fetcher github))
 (require 'p-search)
 
-(set-face-attribute 'mode-line nil :box nil)
-(set-face-attribute 'mode-line-inactive nil :box nil)
-(when (> emacs-major-version 27)
-  (set-face-attribute 'tab-bar-tab nil :box nil))
+(compro/apply-face-overrides)
 (when (< emacs-major-version 31)
   (minions-mode 1))
 (setq debug-on-error  nil
