@@ -3160,6 +3160,14 @@
      (quelpa '(p-search :repo "zkry/p-search" :fetcher github))
      (require 'p-search)
    #+end_src
+** GC magic hack mode
+   Its a global minor mode that auto triggers garbage collection when Emacs is
+   idle i.e. user isn't interacting with Emacs.
+   #+begin_src emacs-lisp :tangle init.el
+     (use-package gcmh :ensure t
+       :config
+       (gcmh-mode 1))
+   #+end_src
 * After init jobs
   #+begin_src emacs-lisp :tangle init.el :noweb yes
     (compro/apply-face-overrides)

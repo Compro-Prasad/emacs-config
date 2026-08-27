@@ -2334,6 +2334,10 @@ References:
 (quelpa '(p-search :repo "zkry/p-search" :fetcher github))
 (require 'p-search)
 
+(use-package gcmh :ensure t
+  :config
+  (gcmh-mode 1))
+
 (compro/apply-face-overrides)
 (when (< emacs-major-version 31)
   (minions-mode 1))
