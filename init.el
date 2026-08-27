@@ -565,7 +565,17 @@ project."
  gc-cons-threshold-bak gc-cons-threshold  ;; Backup
 
  ;;;   Increase buffer size for reading output of processes (5 MB)
- read-process-output-max (* 5 1024 1024)
+ read-process-output-max
+ (or (when (eq system-type 'gnu/linux)
+       (condition-case nil
+           ;; On GNU/Linux systems, the value should not exceed
+           ;; /proc/sys/fs/pipe-max-size
+           (with-temp-buffer
+             (insert-file-contents "/proc/sys/fs/pipe-max-size")
+             (string-to-number (buffer-string)))
+         (error
+          nil))
+       (* 1024 1024)))
 
  ;;;   Prevent recursion limits
  max-lisp-eval-depth 700
@@ -598,9 +608,6 @@ project."
 
  ;;;   Set REPL programs' prompt as read only
  comint-prompt-read-only t
-
- ;;;   Read more output from a process (2mb)
- read-process-output-max 2097152
 
  ;;;   Use commands when in in minibuffer
  enable-recursive-minibuffers t
