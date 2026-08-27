@@ -2015,7 +2015,13 @@ References:
           (with-temp-file pyrightconfig.json (insert config-data))
           (message (concat "compro/python-lsp-setup-for-pyright: created " pyrightconfig.json))))))
 
-  (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright))
+  (advice-add 'eglot :before 'compro/python-lsp-setup-for-pyright)
+  (setq eglot-autoshutdown t
+        eglot-sync-connect nil
+        eglot-events-buffer-config '(:size 0 :format short)
+        eglot-max-file-watches 3000
+        eglot-report-progress nil
+        eglot-code-action-indications nil))
 
 (use-package pet :ensure t
   :hook ((python-mode . compro/set-python-variables)
