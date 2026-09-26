@@ -14,8 +14,8 @@
 
 ;;; Generated autoloads from corfu-doc.el
 
-(autoload 'corfu-doc-mode "corfu-doc" "\
-Corfu doc minor mode.
+(autoload 'corfu-doc-mode "corfu-doc"
+"Corfu doc minor mode.
 
 This is a minor mode.  If called interactively, toggle the `Corfu-Doc
 mode' mode.  If the prefix argument is positive, enable the mode, and if
@@ -87,16 +87,16 @@ disabled.
 
 ;;; Generated autoloads from project-x.el
 
-(defvar project-x-mode nil "\
-Non-nil if Project-X mode is enabled.
+(defvar project-x-mode nil
+"Non-nil if Project-X mode is enabled.
 See the `project-x-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `project-x-mode'.")
 (custom-autoload 'project-x-mode "project-x" nil)
-(autoload 'project-x-mode "project-x" "\
-Minor mode to enable extra convenience features for project.el.
+(autoload 'project-x-mode "project-x"
+"Minor mode to enable extra convenience features for project.el.
 
 When enabled, save and load project window states.
 Recognize any directory that contains (or whose parent
@@ -122,16 +122,16 @@ disabled.
 
 ;;; Generated autoloads from ultra-scroll.el
 
-(defvar ultra-scroll-mode nil "\
-Non-nil if Ultra-Scroll mode is enabled.
+(defvar ultra-scroll-mode nil
+"Non-nil if Ultra-Scroll mode is enabled.
 See the `ultra-scroll-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `ultra-scroll-mode'.")
 (custom-autoload 'ultra-scroll-mode "ultra-scroll" nil)
-(autoload 'ultra-scroll-mode "ultra-scroll" "\
-Toggle pixel precision scrolling.
+(autoload 'ultra-scroll-mode "ultra-scroll"
+"Toggle pixel precision scrolling.
 
 When enabled, this minor mode scrolls the display precisely using
 full trackpad or modern mouse capabilities.  It correctly scrolls
@@ -166,16 +166,16 @@ disabled.
 
 ;;; Generated autoloads from vertico-indexed.el
 
-(defvar vertico-indexed-mode nil "\
-Non-nil if Vertico-Indexed mode is enabled.
+(defvar vertico-indexed-mode nil
+"Non-nil if Vertico-Indexed mode is enabled.
 See the `vertico-indexed-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `vertico-indexed-mode'.")
 (custom-autoload 'vertico-indexed-mode "vertico-indexed" nil)
-(autoload 'vertico-indexed-mode "vertico-indexed" "\
-Prefix candidates with indices.
+(autoload 'vertico-indexed-mode "vertico-indexed"
+"Prefix candidates with indices.
 
 This is a global minor mode.  If called interactively, toggle the
 `Vertico-Indexed mode' mode.  If the prefix argument is positive, enable
@@ -197,16 +197,16 @@ disabled.
 
 ;;; Generated autoloads from vertico-mouse.el
 
-(defvar vertico-mouse-mode nil "\
-Non-nil if Vertico-Mouse mode is enabled.
+(defvar vertico-mouse-mode nil
+"Non-nil if Vertico-Mouse mode is enabled.
 See the `vertico-mouse-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `vertico-mouse-mode'.")
 (custom-autoload 'vertico-mouse-mode "vertico-mouse" nil)
-(autoload 'vertico-mouse-mode "vertico-mouse" "\
-Mouse support for Vertico.
+(autoload 'vertico-mouse-mode "vertico-mouse"
+"Mouse support for Vertico.
 
 This is a global minor mode.  If called interactively, toggle the
 `Vertico-Mouse mode' mode.  If the prefix argument is positive, enable
@@ -224,6 +224,7 @@ disabled.
 
 (fn &optional ARG)" t)
 (register-definition-prefixes "vertico-mouse" '("vertico-"))
+
 
 ;;; End of scraped data
 
