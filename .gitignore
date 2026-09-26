@@ -6,3 +6,5 @@
 .cache/
 *.elc
 /eshell/history
+/eln-cache/
+*.eln
