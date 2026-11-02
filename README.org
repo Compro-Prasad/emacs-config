@@ -573,52 +573,27 @@
    #+begin_src emacs-listp :tangle init.el
      (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
    #+end_src
-** COMMENT Speedup file operations in Tramp
-   Create directory:
-   #+begin_src emacs-lisp :tangle init.el
-     (make-directory "~/.ssh/sockets" t)
-   #+end_src
-   Write the following in =~/.ssh/config=:
-   #+begin_src conf :tangle ~/.ssh/config
-     Host *
-          ControlMaster auto
-          ControlPath ~/.ssh/sockets/%r@%h-%p
-          ControlPersist 600
-          ServerAliveInterval 5
-   #+end_src
-   Create the =~/.ssh/sockets/= dir. TODO: automate this.
+** Speed up TRAMP
+    TRAMP file operations remain synchronous, but caching remote metadata can
+    reduce repeated round trips. Remote directory-local variables are disabled
+    to avoid extra remote lookups. TRAMP already enables SSH connection sharing
+    by default, so no duplicate OpenSSH ControlMaster configuration is needed.
+    Direct asynchronous processes can reduce startup overhead for remote
+    commands; they require non-interactive SSH authentication and do not apply
+    to multi-hop connections.
+    #+begin_src emacs-lisp :tangle init.el
+      (setq remote-file-name-inhibit-cache 30
+            enable-remote-dir-locals nil
+            tramp-persistency-file-name (concat cache-d "tramp"))
 
-   Don't use backups in tramp:
-   #+begin_src emacs-lisp :tangle init.el
-     (defvar disable-tramp-backups '(all))
-
-     (eval-after-load "tramp"
-       '(progn
-          ;; Modified from https://www.gnu.org/software/emacs/manual/html_node/tramp/Auto_002dsave-and-Backup.html
-          (setq backup-enable-predicate
-                (lambda (name)
-                  (and (normal-backup-enable-predicate name)
-                   ;; Disable all tramp backups
-                   (and disable-tramp-backups
-                        (member 'all disable-tramp-backups)
-                        (not (file-remote-p name 'method)))
-                   (not ;; disable backup for tramp with the listed methods
-                    (let ((method (file-remote-p name 'method)))
-                      (when (stringp method)
-                        (member method disable-tramp-backups)))))))
-
-          (defun tramp-set-auto-save--check (original)
-            (if (funcall backup-enable-predicate (buffer-file-name))
-                (funcall original)
-              (auto-save-mode -1)))
-
-          (advice-add 'tramp-set-auto-save :around #'tramp-set-auto-save--check)
-
-          ;; Use my ~/.ssh/config control master settings according to https://puppet.com/blog/speed-up-ssh-by-reusing-connections
-          (setq tramp-ssh-controlmaster-options ""
-                remote-file-name-inhibit-cache 30)))
-   #+end_src
-   Thanks to [[https://emacs.stackexchange.com/users/12634/luke-lee][Luke Lee]] on [[https://emacs.stackexchange.com/a/24654][Emacs Stack Exchange]].
+      (with-eval-after-load 'tramp
+        (connection-local-set-profile-variables
+         'tramp-direct-async-process
+         '((tramp-direct-async-process . t)))
+        (connection-local-set-profiles
+         '(:application tramp :protocol "ssh")
+         'tramp-direct-async-process))
+    #+end_src
 
 ** Tab bar
    Tab bar is a feature in Emacs to show tabs but works like workspaces in
@@ -939,12 +914,8 @@
       ;;;   Initial scratch message is nil
       initial-scratch-message ""
 
-      ;;;   Use directory local variables in tramp session
-      enable-remote-dir-locals t
-
-      ;;;   Backup configuration
-      tramp-persistency-file-name (concat cache-d "tramp")
-      backup-directory-alist `(("." . ,(concat cache-d "backups")))
+       ;;;   Backup configuration
+       backup-directory-alist `(("." . ,(concat cache-d "backups")))
       delete-old-versions -1
       version-control t
       vc-make-backup-files t

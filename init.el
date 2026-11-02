@@ -335,6 +335,18 @@ project."
 
 (remove-hook 'file-name-at-point-functions 'ffap-guess-file-name-at-point)
 
+(setq remote-file-name-inhibit-cache 30
+      enable-remote-dir-locals nil
+      tramp-persistency-file-name (concat cache-d "tramp"))
+
+(with-eval-after-load 'tramp
+  (connection-local-set-profile-variables
+   'tramp-direct-async-process
+   '((tramp-direct-async-process . t)))
+  (connection-local-set-profiles
+   '(:application tramp :protocol "ssh")
+   'tramp-direct-async-process))
+
 (use-package tab-bar
   :when (> emacs-major-version 27)
   :bind (("C-t" . tab-bar-new-tab-event)
@@ -621,12 +633,8 @@ project."
  ;;;   Initial scratch message is nil
  initial-scratch-message ""
 
- ;;;   Use directory local variables in tramp session
- enable-remote-dir-locals t
-
- ;;;   Backup configuration
- tramp-persistency-file-name (concat cache-d "tramp")
- backup-directory-alist `(("." . ,(concat cache-d "backups")))
+  ;;;   Backup configuration
+  backup-directory-alist `(("." . ,(concat cache-d "backups")))
  delete-old-versions -1
  version-control t
  vc-make-backup-files t
