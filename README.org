@@ -3033,7 +3033,7 @@
    #+begin_src emacs-lisp :tangle init.el
      (use-package indent-bars :ensure t)
    #+end_src
-** One tab per project
+** COMMENT One tab per project
    #+begin_src emacs-lisp :tangle init.el
      (use-package otpp
        :ensure t
