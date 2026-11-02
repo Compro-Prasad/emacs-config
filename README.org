@@ -546,7 +546,11 @@
            nil
            (confirm-nonexistent-file-or-buffer)
            (lambda (buf)
-             (memq (cdr buf) candidates))))))
+             (memq (cond
+                    ((bufferp buf) buf)
+                    ((and (consp buf) (bufferp (cdr buf))) (cdr buf))
+                    (t (get-buffer (if (consp buf) (car buf) buf))))
+                   candidates))))))
 
      (global-set-key (kbd "C-x b") 'switch-to-buffer-smart)
      (global-set-key (kbd "C-x C-b") 'switch-to-buffer)
@@ -617,8 +621,7 @@
            (setq buffer-offer-save 'always)))
 
        (defvar tab-bar-new-commands
-         '((?p "Project" project-switch-project)
-           (?n "New buffer" switch-to-untitled-buffer)
+         '((?n "New buffer" switch-to-untitled-buffer)
            (?f "List Files" find-file)
            (?b "List Buffers" switch-to-buffer)
            (?r "Run command" execute-extended-command)
@@ -1654,9 +1657,8 @@
          ("+" er/contract-region)
          ("-" er/contract-region)))
    #+end_src
-** TODO Project integration
-   Now Emacs comes with native project support since 25.1. Investigate and set
-   up =project.el=.
+** Project integration
+   Use built-in =project.el= for project detection and switching.
 
    #+begin_src emacs-lisp :tangle init.el
      (use-package project
@@ -1664,7 +1666,124 @@
        (setq project-list-file (concat cache-d "projects")))
    #+end_src
 
-   Until then we can rely on the more powerful =projectile= package.
+*** One frame per project, with frame-local buffers
+    =beframe= limits buffer prompts to buffers associated with the current
+    frame.  =C-x p p= selects an existing frame for that project, or creates
+    one when needed.  The frame title follows the current project and file.
+    =C-x p k= closes the project frame after successfully killing its project
+    buffers.
+    #+begin_src emacs-lisp :tangle init.el
+      (defun compro/unique-frame-name (frame name)
+        "Return NAME, adding a suffix if another frame already uses it."
+        (let ((candidate name)
+              (suffix 2))
+          (while (seq-some
+                  (lambda (other-frame)
+                    (and (not (eq frame other-frame))
+                         (equal candidate (frame-parameter other-frame 'name))))
+                  (frame-list))
+            (setq candidate (format "%s <%d>" name suffix)
+                  suffix (1+ suffix)))
+          candidate))
+
+      (defun compro/update-project-frame-name (frame)
+        "Name FRAME after its current project and file."
+        (when (and (frame-live-p frame)
+                   (not (minibufferp
+                         (window-buffer (frame-selected-window frame)))))
+          (let* ((buffer (window-buffer (frame-selected-window frame)))
+                 (file (buffer-file-name buffer))
+                 (project
+                  (with-current-buffer buffer
+                    (project-current nil)))
+                 (project-root
+                  (when project
+                    (file-name-as-directory (project-root project))))
+                 (project-name
+                  (when project-root
+                    (file-name-nondirectory
+                     (directory-file-name project-root))))
+                 (file-label (if file
+                                 (file-name-nondirectory file)
+                               (buffer-name buffer)))
+                 (name (compro/unique-frame-name
+                       frame (format "%s: %s"
+                                     (or project-name "Emacs")
+                                     file-label))))
+            (modify-frame-parameters frame `((name . ,name)
+                                             (title . ,name)))
+            (when project-root
+              (set-frame-parameter frame 'compro-project-root project-root)))))
+
+      (defun compro/project-frame-for-root (root)
+        "Return the live frame assigned to project ROOT, if any."
+        (seq-find
+         (lambda (frame)
+           (and (frame-live-p frame)
+                (equal root (frame-parameter frame 'compro-project-root))))
+         (frame-list)))
+
+      (defun compro/project-switch-project-in-frame ()
+        "Switch to a project in its existing frame, or create a frame for it."
+        (interactive)
+        (let* ((directory (project-prompt-project-dir))
+               (project (project-current nil directory))
+               (root (file-name-as-directory
+                      (if project
+                          (project-root project)
+                        (expand-file-name directory))))
+               (frame (or (compro/project-frame-for-root root)
+                          (make-frame))))
+          (set-frame-parameter frame 'compro-project-root root)
+          (select-frame-set-input-focus frame)
+          (unwind-protect
+              (project-switch-project root)
+            (compro/update-project-frame-name frame))))
+
+      (defun compro/project-kill-buffers-close-frame
+          (original &optional no-confirm project)
+        "Close a project's frame after ORIGINAL kills all its project buffers."
+        (let* ((project (or project (project-current t)))
+               (buffers (project--buffers-to-kill project))
+               (frame (compro/project-frame-for-root
+                       (file-name-as-directory (project-root project)))))
+          (prog1
+              (funcall original no-confirm project)
+            (when (and frame
+                       buffers
+                       (not (seq-some #'buffer-live-p buffers))
+                       (frame-live-p frame))
+              (delete-frame frame)))))
+
+      (advice-add 'project-kill-buffers :around
+                  #'compro/project-kill-buffers-close-frame)
+
+      (defun compro/update-project-frame-name-for-buffer ()
+        "Update titles of frames displaying the current buffer."
+        (dolist (frame (get-buffer-window-list (current-buffer) nil t))
+          (compro/update-project-frame-name frame)))
+
+      (use-package beframe :ensure t :demand t
+        :bind-keymap ("C-c b" . beframe-prefix-map)
+        :init
+        (setq beframe-global-buffers nil)
+        :config
+        (beframe-mode 1)
+        (define-key project-prefix-map (kbd "p")
+          #'compro/project-switch-project-in-frame)
+        (add-hook 'after-make-frame-functions
+                  #'compro/update-project-frame-name t)
+        (add-hook 'window-buffer-change-functions
+                  #'compro/update-project-frame-name)
+        (add-hook 'window-selection-change-functions
+                  #'compro/update-project-frame-name)
+        (add-hook 'after-set-visited-file-name-hook
+                  #'compro/update-project-frame-name-for-buffer)
+        (dolist (frame (frame-list))
+          (compro/update-project-frame-name frame)))
+    #+end_src
+
+   For Emacs 27 and earlier, use the =projectile= package instead.
    #+begin_src emacs-lisp :tangle init.el
      (use-package projectile :ensure t
        :when (<= emacs-major-version 27)  ;; Use project.el for > 27
