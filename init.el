@@ -2342,6 +2342,16 @@ References:
   :config
   (beacon-mode 1))
 
+(use-package devops
+  :ensure t
+  :custom
+  (devops-enable-session-async t)    ; async sessions (recommended), see below
+  :config
+  (devops-mode 1)
+  (require 'devops-lob)               ; load a project's tools.org
+  (devops-lob-mode 1)
+  (require 'devops-drift))            ; M-x devops-drift
+
 (compro/apply-face-overrides)
 (when (< emacs-major-version 31)
   (minions-mode 1))
