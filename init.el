@@ -678,6 +678,33 @@ project."
 (when (file-readable-p custom-file)
   (load custom-file))
 
+(use-package spacemacs-theme :ensure t :defer t)
+
+(defun compro/set-theme-by-time-of-day ()
+  "Select the light or dark theme based on the current UTC+05:30 hour."
+  (let* ((hour (nth 2 (decode-time nil 19800)))
+         (theme (if (or (>= hour 17) (< hour 6))
+                    'spacemacs-dark
+                  'modus-operandi-tinted)))
+    (unless (equal custom-enabled-themes (list theme))
+      ;; Load the target before disabling others, so a load failure leaves
+      ;; the current theme intact.
+      (unless (memq theme custom-enabled-themes)
+        (load-theme theme t))
+      (dolist (enabled-theme (copy-sequence custom-enabled-themes))
+        (unless (eq enabled-theme theme)
+          (disable-theme enabled-theme)))
+      (when (fboundp 'compro/apply-face-overrides)
+        (compro/apply-face-overrides)))))
+
+(defvar compro/theme-check-timer nil
+  "Timer that checks the time-based theme every five minutes.")
+
+(when (timerp compro/theme-check-timer)
+  (cancel-timer compro/theme-check-timer))
+(setq compro/theme-check-timer
+      (run-at-time 0 (* 5 60) #'compro/set-theme-by-time-of-day))
+
 (when (file-readable-p "~/.git-tokens")
   (load-file "~/.git-tokens"))
 
