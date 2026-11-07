@@ -1261,6 +1261,10 @@ _=_       _+_
   :init
   (setq project-list-file (concat cache-d "projects")))
 
+(add-to-list 'load-path (expand-file-name "user-lisp" emacs-d))
+(require 'project-idle-cleanup)
+(compro/project-idle-cleanup-mode 1)
+
 (defun compro/unique-frame-name (frame name)
   "Return NAME, adding a suffix if another frame already uses it."
   (let ((candidate name)
@@ -1301,7 +1305,7 @@ _=_       _+_
       (modify-frame-parameters frame `((name . ,name)
                                        (title . ,name)))
       (when project-root
-        (set-frame-parameter frame 'compro-project-root project-root)))))
+        (compro/set-project-frame-root frame project-root)))))
 
 (defun compro/project-frame-for-root (root)
   "Return the live frame assigned to project ROOT, if any."
@@ -1322,7 +1326,7 @@ _=_       _+_
                   (expand-file-name directory))))
          (frame (or (compro/project-frame-for-root root)
                     (make-frame))))
-    (set-frame-parameter frame 'compro-project-root root)
+    (compro/set-project-frame-root frame root)
     (select-frame-set-input-focus frame)
     (unwind-protect
         (project-switch-project root)

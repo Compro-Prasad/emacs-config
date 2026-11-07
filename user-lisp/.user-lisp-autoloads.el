@@ -225,6 +225,12 @@ disabled.
 (fn &optional ARG)" t)
 (register-definition-prefixes "vertico-mouse" '("vertico-"))
 
+
+
+;;; Generated autoloads from project-idle-cleanup.el
+
+(register-definition-prefixes "project-idle-cleanup" '("compro/"))
+
 
 ;;; End of scraped data
 

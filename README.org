@@ -1699,6 +1699,24 @@
        (setq project-list-file (concat cache-d "projects")))
    #+end_src
 
+*** Automatic project cleanup
+    =user-lisp/project-idle-cleanup.el= closes project buffers and frames after
+    12 hours without user activity in any frame assigned to that project. The
+    module checks every five minutes, and leaves projects with modified buffers
+    or running processes untouched. If the expired project is shown in the only
+    frame of a non-daemon session, it keeps that frame open and detaches it from
+    the project.
+
+    The timeout and check interval can be customized with
+    =compro/project-idle-timeout= and =compro/project-idle-check-interval=,
+    respectively. The module is enabled here and relies on the frame-root
+    tracking in the following section.
+    #+begin_src emacs-lisp :tangle init.el
+      (add-to-list 'load-path (expand-file-name "user-lisp" emacs-d))
+      (require 'project-idle-cleanup)
+      (compro/project-idle-cleanup-mode 1)
+    #+end_src
+
 *** One frame per project, with frame-local buffers
     =beframe= limits buffer prompts to buffers associated with the current
     frame.  =C-x p p= selects an existing frame for that project, or creates
@@ -1746,7 +1764,7 @@
             (modify-frame-parameters frame `((name . ,name)
                                              (title . ,name)))
             (when project-root
-              (set-frame-parameter frame 'compro-project-root project-root)))))
+              (compro/set-project-frame-root frame project-root)))))
 
       (defun compro/project-frame-for-root (root)
         "Return the live frame assigned to project ROOT, if any."
@@ -1767,7 +1785,7 @@
                         (expand-file-name directory))))
                (frame (or (compro/project-frame-for-root root)
                           (make-frame))))
-          (set-frame-parameter frame 'compro-project-root root)
+          (compro/set-project-frame-root frame root)
           (select-frame-set-input-focus frame)
           (unwind-protect
               (project-switch-project root)
