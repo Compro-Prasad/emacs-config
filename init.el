@@ -680,12 +680,17 @@ project."
 
 (use-package spacemacs-theme :ensure t :defer t)
 
-(defun compro/set-theme-by-time-of-day ()
-  "Select the light or dark theme based on the current UTC+05:30 hour."
-  (let* ((hour (nth 2 (decode-time nil 19800)))
-         (theme (if (or (>= hour 17) (< hour 6))
-                    'spacemacs-dark
-                  'modus-operandi-tinted)))
+(require 'dbus)
+
+(defconst compro/portal-args
+  '(:session "org.freedesktop.portal.Desktop"
+    "/org/freedesktop/portal/desktop"
+    "org.freedesktop.portal.Settings")
+  "Bus, service, path and interface of the xdg-desktop-portal settings API.")
+
+(defun compro/set-theme (dark)
+  "Enable the dark theme if DARK is non-nil, otherwise the light theme."
+  (let ((theme (if dark 'spacemacs-dark 'modus-operandi-tinted)))
     (unless (equal custom-enabled-themes (list theme))
       ;; Load the target before disabling others, so a load failure leaves
       ;; the current theme intact.
@@ -697,13 +702,38 @@ project."
       (when (fboundp 'compro/apply-face-overrides)
         (compro/apply-face-overrides)))))
 
-(defvar compro/theme-check-timer nil
-  "Timer that checks the time-based theme every five minutes.")
+(defun compro/portal-color-scheme-dark-p (value)
+  "Return non-nil if portal color-scheme VALUE means dark.
+VALUE is 0 (no preference), 1 (dark) or 2 (light), possibly wrapped in lists
+by the D-Bus variant encoding."
+  (eql 1 (car (flatten-tree value))))
 
-(when (timerp compro/theme-check-timer)
-  (cancel-timer compro/theme-check-timer))
-(setq compro/theme-check-timer
-      (run-at-time 0 (* 5 60) #'compro/set-theme-by-time-of-day))
+(defun compro/sync-theme-with-system ()
+  "Apply the theme matching the current system color scheme."
+  (compro/set-theme
+   (compro/portal-color-scheme-dark-p
+    (ignore-errors
+      (apply #'dbus-call-method
+             (append compro/portal-args
+                     '("Read" "org.freedesktop.appearance" "color-scheme")))))))
+
+(defvar compro/theme-dbus-object nil
+  "D-Bus signal registration that tracks system color scheme changes.")
+
+(when compro/theme-dbus-object
+  (dbus-unregister-object compro/theme-dbus-object))
+(setq compro/theme-dbus-object
+      (ignore-errors
+        (apply #'dbus-register-signal
+               (append compro/portal-args
+                       (list "SettingChanged"
+                             (lambda (namespace key value)
+                               (when (and (equal namespace "org.freedesktop.appearance")
+                                          (equal key "color-scheme"))
+                                 (compro/set-theme
+                                  (compro/portal-color-scheme-dark-p value)))))))))
+
+(compro/sync-theme-with-system)
 
 (when (file-readable-p "~/.git-tokens")
   (load-file "~/.git-tokens"))
